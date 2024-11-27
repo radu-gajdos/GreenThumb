@@ -1,10 +1,15 @@
 package com.example.backend.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Proxy;
+
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Proxy(lazy = false)
 public class User {
 
     @Id
@@ -24,6 +29,7 @@ public class User {
     private String passwordHash;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) // Eager loading for performance
+    @JsonIgnoreProperties("owner") // Ignore the 'owner' field in related plots
     private Set<Plot> plots;
 
     // Getters and Setters

@@ -1,10 +1,15 @@
 package com.example.backend.Domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Proxy;
+
 import java.util.Set;
 
 @Entity
 @Table(name = "plots")
+@Proxy(lazy = false)
 public class Plot {
 
     @Id
@@ -31,9 +36,11 @@ public class Plot {
 
     @ManyToOne(fetch = FetchType.EAGER) // Foreign key to the User entity, lazily loaded
     @JoinColumn(name = "owner_id", nullable = false)
+    @JsonIgnoreProperties("plots") // Ignore the 'plots' field in related users
     private User owner;
 
     @OneToMany(mappedBy = "plot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("plot") // Ignore the 'plot' field in related actions
     private Set<Action> actions;
 
     // Getters and Setters
