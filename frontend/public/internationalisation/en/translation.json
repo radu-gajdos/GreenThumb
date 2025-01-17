@@ -1,0 +1,15 @@
+{
+    "signUpTitle": "Sign Up",
+    "termsAndPrivacy": "By creating an account, you agree to the Terms of use and Privacy Policy.",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "repeatPassword": "Repeat Password",
+    "signUp": "Sign Up",
+    "alreadyHaveAccount": "Already have an account? Log in",
+    "platformDesigned": "A Platform Designed for You",
+    "customizableGarden": "Customizable Garden Pages",
+    "aiAssistance": "AI-Powered Assistance",
+    "communityConnection": "Community Connection",
+    "alertSignUp": "Sign-up successful for {{username}}"
+}

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./SignUp.module.scss";
 import { ReactComponent as Circle } from "../../assets/circle.svg";
 
 const SignUp: React.FC = () => {
+    const { t, i18n } = useTranslation(); // Use the useTranslation hook
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -17,21 +19,27 @@ const SignUp: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert(`Sign-up successful for ${formData.username}`);
+        alert(t("alertSignUp", { username: formData.username })); // Use translation for the alert message
+    };
+
+    const changeLanguage = (lng: string) => {
+        console.log(lng);
+        i18n.changeLanguage(lng); // Change the language dynamically
     };
 
     return (
         <div className={styles.main}>
             <div className={styles.formContainer}>
                 <div className={styles.formContent}>
-                    <div className={styles.formTitle}>Sign Up</div>
+                    <div className={styles.formTitle}>{t("signUpTitle")}</div>
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <div className={styles.disclosure}>
-                            By creating an account, you agree to the Terms of
-                            use and Privacy Policy.
+                            {t("termsAndPrivacy")}
                         </div>
                         <div className={styles.input}>
-                            <div className={styles.inputTitle}>Username</div>
+                            <div className={styles.inputTitle}>
+                                {t("username")}
+                            </div>
                             <input
                                 className={styles.inputSlot}
                                 type="text"
@@ -42,7 +50,9 @@ const SignUp: React.FC = () => {
                             />
                         </div>
                         <div className={styles.input}>
-                            <div className={styles.inputTitle}>Email</div>
+                            <div className={styles.inputTitle}>
+                                {t("email")}
+                            </div>
                             <input
                                 className={styles.inputSlot}
                                 type="email"
@@ -53,7 +63,9 @@ const SignUp: React.FC = () => {
                             />
                         </div>
                         <div className={styles.input}>
-                            <div className={styles.inputTitle}>Password</div>
+                            <div className={styles.inputTitle}>
+                                {t("password")}
+                            </div>
                             <input
                                 className={styles.inputSlot}
                                 type="password"
@@ -65,11 +77,11 @@ const SignUp: React.FC = () => {
                         </div>
                         <div className={styles.input}>
                             <div className={styles.inputTitle}>
-                                Repeat Password
+                                {t("repeatPassword")}
                             </div>
                             <input
                                 className={styles.inputSlot}
-                                type="repassword"
+                                type="password" // Correct type for a password field
                                 name="repassword"
                                 value={formData.repassword}
                                 onChange={handleChange}
@@ -77,58 +89,36 @@ const SignUp: React.FC = () => {
                             />
                         </div>
                         <button type="submit" className={styles.submitButton}>
-                            Sign Up
+                            {t("signUp")}
                         </button>
                     </form>
-                    <div className={styles.accountCheck}>Already have an account? Log in</div>
+                    <div className={styles.accountCheck}>
+                        {t("alreadyHaveAccount")}
+                    </div>
                 </div>
             </div>
             <div className={styles.ilustrationContainer}>
                 <div className={styles.ilustrationContent}>
                     <div className={styles.ilustrationTitle}>
-                        A Platform Designed for You
+                        {t("platformDesigned")}
                     </div>
                     <div className={styles.ilustrationBullets}>
                         <div className={styles.ilustrationBullet}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="9"
-                                height="8"
-                                viewBox="0 0 9 8"
-                                fill="none"
-                            >
-                                <circle cx="4.5" cy="4" r="4" fill="#3F3D56" />
-                            </svg>
+                            <Circle />
                             <div className={styles.ilustrationBulletText}>
-                                Customizable Garden Pages
+                                {t("customizableGarden")}
                             </div>
                         </div>
                         <div className={styles.ilustrationBullet}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="9"
-                                height="8"
-                                viewBox="0 0 9 8"
-                                fill="none"
-                            >
-                                <circle cx="4.5" cy="4" r="4" fill="#3F3D56" />
-                            </svg>
+                            <Circle />
                             <div className={styles.ilustrationBulletText}>
-                                AI-Powered Assistance
+                                {t("aiAssistance")}
                             </div>
                         </div>
                         <div className={styles.ilustrationBullet}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="9"
-                                height="8"
-                                viewBox="0 0 9 8"
-                                fill="none"
-                            >
-                                <circle cx="4.5" cy="4" r="4" fill="#3F3D56" />
-                            </svg>
+                            <Circle />
                             <div className={styles.ilustrationBulletText}>
-                                Community Connection
+                                {t("communityConnection")}
                             </div>
                         </div>
                     </div>
