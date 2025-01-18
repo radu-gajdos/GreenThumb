@@ -8,13 +8,11 @@ interface FormData {
 }
 
 interface FormErrors {
-    username?: string;
     email?: string;
     password?: string;
-    repassword?: string;
 }
 
-const SignUp = () => {
+const SignIn = () => {
     const { t } = useTranslation();
 
     const [formData, setFormData] = React.useState<FormData>({
@@ -23,6 +21,7 @@ const SignUp = () => {
     });
 
     const [errors, setErrors] = React.useState<FormErrors>({});
+    const [apiError, setApiError] = React.useState<string | null>(null);
 
     const validationSchema = yup.object().shape({
         email: yup
@@ -49,14 +48,35 @@ const SignUp = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setApiError(null); // Reset any previous API error
+
         try {
             await validationSchema.validate(formData, { abortEarly: false });
-            // alert(t("alertSignUp", { username: formData.username }));
+
+            const response = await fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // Store the token in localStorage or context for future use
+                localStorage.setItem("authToken", data.token);
+                console.log(localStorage.getItem("authToken"));
+                alert(t("signInSuccess"));
+            } else if (response.status === 401) {
+                setApiError(t("apiError.invalidCredentials"));
+            } else {
+                const errorMessage = await response.text();
+                setApiError(errorMessage || t("apiError.default"));
+            }
         } catch (validationError) {
             const newErrors: FormErrors = {};
             (validationError as yup.ValidationError).inner.forEach((err: yup.ValidationError) => {
-                if (err.path)
-                    newErrors[err.path as keyof FormErrors] = err.message;
+                if (err.path) newErrors[err.path as keyof FormErrors] = err.message;
             });
             setErrors(newErrors);
         }
@@ -82,6 +102,12 @@ const SignUp = () => {
                 <div className="max-w-md w-full space-y-8">
                     <h1 className="text-4xl lg:text-5xl font-semibold text-center">{t("signIn")}</h1>
 
+                    {apiError && (
+                        <div className="text-red-500 text-center mb-4">
+                            {apiError}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <div className="flex justify-between items-center mb-2">
@@ -92,7 +118,8 @@ const SignUp = () => {
                             </div>
                             <input
                                 type="email"
-                                className="w-full p-3 text-lg rounded-lg border"
+                                name="email"
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.email ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("emailPlaceholder")}
                                 value={formData.email}
                                 onChange={handleChange}
@@ -108,7 +135,8 @@ const SignUp = () => {
                             </div>
                             <input
                                 type="password"
-                                className="w-full p-3 text-lg rounded-lg border"
+                                name="password"
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("passwordPlaceholder")}
                                 value={formData.password}
                                 onChange={handleChange}
@@ -124,17 +152,23 @@ const SignUp = () => {
                     </form>
 
                     <p className="text-center text-sm text-gray-600">
-                        {t("dontHaveAccount")} <a href="/sign-up" className="text-green-600 hover:underline">{t("signUp")}</a>
+                        {t("dontHaveAccount")}{" "}
+                        <a href="/sign-up" className="text-green-600 hover:underline">
+                            {t("signUp")}
+                        </a>
                     </p>
                 </div>
             </div>
 
-            <div className="w-full lg:w-1/3 bg-green-50 p-8 min-h-[300px] lg:min-h-screen flex items-center justify-center" style={{
-                backgroundImage: `url('/assets/signup-illustration.png')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}>
+            <div
+                className="w-full lg:w-1/3 bg-green-50 p-8 min-h-[300px] lg:min-h-screen flex items-center justify-center"
+                style={{
+                    backgroundImage: `url('/assets/signup-illustration.png')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                }}
+            >
                 <div className="max-w-sm mx-auto space-y-8">
                     <h2 className="text-2xl lg:text-3xl font-semibold text-center text-gray-800">
                         {t("platformDesigned")}
@@ -157,8 +191,7 @@ const SignUp = () => {
                 </div>
             </div>
         </div>
-    
     );
 };
 
-export default SignUp;
+export default SignIn;
