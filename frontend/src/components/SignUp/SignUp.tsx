@@ -1,125 +1,202 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import styles from "./SignUp.module.scss";
-import { ReactComponent as Circle } from "../../assets/circle.svg";
+import * as yup from "yup";
 
-const SignUp: React.FC = () => {
-    const { t, i18n } = useTranslation(); // Use the useTranslation hook
-    const [formData, setFormData] = useState({
+interface FormData {
+    username: string;
+    email: string;
+    password: string;
+    repassword: string;
+}
+
+interface FormErrors {
+    username?: string;
+    email?: string;
+    password?: string;
+    repassword?: string;
+}
+
+const SignUp = () => {
+    const { t } = useTranslation();
+
+    const [formData, setFormData] = React.useState<FormData>({
         username: "",
         email: "",
         password: "",
-        repassword: "",
+        repassword: ""
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+    const [errors, setErrors] = React.useState<FormErrors>({});
+
+    const validationSchema = yup.object().shape({
+        username: yup.string().required(t("validation.usernameRequired")),
+        email: yup
+            .string()
+            .email(t("validation.invalidEmail"))
+            .required(t("validation.emailRequired")),
+        password: yup
+            .string()
+            .required(t("validation.passwordRequired"))
+            .min(6, t("validation.passwordMin", { count: 6 })),
+        repassword: yup
+            .string()
+            .required(t("validation.repasswordRequired"))
+            .oneOf([yup.ref("password")], t("validation.passwordMatch"))
+    });
+
+    const validateField = async (name: keyof FormData, value: string): Promise<string | undefined> => {
+        try {
+            await validationSchema.validateAt(name, { ...formData, [name]: value });
+            return undefined;
+        } catch (validationError: any) {
+            return validationError.message;
+        }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        alert(t("alertSignUp", { username: formData.username })); // Use translation for the alert message
+        try {
+            await validationSchema.validate(formData, { abortEarly: false });
+            alert(t("alertSignUp", { username: formData.username }));
+        } catch (validationError: any) {
+            const newErrors: FormErrors = {};
+            validationError.inner.forEach((err: yup.ValidationError) => {
+                if (err.path) newErrors[err.path as keyof FormErrors] = err.message;
+            });
+            setErrors(newErrors);
+        }
     };
 
-    const changeLanguage = (lng: string) => {
-        console.log(lng);
-        i18n.changeLanguage(lng); // Change the language dynamically
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        const errorMessage = await validateField(name as keyof FormData, value);
+        setErrors(prev => ({
+            ...prev,
+            [name]: errorMessage
+        }));
     };
 
     return (
-        <div className={styles.main}>
-            <div className={styles.formContainer}>
-                <div className={styles.formContent}>
-                    <div className={styles.formTitle}>{t("signUpTitle")}</div>
-                    <form onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.disclosure}>
-                            {t("termsAndPrivacy")}
-                        </div>
-                        <div className={styles.input}>
-                            <div className={styles.inputTitle}>
-                                {t("username")}
+        <div className="min-h-screen flex flex-col lg:flex-row">
+            <div className="w-full lg:w-2/3 p-4 lg:p-8 bg-white">
+                <div className="max-w-md mx-auto space-y-8 mt-8 lg:mt-0">
+                    <h1 className="text-3xl lg:text-4xl font-semibold text-center">{t("signUpTitle")}</h1>
+
+                    <p className="text-sm text-gray-600 text-center">
+                        {t("termsAndPrivacy")}
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-sm font-medium">{t("username")}</label>
+                                {errors.username && (
+                                    <span className="text-xs text-red-500">{errors.username}</span>
+                                )}
                             </div>
                             <input
-                                className={styles.inputSlot}
                                 type="text"
                                 name="username"
+                                className={`w-full p-3 rounded-lg border ${errors.username ? "border-red-500" : "border-gray-300"}`}
+                                placeholder={t("usernamePlaceholder")}
                                 value={formData.username}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
-                        <div className={styles.input}>
-                            <div className={styles.inputTitle}>
-                                {t("email")}
+
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-sm font-medium">{t("email")}</label>
+                                {errors.email && (
+                                    <span className="text-xs text-red-500">{errors.email}</span>
+                                )}
                             </div>
                             <input
-                                className={styles.inputSlot}
                                 type="email"
                                 name="email"
+                                className={`w-full p-3 rounded-lg border ${errors.email ? "border-red-500" : "border-gray-300"}`}
+                                placeholder={t("emailPlaceholder")}
                                 value={formData.email}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
-                        <div className={styles.input}>
-                            <div className={styles.inputTitle}>
-                                {t("password")}
+
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-sm font-medium">{t("password")}</label>
+                                {errors.password && (
+                                    <span className="text-xs text-red-500">{errors.password}</span>
+                                )}
                             </div>
                             <input
-                                className={styles.inputSlot}
                                 type="password"
                                 name="password"
+                                className={`w-full p-3 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"}`}
+                                placeholder={t("passwordPlaceholder")}
                                 value={formData.password}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
-                        <div className={styles.input}>
-                            <div className={styles.inputTitle}>
-                                {t("repeatPassword")}
+
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-sm font-medium">{t("repeatPassword")}</label>
+                                {errors.repassword && (
+                                    <span className="text-xs text-red-500">{errors.repassword}</span>
+                                )}
                             </div>
                             <input
-                                className={styles.inputSlot}
-                                type="password" // Correct type for a password field
+                                type="password"
                                 name="repassword"
+                                className={`w-full p-3 rounded-lg border ${errors.repassword ? "border-red-500" : "border-gray-300"}`}
+                                placeholder={t("repeatPasswordPlaceholder")}
                                 value={formData.repassword}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
-                        <button type="submit" className={styles.submitButton}>
+
+                        <button
+                            type="submit"
+                            className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white rounded-full text-lg transition-colors"
+                        >
                             {t("signUp")}
                         </button>
                     </form>
-                    <div className={styles.accountCheck}>
-                        {t("alreadyHaveAccount")}
-                    </div>
+
+                    <p className="text-center text-sm text-gray-600">
+                        {t("alreadyHaveAccount")} <a href="/signin" className="text-green-600 hover:underline">{t("signUp")}</a>
+                    </p>
                 </div>
             </div>
-            <div className={styles.ilustrationContainer}>
-                <div className={styles.ilustrationContent}>
-                    <div className={styles.ilustrationTitle}>
+
+            <div className="w-full lg:w-1/3 bg-green-50 p-8 min-h-[300px] lg:min-h-screen flex items-center justify-center" style={{
+                backgroundImage: `url('/assets/signup-illustration.png')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            }}>
+                <div className="max-w-sm mx-auto space-y-8">
+                    <h2 className="text-2xl font-semibold text-center text-gray-800">
                         {t("platformDesigned")}
-                    </div>
-                    <div className={styles.ilustrationBullets}>
-                        <div className={styles.ilustrationBullet}>
-                            <Circle />
-                            <div className={styles.ilustrationBulletText}>
-                                {t("customizableGarden")}
-                            </div>
+                    </h2>
+
+                    <div className="space-y-6">
+                        <div className="flex items-center space-x-4">
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <p className="text-gray-700">{t("customizableGarden")}</p>
                         </div>
-                        <div className={styles.ilustrationBullet}>
-                            <Circle />
-                            <div className={styles.ilustrationBulletText}>
-                                {t("aiAssistance")}
-                            </div>
+                        <div className="flex items-center space-x-4">
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <p className="text-gray-700">{t("aiAssistance")}</p>
                         </div>
-                        <div className={styles.ilustrationBullet}>
-                            <Circle />
-                            <div className={styles.ilustrationBulletText}>
-                                {t("communityConnection")}
-                            </div>
+                        <div className="flex items-center space-x-4">
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <p className="text-gray-700">{t("communityConnection")}</p>
                         </div>
                     </div>
                 </div>
