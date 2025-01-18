@@ -27,6 +27,7 @@ const SignUp = () => {
     });
 
     const [errors, setErrors] = React.useState<FormErrors>({});
+    const [apiError, setApiError] = React.useState<string | null>(null);
 
     const validationSchema = yup.object().shape({
         username: yup.string().required(t("validation.usernameRequired")),
@@ -55,9 +56,32 @@ const SignUp = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setApiError(null);
         try {
             await validationSchema.validate(formData, { abortEarly: false });
-            alert(t("alertSignUp", { username: formData.username }));
+
+            const requestData = {
+                fullName: formData.username,
+                email: formData.email,
+                password: formData.password,
+                phoneNumber: "" // Add a phone number field if needed
+            };
+
+            const response = await fetch("http://localhost:8080/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                alert(t("alertSignUp", { username: formData.username }));
+                setFormData({ username: "", email: "", password: "", repassword: "" });
+            } else {
+                const errorMessage = await response.text();
+                setApiError(errorMessage || t("apiError.default"));
+            }
         } catch (validationError: any) {
             const newErrors: FormErrors = {};
             validationError.inner.forEach((err: yup.ValidationError) => {
@@ -87,9 +111,11 @@ const SignUp = () => {
                 <div className="max-w-md w-full space-y-8">
                     <h1 className="text-3xl lg:text-4xl font-semibold text-center">{t("signUpTitle")}</h1>
 
-                    <p className="text-base text-gray-600 text-center">
-                        {t("termsAndPrivacy")} <a href="/terms" className="text-green-600 hover:underline">{t("terms")}</a>
-                    </p>
+                    {apiError && (
+                        <div className="text-red-500 text-center mb-4">
+                            {apiError}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
@@ -204,8 +230,6 @@ const SignUp = () => {
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 };
