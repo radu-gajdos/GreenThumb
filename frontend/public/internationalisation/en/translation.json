@@ -11,5 +11,18 @@
     "customizableGarden": "Customizable Garden Pages",
     "aiAssistance": "AI-Powered Assistance",
     "communityConnection": "Community Connection",
-    "alertSignUp": "Sign-up successful for {{username}}"
+    "alertSignUp": "Sign-up successful for {{username}}",
+    "validation": {
+        "usernameRequired": "Username is required.",
+        "emailRequired": "Email is required.",
+        "invalidEmail": "Please enter a valid email address.",
+        "passwordMin": "Password must be at least {{count}} characters long.",
+        "passwordRequired": "Password is required.",
+        "passwordMatch": "Passwords must match.",
+        "repasswordRequired": "Please confirm your password."
+    },
+    "usernamePlaceholder": "Enter your username",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "repeatPasswordPlaceholder": "Repeat your password"
 }
