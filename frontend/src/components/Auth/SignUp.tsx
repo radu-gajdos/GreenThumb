@@ -82,27 +82,27 @@ const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row">
-            <div className="w-full lg:w-2/3 p-4 lg:p-8 bg-white">
-                <div className="max-w-md mx-auto space-y-8 mt-8 lg:mt-0">
+        <div className="min-h-screen flex flex-col lg:flex-row text-lg">
+            <div className="w-full lg:w-2/3 p-4 lg:p-8 bg-white flex items-center justify-center">
+                <div className="max-w-md w-full space-y-8">
                     <h1 className="text-3xl lg:text-4xl font-semibold text-center">{t("signUpTitle")}</h1>
 
-                    <p className="text-sm text-gray-600 text-center">
-                        {t("termsAndPrivacy")}
+                    <p className="text-base text-gray-600 text-center">
+                        {t("termsAndPrivacy")} <a href="/terms" className="text-green-600 hover:underline">{t("terms")}</a>
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-medium">{t("username")}</label>
+                                <label className="text-base font-medium">{t("username")}</label>
                                 {errors.username && (
-                                    <span className="text-xs text-red-500">{errors.username}</span>
+                                    <span className="text-sm text-red-500">{errors.username}</span>
                                 )}
                             </div>
                             <input
                                 type="text"
                                 name="username"
-                                className={`w-full p-3 rounded-lg border ${errors.username ? "border-red-500" : "border-gray-300"}`}
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.username ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("usernamePlaceholder")}
                                 value={formData.username}
                                 onChange={handleChange}
@@ -111,15 +111,15 @@ const SignUp = () => {
 
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-medium">{t("email")}</label>
+                                <label className="text-base font-medium">{t("email")}</label>
                                 {errors.email && (
-                                    <span className="text-xs text-red-500">{errors.email}</span>
+                                    <span className="text-sm text-red-500">{errors.email}</span>
                                 )}
                             </div>
                             <input
                                 type="email"
                                 name="email"
-                                className={`w-full p-3 rounded-lg border ${errors.email ? "border-red-500" : "border-gray-300"}`}
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.email ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("emailPlaceholder")}
                                 value={formData.email}
                                 onChange={handleChange}
@@ -128,15 +128,15 @@ const SignUp = () => {
 
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-medium">{t("password")}</label>
+                                <label className="text-base font-medium">{t("password")}</label>
                                 {errors.password && (
-                                    <span className="text-xs text-red-500">{errors.password}</span>
+                                    <span className="text-sm text-red-500">{errors.password}</span>
                                 )}
                             </div>
                             <input
                                 type="password"
                                 name="password"
-                                className={`w-full p-3 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"}`}
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("passwordPlaceholder")}
                                 value={formData.password}
                                 onChange={handleChange}
@@ -145,15 +145,15 @@ const SignUp = () => {
 
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-medium">{t("repeatPassword")}</label>
+                                <label className="text-base font-medium">{t("repeatPassword")}</label>
                                 {errors.repassword && (
-                                    <span className="text-xs text-red-500">{errors.repassword}</span>
+                                    <span className="text-sm text-red-500">{errors.repassword}</span>
                                 )}
                             </div>
                             <input
                                 type="password"
                                 name="repassword"
-                                className={`w-full p-3 rounded-lg border ${errors.repassword ? "border-red-500" : "border-gray-300"}`}
+                                className={`w-full p-3 text-lg rounded-lg border ${errors.repassword ? "border-red-500" : "border-gray-300"}`}
                                 placeholder={t("repeatPasswordPlaceholder")}
                                 value={formData.repassword}
                                 onChange={handleChange}
@@ -168,39 +168,44 @@ const SignUp = () => {
                         </button>
                     </form>
 
-                    <p className="text-center text-sm text-gray-600">
-                        {t("alreadyHaveAccount")} <a href="/signin" className="text-green-600 hover:underline">{t("signUp")}</a>
+                    <p className="text-center text-base text-gray-600">
+                        {t("alreadyHaveAccount")} <a href="/sign-in" className="text-green-600 hover:underline">{t("signIn")}</a>
                     </p>
                 </div>
             </div>
 
-            <div className="w-full lg:w-1/3 bg-green-50 p-8 min-h-[300px] lg:min-h-screen flex items-center justify-center" style={{
-                backgroundImage: `url('/assets/signup-illustration.png')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-            }}>
+            <div
+                className="w-full lg:w-1/3 bg-green-50 p-8 min-h-[300px] lg:min-h-screen flex items-center justify-center"
+                style={{
+                    backgroundImage: `url('/assets/signup-illustration.png')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                }}
+            >
                 <div className="max-w-sm mx-auto space-y-8">
-                    <h2 className="text-2xl font-semibold text-center text-gray-800">
+                    <h2 className="text-2xl lg:text-2xl font-semibold text-left text-gray-800">
                         {t("platformDesigned")}
                     </h2>
 
                     <div className="space-y-6">
                         <div className="flex items-center space-x-4">
-                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0"></div>
                             <p className="text-gray-700">{t("customizableGarden")}</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0"></div>
                             <p className="text-gray-700">{t("aiAssistance")}</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0" />
+                            <div className="w-4 h-4 rounded-full bg-green-600 flex-shrink-0"></div>
                             <p className="text-gray-700">{t("communityConnection")}</p>
                         </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 };
