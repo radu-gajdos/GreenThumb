@@ -28,4 +28,12 @@
     "emailPlaceholder": "Enter your email",
     "passwordPlaceholder": "Enter your password",
     "repeatPasswordPlaceholder": "Repeat your password"
+    ,
+    "apiError": {
+        "invalidCredentials": "Invalid username or password.",
+        "default": "An error occurred. Please try again later."
+    },
+    "signInSuccess": "Signed-in successfuly!",
+    "accountCreationLoadingMessage": "Creating account...",
+    "signInLoadingMessage": "Signing in..."
 }
