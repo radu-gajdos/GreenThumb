@@ -1,115 +1,49 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import * as yup from "yup";
 import Alert from "../Misc/Alert";
 import Loading from "../Misc/Loading";
-
-interface FormData {
-    email: string;
-    password: string;
-}
-
-interface FormErrors {
-    email?: string;
-    password?: string;
-}
+import { useForm } from "../../hooks/useForm";
+import { getSignInValidationSchema } from "../../validations/authSchemas";
+import { login } from "../../api/auth";
 
 const SignIn = () => {
     const { t } = useTranslation();
 
-    const [formData, setFormData] = React.useState<FormData>({
-        email: "",
-        password: "",
-    });
+    // Generate the validation schema using the factory function
+    const signInValidationSchema = getSignInValidationSchema(t);
 
-    const [errors, setErrors] = React.useState<FormErrors>({});
+    const {
+        formData,
+        errors,
+        handleChange,
+        validateForm,
+    } = useForm({ email: "", password: "" }, signInValidationSchema);
+
     const [apiError, setApiError] = React.useState<string | null>(null);
     const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false); // Loading state
-
-    const validationSchema = yup.object().shape({
-        email: yup
-            .string()
-            .email(t("validation.invalidEmail"))
-            .required(t("validation.emailRequired")),
-        password: yup.string().required(t("validation.passwordRequired")),
-    });
-
-    const validateField = async (
-        name: keyof FormData,
-        value: string
-    ): Promise<string | undefined> => {
-        try {
-            await validationSchema.validateAt(name, {
-                ...formData,
-                [name]: value,
-            });
-            return undefined;
-        } catch (validationError) {
-            return (validationError as yup.ValidationError).message;
-        }
-    };
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setApiError(null); // Reset any previous API error
-        setSuccessMessage(null); // Reset any previous success message
-        setIsLoading(true); // Show loading spinner
+        setApiError(null);
+        setSuccessMessage(null);
+        setIsLoading(true);
+
+        const isValid = await validateForm();
+        if (!isValid) {
+            setIsLoading(false);
+            return;
+        }
 
         try {
-            await validationSchema.validate(formData, { abortEarly: false });
-
-            const response = await fetch("http://localhost:8080/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                // Store the token in localStorage or context for future use
-                localStorage.setItem("authToken", data.token);
-                console.log(localStorage.getItem("authToken"));
-                setSuccessMessage(t("signInSuccess"));
-            } else if (response.status === 401) {
-                setApiError(t("apiError.invalidCredentials"));
-            } else {
-                const errorMessage = await response.text();
-                setApiError(errorMessage || t("apiError.default"));
-            }
+            const data = await login(formData);
+            localStorage.setItem("authToken", data.token);
+            setSuccessMessage(t("signInSuccess"));
         } catch (error: any) {
-            if (error.name === "ValidationError") {
-                // Handle validation errors
-                const newErrors: FormErrors = {};
-                if (error.inner && Array.isArray(error.inner)) {
-                    error.inner.forEach((err: yup.ValidationError) => {
-                        if (err.path) newErrors[err.path as keyof FormErrors] = err.message;
-                    });
-                }
-                setErrors(newErrors);
-            } else {
-                // Handle non-validation errors (e.g., network errors)
-                setApiError(t("apiError.default"));
-            }
+            setApiError(error.message || t("apiError.default"));
         } finally {
-            setIsLoading(false); // Hide loading spinner
+            setIsLoading(false);
         }
-    };
-
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-
-        const errorMessage = await validateField(name as keyof FormData, value);
-        setErrors((prev) => ({
-            ...prev,
-            [name]: errorMessage,
-        }));
     };
 
     return (
@@ -174,7 +108,7 @@ const SignIn = () => {
                     )}
 
                     <p className="text-center text-sm text-gray-600">
-                        {t("dontHaveAccount")} {" "}
+                        {t("dontHaveAccount")}{" "}
                         <a href="/sign-up" className="text-green-600 hover:underline">
                             {t("signUp")}
                         </a>
