@@ -19,7 +19,7 @@
         "usernameRequired": "Username is required.",
         "emailRequired": "Email is required.",
         "invalidEmail": "Please enter a valid email address.",
-        "passwordMin": "Password must be at least {{count}} characters long.",
+        "passwordMin": "Password must be at least 8 characters long.",
         "passwordRequired": "Password is required.",
         "passwordMatch": "Passwords must match.",
         "repasswordRequired": "Please confirm your password."
