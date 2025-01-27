@@ -4,6 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n'; // Import the i18n configuration
 import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn'
+import Home from './components/Home';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
+          <Route path='/' element={<Home />} />
         </Routes>
       </Router>
     </I18nextProvider>
