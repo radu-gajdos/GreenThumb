@@ -104,6 +104,76 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Features Section */}
+            <div className="w-full px-20 mt-20">
+                <div className="flex w-full h-[15%]">
+                    <div className="flex-1 flex items-center justify-center relative">
+                        <img
+                            src="/assets/feature.svg"
+                            alt="Feature illustration"
+                            className=""
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-white text-2xl font-bold bg-black bg-opacity-50 p-4 rounded-lg">
+                                Your Text Here
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center relative">
+                        <img
+                            src="/assets/feature.svg"
+                            alt="Feature illustration"
+                            className=""
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-white text-2xl font-bold bg-black bg-opacity-50 p-4 rounded-lg">
+                                Your Text Here
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center relative">
+                        <img
+                            src="/assets/feature.svg"
+                            alt="Feature illustration"
+                            className=""
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-white text-2xl font-bold bg-black bg-opacity-50 p-4 rounded-lg">
+                                Your Text Here
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="w-full px-20 mt-20">
+                <div className="flex w-full h-[15%]">
+                    <div className="flex-1 flex items-center justify-center relative">
+                        <img
+                            src="/assets/feature.svg"
+                            alt="Feature illustration"
+                            className=""
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-white text-2xl font-bold bg-black bg-opacity-50 p-4 rounded-lg">
+                                Your Text Here
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center relative">
+                        <img
+                            src="/assets/feature.svg"
+                            alt="Feature illustration"
+                            className=""
+                        />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-white text-2xl font-bold bg-black bg-opacity-50 p-4 rounded-lg">
+                                Your Text Here
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
