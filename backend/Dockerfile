@@ -1,14 +1,25 @@
-# Use the latest Eclipse Temurin JDK 21 image
-FROM eclipse-temurin:21-jdk-alpine
+# Use an official Node.js runtime as a parent image
+FROM node:22.5.1
 
-# Set the working directory inside the container
-WORKDIR /app
+# Set the working directory
+WORKDIR /usr/src/app
 
-# Copy the built JAR file into the container
-COPY target/backend-0.0.1-SNAPSHOT.jar app.jar
+# Copy package.json and package-lock.json
+COPY package*.json ./
+# Install dependencies
+RUN npm install
+# Modificam pachetul bcrypt
+RUN npm rebuild bcrypt --build-from-source
+# Sterge fisierul de compilare typescript
+RUN rm -f tsconfig.build.tsbuildinfo
 
-# Expose the port your app runs on
-EXPOSE 8080
+# Copy the rest of the application code
+COPY . .
 
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Install nodemon globally
+# RUN npm install -g nodemon
+# Expose the port the app runs on
+EXPOSE 3005
+
+# Command to run the app in development mode
+CMD ["npm", "run", "start:dev"]

@@ -7,6 +7,7 @@ export const getSignInValidationSchema = (t: (key: string) => string) =>
             .email(t("validation.invalidEmail"))
             .required(t("validation.emailRequired")),
         password: yup.string().required(t("validation.passwordRequired")),
+        rememberMe: yup.boolean(),
     });
 
 export const getSignUpValidationSchema = (
@@ -21,7 +22,7 @@ export const getSignUpValidationSchema = (
         password: yup
             .string()
             .required(t("validation.passwordRequired"))
-            .min(8, t("validation.passwordMin")),
+            .min(6, t("validation.passwordMin")),
         repassword: yup
             .string()
             .required(t("validation.repasswordRequired"))
