@@ -5,6 +5,7 @@ import { VerificationToken } from 'src/modules/auth/entities/verificationToken.e
 import { RefreshToken } from 'src/modules/auth/entities/refreshToken.entity';
 import { TwoFactorCode } from 'src/modules/auth/entities/twoFactorCode.entity';
 import { ActiveSession } from 'src/modules/auth/entities/activeSession.entity';
+import { Plot } from 'src/modules/plot/entities/plot.entity';
 
 @Entity()
 export class User {
@@ -86,4 +87,9 @@ export class User {
 
     @OneToMany(() => ActiveSession, (activeSession) => activeSession.user)
     activeSessions: ActiveSession[];
+    
+    // plots of a user
+    @Expose({ groups: ['user', 'relation'] })
+    @OneToMany(() => Plot, (plot) => plot.owner)
+    plots: Plot[];
 }
