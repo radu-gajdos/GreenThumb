@@ -26,6 +26,7 @@ import { ValidatorModule } from './shared/validators/validator.module';
 import { DataSource } from 'typeorm';
 import { setDataSource } from './shared/decorators/isEntityExistConstraint';
 import { SharedModule } from './shared/modules/shared.module';
+import { PlotModule } from './modules/plot/plot.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { SharedModule } from './shared/modules/shared.module';
     TwoFactorModule,
     ValidatorModule,
     SharedModule,
+    PlotModule,
   ],
   providers: [
     // Global interceptors
