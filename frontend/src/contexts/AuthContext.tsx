@@ -1,5 +1,5 @@
-import { UserType } from '../auth/interfaces/user';
-import { authApi } from '../auth/api/auth';
+import { UserType } from '../features/auth/interfaces';
+import { authApi } from '../api/auth';
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
