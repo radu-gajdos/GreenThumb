@@ -28,6 +28,7 @@ import { setDataSource } from './shared/decorators/isEntityExistConstraint';
 import { SharedModule } from './shared/modules/shared.module';
 import { PlotModule } from './modules/plot/plot.module';
 import { ActionModule } from './modules/action/action.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ActionModule } from './modules/action/action.module';
     SharedModule,
     PlotModule,
     ActionModule,
+    AiModule,
   ],
   providers: [
     // Global interceptors
