@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import Login from './features/auth/pages/Login';
 import { Loader } from 'lucide-react';
+import LayoutAppRoutes from './features/layout/routes';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const AppRoutes: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/app/*" element={<LayoutAppRoutes />} />
           </Routes>
         </LanguageProvider>
       </ThemeProvider>
