@@ -1,0 +1,347 @@
+[data-state="checked"].loginCheckbox {
+  @apply !border-primary;
+}
+body {
+  color: #282D30;
+  @apply dark:bg-gray-900 dark:text-gray-200;
+}
+
+.ag-header-cell-text{
+  @apply flex-1;
+}
+
+.ag-header-icon.ag-header-cell-menu-button.ag-header-menu-icon, .ag-header-icon.ag-header-cell-filter-button{
+  @apply hidden;
+}
+
+@keyframes content-show {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.dialog-animation {
+  animation: content-show 0.2s ease-out!important;
+}
+
+.actionsCell{
+  @apply !p-[0] !px-1;
+}
+
+.actionsCell{
+  @apply focus-within:!border-none;
+}
+
+body {
+  @apply !pointer-events-auto;
+}
+
+.menu-navlink.active {
+  @apply bg-danger-50;
+}
+.MuiOutlinedInput-notchedOutline{
+  @apply !border-none;
+}
+.MuiInputBase-root{
+  @apply h-10 w-full !rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:!ring-primary focus-visible:ring-0 focus-visible:shadow-none focus-within:border-primary focus-visible:outline-none;
+}
+.MuiInputBase-root .clearButton{
+  @apply p-1.5 hover:text-danger-500 hover:bg-danger-50;
+}
+.MuiInputBase-root .MuiButtonBase-root{
+  @apply p-1.5;
+}
+.MuiInputBase-root .MuiButtonBase-root .MuiSvgIcon-root{
+  @apply w-4 h-4;
+}
+/* .MuiOutlinedInput-notchedOutline{
+  @apply !border-none;
+} */
+.MuiInputBase-input{
+  @apply !pl-0 !py-2;
+}
+.MuiInputAdornment-root.MuiInputAdornment-positionStart{
+  @apply !mx-1;
+}
+.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-edgeStart .lucide-calendar{
+  @apply w-4 h-4 !text-gray-400;
+}
+.MuiInputAdornment-root.MuiInputAdornment-positionEnd{
+  @apply !pr-1;
+}
+.MuiButtonBase-root.MuiPickersDay-root.MuiPickersDay-dayWithMargin{
+  @apply w-8 h-8;
+}
+.MuiTypography-root.MuiTypography-caption.MuiDayCalendar-weekDayLabel{
+  @apply text-gray-400 rounded-md font-normal text-[0.8rem] w-8 h-5 mx-0;
+}
+.MuiDateCalendar-root{
+  @apply !w-[248px] p-3 h-auto dark:bg-gray-900;
+}
+.MuiButtonBase-root.MuiPickersDay-root.MuiPickersDay-dayWithMargin{
+  @apply text-sm rounded-sm hover:bg-gray-100 mx-0 font-normal focus:bg-gray-100 dark:focus:bg-gray-400 dark:hover:bg-gray-400 dark:text-gray-200;
+}
+.MuiButtonBase-root.MuiPickersDay-root.MuiPickersDay-dayWithMargin.MuiPickersDay-dayOutsideMonth{
+  @apply text-sm rounded-sm hover:bg-gray-100 mx-0 text-gray-400 font-normal focus:bg-gray-400 dark:focus:bg-gray-400 dark:hover:bg-gray-400 dark:text-gray-200;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded{
+  @apply border shadow-md mt-1 outline-none dark:bg-gray-900 dark:border-gray-600;
+}
+.MuiPickersSlideTransition-root.MuiDayCalendar-slideTransition{
+  @apply h-full min-h-full overflow-visible dark:bg-gray-900;
+}
+.MuiButtonBase-root.MuiPickersDay-root.MuiPickersDay-dayWithMargin.MuiPickersDay-today{
+  @apply bg-gray-100 border-none dark:bg-gray-700;
+}
+.MuiButtonBase-root.MuiPickersDay-root.Mui-selected{
+  @apply !bg-primary text-white hover:text-muted dark:focus:bg-gray-400 dark:hover:bg-gray-400 dark:text-gray-200;
+}
+.MuiDayCalendar-monthContainer{
+  @apply !relative dark:bg-gray-900;
+}
+.MuiDateCalendar-root{
+  @apply !h-auto !overflow-visible dark:bg-gray-900;
+}
+.MuiDayCalendar-weekContainer{
+  @apply !mt-2 !mb-0;
+}
+.MuiDayCalendar-header{
+  @apply mt-4 dark:bg-gray-900 dark:text-gray-300;
+}
+.MuiPickersLayout-root *{
+  font-family: 'Geist'!important;
+}
+.MuiPickersYear-root{
+  @apply w-1/4 !mt-2;
+}
+.MuiYearCalendar-root{
+  @apply !w-full !p-0 !text-sm dark:bg-gray-900;
+}
+.MuiPickersYear-yearButton{
+  @apply !rounded-sm !my-0 !text-sm dark:focus:bg-gray-400 dark:hover:bg-gray-400 dark:text-gray-200;
+}
+.MuiPickersYear-yearButton.Mui-selected{
+  @apply !bg-primary text-white hover:text-muted dark:focus:bg-gray-400 dark:hover:bg-gray-400 dark:text-gray-200;
+}
+.MuiFormControl-root.MuiTextField-root{
+  @apply !w-full dark:bg-gray-900 dark:text-gray-200 rounded-md;
+}
+.MuiButtonBase-root.MuiMenuItem-root{
+  @apply text-sm px-1.5 py-1.5 hover:bg-gray-100 rounded-sm dark:hover:bg-gray-700 dark:text-gray-200;
+}
+.MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.Mui-selected{
+  @apply !bg-primary;
+}
+.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary{
+  @apply !text-primary hover:bg-primary-50 rounded-md px-4 py-1 min-w-[auto] min-h-[auto] dark:hover:bg-gray-700;
+}
+.MuiPickersCalendarHeader-root {
+  @apply dark:bg-gray-900 dark:text-gray-200;
+}
+.MuiPickersCalendarHeader-label {
+  @apply dark:text-gray-200;
+}
+.MuiInputBase-root {
+  @apply dark:bg-gray-900 dark:text-gray-200;
+}
+.MuiOutlinedInput-notchedOutline {
+  @apply dark:border-gray-600;
+}
+.MuiSvgIcon-root {
+  @apply dark:text-gray-200;
+}
+.MuiPickersPopper-root {
+  @apply dark:bg-gray-900;
+}
+.MuiPickersLayout-contentWrapper {
+  @apply dark:bg-gray-900;
+}
+
+.invoiceResizeDiv{
+  @apply after:w-[2px] dark:!bg-gray-800 dark:!border-gray-800 after:dark:!bg-gray-800 after:dark:!border-gray-800;
+}
+.invoiceResizeDiv div {
+  @apply dark:!bg-gray-800 dark:!border-gray-800
+}
+.invoiceResizeDiv[data-resize-handle-state="hover"], .invoiceResizeDiv[data-resize-handle-state="drag"] {
+  @apply after:!bg-primary;
+}
+.invoiceResizeDiv[data-resize-handle-state="hover"] div, .invoiceResizeDiv[data-resize-handle-state="drag"] div {
+  @apply !bg-primary text-white dark:text-muted-400 transition-none duration-0 border-primary;
+}
+
+/* Invoice preview */
+.invoicePreviewBackground {
+  @apply bg-[#F4F4F4] dark:bg-gray-800;
+}
+.invoicePreviewMutedText {
+  @apply text-[#6E6E6E] dark:text-gray-400;
+}
+.invoicePreviewMutedDevider {
+  @apply bg-[#D8D8D8] dark:bg-gray-600;
+}
+
+/* Invoice preview dark mode text */
+.dark .font-semibold,
+.dark .font-bold {
+  @apply text-white;
+}
+
+.dark .invoice-item-value {
+  @apply text-gray-300;
+}
+
+.dark .invoice-item-title {
+  @apply text-white;
+}
+
+.dark .invoice-item-description {
+  @apply text-gray-400;
+}
+
+/* Highlighted active row in ag-grid */
+.ag-row.bg-primary-50 {
+  background-color: #f1f0ff !important;
+}
+
+/* Dark mode skeleton styles */
+.dark .animate-pulse {
+  @apply bg-gray-700;
+}
+
+/* AG Grid dark theme */
+.dark .tabel-agGrid {
+  --ag-foreground-color: #E1E3E6;
+  --ag-background-color: #111827; /* Match gray-900 */
+  --ag-header-background-color: #1F2937; /* Match gray-800 */
+  --ag-odd-row-background-color: rgba(255, 255, 255, 0.03);
+  --ag-header-column-separator-color: rgba(255, 255, 255, 0.1);
+  --ag-border-color: #374151; /* Match gray-700 */
+  --ag-row-border-color: #374151; /* Match gray-700 */
+  --ag-row-hover-color: rgba(94, 107, 247, 0.1);
+  --ag-selected-row-background-color: rgba(94, 107, 247, 0.2);
+  --ag-modal-overlay-background-color: rgba(17, 24, 39, 0.7);
+  --ag-range-selection-background-color: rgba(94, 107, 247, 0.2);
+  --ag-range-selection-border-color: #663BFF;
+  --ag-checkbox-unchecked-color: #6B7280; /* Match gray-500 */
+  --ag-input-border-color: #374151; /* Match gray-700 */
+  --ag-input-disabled-background-color: rgba(31, 41, 55, 0.5);
+  --ag-input-disabled-border-color: rgba(55, 65, 81, 0.5);
+  --ag-input-disabled-foreground-color: rgba(156, 163, 175, 0.5);
+  --ag-side-bar-background-color: #111827; /* Match gray-900 */
+  --ag-side-button-selected-background-color: #1F2937; /* Match gray-800 */
+  color-scheme: dark;
+}
+
+/* Cell content styling in dark mode */
+.dark .ag-theme-quartz .ag-cell {
+  @apply text-gray-300;
+}
+
+/* Active row in AG Grid */
+.dark .ag-row.bg-primary-50 {
+  background-color: rgba(94, 107, 247, 0.15) !important;
+}
+
+/* AG Grid table header icons in dark mode */
+.dark .tabel-agGrid .ag-header-cell-text,
+.dark .tabel-agGrid .ag-header-icon,
+.dark .tabel-agGrid .ag-header-cell-menu-button {
+  @apply text-gray-300;
+}
+
+/* AG Grid pagination and tools in dark mode */
+.dark .ag-theme-quartz .ag-paging-panel,
+.dark .ag-theme-quartz .ag-status-bar {
+  @apply bg-gray-800 text-gray-300 border-gray-700;
+}
+
+/* AG Grid buttons in dark mode */
+.dark .ag-theme-quartz .ag-standard-button {
+  @apply bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700;
+}
+
+/* AG Grid filter popup and dropdowns */
+.dark .ag-theme-quartz .ag-menu,
+.dark .ag-theme-quartz .ag-filter-toolpanel-header,
+.dark .ag-theme-quartz .ag-tab {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .ag-theme-quartz .ag-tab-selected {
+  @apply bg-gray-700;
+}
+
+/* AG Grid input fields in dark mode */
+.dark .ag-theme-quartz .ag-input-field-input {
+  @apply bg-gray-800 border-gray-700 text-gray-300;
+}
+
+/* AG Grid cell editor and selection */
+.dark .ag-theme-quartz .ag-cell-inline-editing,
+.dark .ag-theme-quartz .ag-rich-select-list {
+  @apply bg-gray-800 border-gray-700;
+}
+
+/* Mobile invoice separator */
+.dark .invoiceMobileRowSeparator {
+  @apply bg-gray-700;
+}
+
+/* Explicit dark mode badge classes for safety */
+.dark-badge-warning {
+  @apply dark:bg-warning-950 dark:border-warning-500 dark:text-warning-400;
+}
+
+.dark-badge-primary {
+  @apply dark:bg-primary-950 dark:border-primary-500 dark:text-primary-400;
+}
+
+.dark-badge-secondary {
+  @apply dark:bg-secondary-950 dark:border-secondary-500 dark:text-secondary-400;
+}
+
+.dark-badge-success {
+  @apply dark:bg-success-950 dark:border-success-500 dark:text-success-400;
+}
+
+.dark-badge-danger {
+  @apply dark:bg-danger-950 dark:border-danger-500 dark:text-danger-400;
+}
+
+.dark-badge-blue {
+  @apply dark:bg-blue-950 dark:border-blue-500 dark:text-blue-400;
+}
+
+.dark-badge-destructive {
+  @apply dark:bg-destructive-900 dark:border-destructive-600 dark:text-destructive-200;
+}
+.dark-badge-muted {
+  @apply dark:bg-gray-900 dark:border-gray-600 dark:text-gray-200;
+}
+
+.dark-badge-info {
+  @apply dark:bg-info-950 dark:border-info-500 dark:text-info-400;
+}
+
+.dark-badge-emerald {
+  @apply dark:bg-emerald-950 dark:border-emerald-500 dark:text-emerald-400;
+}
+
+.invoiceTotalCell{
+  @apply whitespace-pre !overflow-visible !text-clip leading-normal py-2;
+}
+/* .ag-row-group .ag-cell {
+  border-right: none !important;
+} */
+ .ag-center-cols-viewport {
+  min-height: 400px !important;
+}
+/* .proposalCustomEditor .ContentEditable__root{ */
+  /* @apply scale-110; */
+/* } */

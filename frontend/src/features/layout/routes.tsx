@@ -7,6 +7,8 @@ import DashboardRoutes from '../dashboard/routes';
 import { AuthMiddleware } from '@/middleware/AuthMiddleware';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
+import PlotRoutes from '../plots/routes';
+import TwoStepConfigure from '../auth/pages/TwoStepConfiguration';
 
 const LayoutAppRoutes: React.FC = () => {
     return (
@@ -17,11 +19,15 @@ const LayoutAppRoutes: React.FC = () => {
                     <SidebarProvider className="flex flex-col">
                         <div className="flex overflow-x-hidden">
                             <AppSidebar />
-                            <div className="flex-1 overflow-auto">
+                            <div className="">
                                 <SiteHeader />
-                                <Routes>
-                                    <Route path="/dashboard/*" element={<DashboardRoutes />} />
-                                </Routes>
+                                <div className='overflow-y-auto h-[calc(100vh-64px)]'>
+                                    <Routes>
+                                        <Route path="/dashboard/*" element={<DashboardRoutes />} />
+                                        <Route path="/plots/*" element={<PlotRoutes />} />
+                                        <Route path="/two-step" element={<TwoStepConfigure />} />
+                                    </Routes>
+                                </div>
                             </div>
                         </div>
                     </SidebarProvider>

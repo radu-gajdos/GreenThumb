@@ -7,8 +7,8 @@ import { Expose } from 'class-transformer';
 @Entity({ name: 'plots' })
 export class Plot {
     @Expose({ groups: ['plot'] })
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Expose({ groups: ['plot'] })
     @Column({ length: 100 })
@@ -20,7 +20,6 @@ export class Plot {
 
     @Expose({ groups: ['plot'] })
     @Index({ spatial: true }) // this tells TypeORM to create a GiST index
-    // src/modules/plot/entities/plot.entity.ts
     @Column({
         type: 'geometry',
         spatialFeatureType: 'Polygon',

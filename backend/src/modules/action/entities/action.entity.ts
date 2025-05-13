@@ -6,7 +6,7 @@ import { Plot } from '../../plot/entities/plot.entity';
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Action {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: string;
 
     @Expose()
     @Column({ type: 'varchar' })
