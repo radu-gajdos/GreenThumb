@@ -1,29 +1,48 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
-import { Expose } from 'class-transformer';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Index } from 'typeorm';
+import { Feature, Polygon } from 'geojson';
 import { User } from '../../user/entities/user.entity';
 import { Action } from '../../action/entities/action.entity';
+import { Expose } from 'class-transformer';
 
 @Entity({ name: 'plots' })
 export class Plot {
-    @Expose({ groups: ['plot', 'relation'] })
+    @Expose({ groups: ['plot'] })
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Expose({ groups: ['plot', 'relation'] })
-    @Column({ nullable: false, length: 100 })
+    @Expose({ groups: ['plot'] })
+    @Column({ length: 100 })
     name: string;
 
     @Expose({ groups: ['plot'] })
-    @Column({ nullable: false, type: 'float' })
+    @Column({ type: 'float' })
     size: number;
 
     @Expose({ groups: ['plot'] })
-    @Column({ nullable: false, type: 'float' })
-    latitude: number;
+    @Index({ spatial: true }) // this tells TypeORM to create a GiST index
+    // src/modules/plot/entities/plot.entity.ts
+    @Column({
+        type: 'geometry',
+        spatialFeatureType: 'Polygon',
+        srid: 4326,
+        nullable: false,
+        transformer: {
+            // incoming from DB (Buffer or WKB string) → parsed GeoJSON
+            from: (value: Buffer | string) => {
+                try {
+                    // if Postgres returned text‐encoded GeoJSON
+                    return JSON.parse(String(value));
+                } catch {
+                    // fallback: leave it to the DB layer
+                    return value;
+                }
+            },
+            // outgoing: leave as-is (TypeORM will serialize GeoJSON to WKB for Postgres)
+            to: (value: any) => value,
+        },
+    })
+    boundary: Polygon;
 
-    @Expose({ groups: ['plot'] })
-    @Column({ nullable: false, type: 'float' })
-    longitude: number;
 
     @Expose({ groups: ['plot'] })
     @Column({ nullable: true, length: 255 })
@@ -33,23 +52,20 @@ export class Plot {
     @Column({ nullable: true, length: 255 })
     soilType?: string;
 
-    @Expose({ groups: ['plot', 'relation'] })
+    @Expose({ groups: ['plot'] })
     @ManyToOne(() => User, (user) => user.plots, { eager: true, onDelete: 'CASCADE' })
     owner: User;
 
-    @Expose({ groups: ['admin'] })
-    @CreateDateColumn()
-    createdAt: Date;
-    
-    @Expose({ groups: ['admin'] })
-    @UpdateDateColumn()
-    updatedAt: Date;
-    
-    @Expose({ groups: ['admin'] })
-    @DeleteDateColumn()
-    deletedAt?: Date;
-
-    @Expose({ groups: ['plot', 'relation'] })
+    @Expose({ groups: ['plot'] })
     @OneToMany(() => Action, (action) => action.plot, { cascade: true, eager: true })
     actions: Action[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
 }
