@@ -1,16 +1,52 @@
-import { BrowserRouter } from 'react-router-dom';
+// index.tsx (sau main entry point)
+
 import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes';
 import { AuthProvider } from './contexts/AuthContext';
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-draw/dist/leaflet.draw.css'
+import { ModuleRegistry } from 'ag-grid-community';
+import { AllEnterpriseModule, LicenseManager, IntegratedChartsModule } from 'ag-grid-enterprise';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { Buffer } from 'buffer';
 
-const App : React.FC = () => {
+// CSS
+import './index.css';
+import './custom.css';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
+import exp from 'constants';
+
+// AG Grid - Register Modules
+ModuleRegistry.registerModules([
+  AllEnterpriseModule,
+  IntegratedChartsModule.with(AgChartsEnterpriseModule)
+]);
+
+LicenseManager.setLicenseKey(process.env.REACT_APP_AG_GRID_LICENSE_KEY!);
+
+// Polyfill Buffer for react-pdf or other browser-side usage
+window.Buffer = window.Buffer || Buffer;
+
+// Main App Component
+const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <AppRoutes />    
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   );
 };
+
+// Render
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
+  // You can wrap with <React.StrictMode> if desired
+  <App />
+);
 
 export default App;

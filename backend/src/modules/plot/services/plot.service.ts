@@ -20,7 +20,7 @@ export class PlotService {
     return this.plotRepository.find({ relations: ['actions'] });
   }
 
-  async findOne(id: number): Promise<Plot> {
+  async findOne(id: string): Promise<Plot> {
     const plot = await this.plotRepository.findOne({
       where: { id },
       relations: ['actions'],
@@ -35,7 +35,7 @@ export class PlotService {
     return this.plotRepository.save(plot);
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: string): Promise<boolean> {
     const plot = await this.findOne(id);
     await this.plotRepository.remove(plot);
     return true;

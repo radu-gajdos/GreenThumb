@@ -14,7 +14,7 @@ export class ActionService {
         private readonly plotRepository: Repository<Plot>,
     ) { }
 
-    async create(plotId: number, input: CreateActionDto): Promise<Action> {
+    async create(plotId: string, input: CreateActionDto): Promise<Action> {
         const plot = await this.plotRepository.findOne({ where: { id: plotId } });
 
         if (!plot) throw new NotFoundException('Plot not found');
@@ -26,13 +26,13 @@ export class ActionService {
         return this.actionRepository.save(action);
     }
 
-    async findOne(id: number): Promise<Action> {
+    async findOne(id: string): Promise<Action> {
         const action = await this.actionRepository.findOne({ where: { id } });
         if (!action) throw new NotFoundException();
         return action;
     }
 
-    async update(id: number, input: CreateActionDto): Promise<Action> {
+    async update(id: string, input: CreateActionDto): Promise<Action> {
         const action = await this.findOne(id);
 
         if (!['fertilizing', 'harvesting', 'watering', 'planting', 'treatment'].includes(input.type)) {
@@ -43,7 +43,7 @@ export class ActionService {
         return this.actionRepository.save(action);
     }
 
-    async remove(id: number): Promise<boolean> {
+    async remove(id: string): Promise<boolean> {
         const action = await this.actionRepository.findOne({ where: { id } });
 
         if (!action) throw new NotFoundException();

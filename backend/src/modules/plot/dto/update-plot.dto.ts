@@ -1,9 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePlotDto } from './create-plot.dto';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdatePlotDto extends PartialType(CreatePlotDto) {
     @IsNotEmpty()
-    @IsNumber()
-    id: number;
+    @IsString()
+    id: string;
 }

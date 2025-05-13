@@ -9,21 +9,21 @@ export class ActionController {
 
     @Post(':plotId')
     create(@Param('plotId') plotId: string, @Body() createActionDto: CreateActionDto) {
-        return this.actionService.create(Number(plotId), createActionDto);
+        return this.actionService.create(plotId, createActionDto);
     }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.actionService.findOne(Number(id));
+        return this.actionService.findOne(id);
     }
 
     @Put(':id')
     update(@Param('id') id: string, @Body() updateActionDto: CreateActionDto) {
-        return this.actionService.update(Number(id), updateActionDto);
+        return this.actionService.update(id, updateActionDto);
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.actionService.remove(Number(id));
+        return this.actionService.remove(id);
     }
 }

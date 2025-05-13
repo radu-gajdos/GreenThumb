@@ -43,7 +43,7 @@ const TwoStepConfigure = () => {
             });
         }
     } else if (activeMethod === null) {
-      if(method == 'email'){
+      if(method === 'email'){
         authApi.enableEmail((response) => {
             setActiveMethod(method);
         });
@@ -207,7 +207,7 @@ const TwoStepConfigure = () => {
             </div>
             
 
-            {(activeMethod === 'app' && appSetupStep == 0) && (
+            {(activeMethod === 'app' && appSetupStep === 0) && (
                 <Alert>
                     <AlertDescription>
                         <span className="text-green-600">

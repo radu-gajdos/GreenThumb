@@ -23,7 +23,7 @@ export class PlotController {
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.plotService.findOne(Number(id));
+        return this.plotService.findOne(id);
     }
 
     @Put()
@@ -33,6 +33,6 @@ export class PlotController {
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.plotService.remove(Number(id));
+        return this.plotService.remove(id);
     }
 }

@@ -35,7 +35,7 @@ const TwoStepForm: React.FC<TwoStepFormProps> = ({ code, setCode, setStep, onSub
         </div>
 
         {/* Error */}
-        {error.trim() != "" && (
+        {error.trim() !== "" && (
           <Alert type="danger" title="Error!">
             {error}
           </Alert>
