@@ -5,8 +5,14 @@ import Index from './pages/Index';
 const PlotRoutes: React.FC = () => {
     return (
         <Routes>
-            <Route path="/index" element={<Index />} />
-            <Route path="*" element={<Navigate to="/app/plots/index" />} />
+            {/* Remove the leading slash - this is critical */}
+            <Route path="index" element={<Index />} />
+            
+            {/* Use the index prop for the root path */}
+            <Route index element={<Navigate to="index" />} />
+            
+            {/* Change the wildcard redirect to be relative, not absolute */}
+            <Route path="*" element={<Navigate to="index" replace />} />
         </Routes>
     );
 };
