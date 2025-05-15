@@ -1,8 +1,12 @@
-import React from "react"
-import { TopBar } from "./TopBar"
+// src/components/layout/site-header.tsx
+import React from "react";
+import { TopBar } from "./TopBar";
 
 export function SiteHeader() {
   return (
-    <TopBar />
-  )
+    // ensure the bar itself is above the scrollable region
+    <div className="sticky top-0 z-20 bg-white">
+      <TopBar />
+    </div>
+  );
 }
