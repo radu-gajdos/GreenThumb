@@ -11,7 +11,7 @@ export class AuthLoggingService {
   ) {}
 
   async logActivity(data: {
-    userId: number;
+    userId: string;
     action: string;
     ip: string;
     userAgent: string;
@@ -28,7 +28,7 @@ export class AuthLoggingService {
     await this.authLogRepository.save(log);
   }
 
-  async getRecentActivity(userId: number, limit: number = 10) {
+  async getRecentActivity(userId: string, limit: number = 10) {
     return this.authLogRepository.find({
       where: { userId },
       order: { createdAt: 'DESC' },
@@ -36,7 +36,7 @@ export class AuthLoggingService {
     });
   }
 
-  async getFailedLoginAttempts(userId: number, minutes: number = 15) {
+  async getFailedLoginAttempts(userId: string, minutes: number = 15) {
     const timeAgo = new Date(Date.now() - minutes * 60 * 1000);
 
     return this.authLogRepository.count({

@@ -41,7 +41,7 @@ export class UserService {
     });
   }
 
-  async findById(id: number): Promise<User> {
+  async findById(id: string): Promise<User> {
     const user = await this.userRepository.findOne({where: { id }});
 
     if(!user) throw new NotFoundException('User not found');
@@ -54,7 +54,7 @@ export class UserService {
     return user;
   }
 
-  async update(id: number, updateUserDto: Partial<User>): Promise<User> {
+  async update(id: string, updateUserDto: Partial<User>): Promise<User> {
     const user = await this.findById(id);
 
     if (updateUserDto.password) {
@@ -78,8 +78,8 @@ export class UserService {
     });
   }
 
-  async getUserForGuards(id: number): Promise<{
-      id: number, 
+  async getUserForGuards(id: string): Promise<{
+      id: string, 
       passwordResetCount: number,
       twoFactorEnabled: boolean, 
   }> {
@@ -113,7 +113,7 @@ export class UserService {
     return userForGuards;
   }
 
-  async updateWithRedis(id: number, updateUserDto: Partial<User>): Promise<User> {
+  async updateWithRedis(id: string, updateUserDto: Partial<User>): Promise<User> {
     const user = await this.findById(id);
     if(updateUserDto.password){
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);

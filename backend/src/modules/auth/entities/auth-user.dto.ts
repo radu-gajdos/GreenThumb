@@ -1,5 +1,5 @@
 export interface AuthUserDto {
-    id: number;
+    id: string;
     twoFactorEnabled: boolean;
     passwordChangedAt: Date|null;
     is2FAAuthenticated: boolean;

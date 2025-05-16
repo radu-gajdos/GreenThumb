@@ -49,6 +49,7 @@ export class PlotApi {
    */
   async create(data: Partial<Plot>): Promise<Plot> {
     try {
+      delete data.id; // Ensure no ID is sent for creation
       const response = await http.post("/plots", data);
       ToastService.success("Terenul a fost creat.");
       return response.data.data;

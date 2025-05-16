@@ -9,7 +9,7 @@ export class RefreshToken {
   id: number;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   token: string;
