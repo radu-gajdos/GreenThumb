@@ -25,7 +25,7 @@ export class PlotService {
   async findOne(id: string, user: AuthUserDto): Promise<Plot> {
     const plot = await this.plotRepository.findOne({
       where: { id, ownerId: user.id },
-      relations: ['actions'],
+      relations: ['actions', 'owner'],
     });
     if (!plot) throw new NotFoundException();
     return plot;

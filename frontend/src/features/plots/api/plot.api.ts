@@ -1,6 +1,6 @@
 import http from "@/api/http";
 import { ToastService } from "@/services/toast.service";
-import { Plot } from "../interfaces/plot";
+import { IAction, IFertilizing, IHarvesting, IPlanting, ISoilReading, ITreatment, IWatering, Plot } from "../interfaces/plot";
 
 /**
  * @class PlotApi
@@ -90,4 +90,25 @@ export class PlotApi {
       ToastService.error("Ștergerea terenului a eșuat.");
     }
   }
+
+  
 }
+
+export const castAction = (action: IAction): IAction => {
+    switch (action.type) {
+      case 'planting':
+        return action as IPlanting;
+      case 'harvesting':
+        return action as IHarvesting;
+      case 'fertilizing':
+        return action as IFertilizing;
+      case 'treatment':
+        return action as ITreatment;
+      case 'watering':
+        return action as IWatering;
+      case 'soil_reading':
+        return action as ISoilReading;
+      default:
+        return action;
+    }
+  }
