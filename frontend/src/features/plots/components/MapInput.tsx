@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, Polygon } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  FeatureGroup,
+  Polygon,
+  useMap,
+} from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
-import { LatLngExpression } from 'leaflet';
+import { LatLngExpression, latLngBounds, Icon } from 'leaflet';
 import { GeoJsonPolygon } from '../interfaces/plot';
+
+// GeoSearch imports
+import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch';
+import 'leaflet-geosearch/dist/geosearch.css';
 
 /**
  * Default map center (approx. central Romania) used when no value is provided.
@@ -10,73 +20,123 @@ import { GeoJsonPolygon } from '../interfaces/plot';
 const DEFAULT_CENTER: LatLngExpression = [45.0, 25.0];
 
 interface PlotEditorProps {
-  /** Existing polygon to display/edit */
   value?: GeoJsonPolygon;
-  /** Callback when the polygon boundary changes */
   onChange?: (boundary: GeoJsonPolygon) => void;
 }
 
-/**
- * MapInput
- *
- * Renders a Leaflet map with draw/edit controls for a single polygon.
- * Maintains local coord state and notifies parent via `onChange`.
- */
-const MapInput: React.FC<PlotEditorProps> = ({ value, onChange }) => {
-  // Store array of rings: [ [ [lng, lat], ... ] ]
-  const [coords, setCoords] = useState<number[][][]>(value?.coordinates || []);
+/** Re-centers/zooms to bounds whenever they change */
+function FitBounds({ bounds }: { bounds: LatLngExpression[] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds.length > 0) {
+      map.fitBounds(latLngBounds(bounds), { padding: [20, 20] });
+    }
+  }, [map, bounds]);
+  return null;
+}
 
-  // Sync local coords if parent value prop changes (e.g. when editing existing plot)
+/** Forces the map to move to the `center` whenever it updates */
+function RecenterMap({ center }: { center: LatLngExpression }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, map.getZoom());
+  }, [map, center]);
+  return null;
+}
+
+/** Adds the search control once to the map, with a valid default icon */
+function SearchBox() {
+  const map = useMap();
+  useEffect(() => {
+    const provider = new OpenStreetMapProvider();
+    const searchControl = GeoSearchControl({
+      provider,
+      style: 'bar',
+      showMarker: true,
+      // supply the default Leaflet marker icon
+      marker: {
+        icon: new Icon.Default(),
+        draggable: false,
+      },
+      autoClose: true,
+      retainZoomLevel: false,
+      animateZoom: true,
+      keepResult: true,
+    });
+    map.addControl(searchControl);
+    return () => {
+      map.removeControl(searchControl);
+    };
+  }, [map]);
+  return null;
+}
+
+const MapInput: React.FC<PlotEditorProps> = ({ value, onChange }) => {
+  // drawn polygon rings
+  const [coords, setCoords] = useState<number[][][]>(value?.coordinates || []);
+  // map center—moves once geolocation resolves
+  const [center, setCenter] = useState<LatLngExpression>(DEFAULT_CENTER);
+
+  // sync in external value
   useEffect(() => {
     if (value?.coordinates) {
       setCoords(value.coordinates);
     }
   }, [value]);
 
-  /**
-   * Extract [lng, lat] pairs from a Leaflet layer.
-   * @param layer - A drawn polygon layer
-   * @returns Array of [lng, lat] tuples
-   */
-  const extractCoords = (layer: any) => {
-    // getLatLngs()[0] returns outer ring
-    const latlngs = layer.getLatLngs()[0] as L.LatLng[];
-    return latlngs.map(pt => [pt.lng, pt.lat]);
-  };
+  // ask browser for geolocation once
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCenter([pos.coords.latitude, pos.coords.longitude]);
+        },
+        () => {
+          // ignore failures
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+  }, []);
 
-  /**
-   * Handler for new polygon creation.
-   */
+  const extractCoords = (layer: any) =>
+    (layer.getLatLngs()[0] as L.LatLng[]).map((pt) => [pt.lng, pt.lat]);
+
   const handleCreated = (e: any) => {
-    const newCoords = extractCoords(e.layer);
-    const updated = [newCoords];
-    setCoords(updated);
-    onChange?.({ type: 'Polygon', coordinates: updated });
+    const ring = extractCoords(e.layer);
+    setCoords([ring]);
+    onChange?.({ type: 'Polygon', coordinates: [ring] });
   };
 
-  /**
-   * Handler for edits to existing polygon(s).
-   */
   const handleEdited = (e: any) => {
-    // Only handle the first edited layer
-    const editedLayer = e.layers.getLayers()[0];
-    const newCoords = extractCoords(editedLayer);
-    const updated = [newCoords];
-    setCoords(updated);
-    onChange?.({ type: 'Polygon', coordinates: updated });
+    const layer = e.layers.getLayers()[0];
+    const ring = extractCoords(layer);
+    setCoords([ring]);
+    onChange?.({ type: 'Polygon', coordinates: [ring] });
   };
+
+  // convert for Leaflet
+  const latLngs: LatLngExpression[] =
+    coords.length > 0 ? coords[0].map(([lng, lat]) => [lat, lng]) : [];
 
   return (
     <div className="w-full h-[400px] border rounded overflow-hidden">
-      {/* Leaflet map container */}
-      <MapContainer center={DEFAULT_CENTER} zoom={13} className="w-full h-full">
-        {/* Satellite imagery tiles */}
+      <MapContainer center={center} zoom={13} className="w-full h-full">
+        {/* move when `center` changes */}
+        <RecenterMap center={center} />
+
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           attribution="Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
         />
+
+        {/* place search widget */}
+        <SearchBox />
+
+        {/* zoom to your drawn polygon */}
+        {latLngs.length > 0 && <FitBounds bounds={latLngs} />}
+
         <FeatureGroup>
-          {/* Draw/edit toolbar */}
           <EditControl
             position="topright"
             draw={{
@@ -90,14 +150,8 @@ const MapInput: React.FC<PlotEditorProps> = ({ value, onChange }) => {
             onCreated={handleCreated}
             onEdited={handleEdited}
           />
-          {/* Render existing polygon */}
-          {coords.length > 0 && (
-            <Polygon
-              // Path options can be pulled from theme or props if needed
-              pathOptions={{ color: 'green', weight: 2 }}
-              // Leaflet expects [lat, lng]
-              positions={coords[0].map(([lng, lat]) => [lat, lng] as [number, number])}
-            />
+          {latLngs.length > 0 && (
+            <Polygon pathOptions={{ color: 'green', weight: 2 }} positions={latLngs} />
           )}
         </FeatureGroup>
       </MapContainer>
