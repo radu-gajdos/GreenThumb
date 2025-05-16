@@ -9,6 +9,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import TwoStepConfigure from '../auth/pages/TwoStepConfiguration';
 import { Toaster } from "@/components/ui/toaster"
 import PlotRoutes from '../plots/routes';
+import MapRoutes from '../map/routes';
 
 const LayoutAppRoutes: React.FC = () => {
     return (
@@ -24,6 +25,7 @@ const LayoutAppRoutes: React.FC = () => {
                                 <Routes>
                                     <Route path="/dashboard/*" element={<DashboardRoutes />} />
                                     <Route path="/plots/*" element={<PlotRoutes />} />
+                                    <Route path="/maps/*" element={<MapRoutes />} />
                                     <Route path="/two-step" element={<TwoStepConfigure />} />
                                 </Routes>
                             </div>
