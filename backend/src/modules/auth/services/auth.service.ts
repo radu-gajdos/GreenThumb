@@ -94,7 +94,7 @@ export class AuthService {
     };
   }
 
-  async verify2FA(verify2FADto: Verify2FADto, userId: number, userAgent: string, ipAddress: string) {
+  async verify2FA(verify2FADto: Verify2FADto, userId: string, userAgent: string, ipAddress: string) {
     const user = await this.userService.findById(userId);
 
     if (!user.twoFactorEnabled) {
@@ -189,7 +189,7 @@ export class AuthService {
 }
 
   private async generateTokens(
-    userId: number,
+    userId: string,
     is2FAAuthenticated: boolean,
     rememberMe: boolean
   ) : Promise<{ accessToken: string; refreshToken: string; refreshTokenId: number; }> {
@@ -227,7 +227,7 @@ export class AuthService {
   }
 
   private async createActiveSession(
-    userId: number,
+    userId: string,
     refreshTokenId: number,
     userAgent: string,
     ipAddress: string,
@@ -244,7 +244,7 @@ export class AuthService {
     return await this.activeSessionsRepository.save(session);
   }
 
-  private async createVerificationToken(userId: number, type: 'email' | 'reset') {
+  private async createVerificationToken(userId: string, type: 'email' | 'reset') {
     const token = crypto.randomBytes(32).toString('hex');
     const hashedCode = crypto.createHash('md5').update(token).digest('hex');
 
@@ -349,7 +349,7 @@ export class AuthService {
     return user;
   }
 
-  async logout(userId: number, refreshToken: string) {
+  async logout(userId: string, refreshToken: string) {
     const token = await this.refreshTokensRepository.findOne({
       where: { userId: userId, token: refreshToken, revokedAt: IsNull() },
     });
@@ -363,7 +363,7 @@ export class AuthService {
     return { message: 'Logged out successfully' };
   }
 
-  async logoutFromAllDevices(userId: number) {
+  async logoutFromAllDevices(userId: string) {
     await this.refreshTokensRepository.update(
       { userId, revokedAt: IsNull() },
       { revokedAt: new Date() }
@@ -374,14 +374,14 @@ export class AuthService {
     return { message: 'Logged out from all devices' };
   }
 
-  async getActiveSessions(userId: number) {
+  async getActiveSessions(userId: string) {
     return this.activeSessionsRepository.find({
       where: { userId },
       select: ['id', 'userAgent', 'ipAddress', 'lastActivityAt', 'createdAt'],
     });
   }
 
-  private async generateTwoFactorCode(userId: number): Promise<string> {
+  private async generateTwoFactorCode(userId: string): Promise<string> {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedCode = crypto.createHash('md5').update(code).digest('hex');
 
@@ -400,7 +400,7 @@ export class AuthService {
   }
 
   async logActivity(data: {
-    userId: number;
+    userId: string;
     action: string;
     ip: string;
     userAgent: string;
@@ -411,7 +411,7 @@ export class AuthService {
     await this.authLogRepository.save(log);
   }
 
-  async findUserById(id: number): Promise<User> {
+  async findUserById(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
     });

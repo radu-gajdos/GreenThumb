@@ -7,7 +7,7 @@ export class AuthLog {
   id: number;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column({ nullable: true, default: null })
   action?: string;

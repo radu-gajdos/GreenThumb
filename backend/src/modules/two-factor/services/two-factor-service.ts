@@ -20,7 +20,7 @@ export class TwoFactorService {
   }
 
   // enable email method
-  async enableEmail(userId: number) {
+  async enableEmail(userId: string) {
     const user = await this.userService.findById(userId);
     if (user.twoFactorEnabled && user.twoFactorType === 'email') {
       throw new BadRequestException('2FA este deja activat cu mailul.');
@@ -34,7 +34,7 @@ export class TwoFactorService {
   }
 
   // enable google authentificator method
-  async enable(userId: number) {
+  async enable(userId: string) {
     const user = await this.userService.findById(userId);
 
     const secret = authenticator.generateSecret();
@@ -54,7 +54,7 @@ export class TwoFactorService {
   }
 
   // verify setup method
-  async verifySetup(userId: number, token: string) {
+  async verifySetup(userId: string, token: string) {
     const user = await this.userService.findById(userId);
 
     if (!user.twoFactorSecret) {
@@ -107,7 +107,7 @@ export class TwoFactorService {
   }
 
   // functie care dezactiveaza 2FA
-  async disable(userId: number) {
+  async disable(userId: string) {
     const user = await this.userService.findById(userId);
 
     if (!user.twoFactorEnabled) {
@@ -124,7 +124,7 @@ export class TwoFactorService {
   }
 
   // functie care genereaza noi coduri de backup
-  async generateNewBackupCodes(userId: number) {
+  async generateNewBackupCodes(userId: string) {
     const user = await this.userService.findById(userId);
 
     if (!user.twoFactorEnabled) {

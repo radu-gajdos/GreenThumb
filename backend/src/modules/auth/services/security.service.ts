@@ -18,7 +18,7 @@ export class SecurityService {
     private authLoggingService: AuthLoggingService,
   ) {}
 
-  async detectSuspiciousActivity(userId: number) {
+  async detectSuspiciousActivity(userId: string) {
     const suspiciousPatterns = await Promise.all([
       this.checkMultipleFailedLogins(userId),
       this.checkMultipleDevices(userId),
@@ -29,12 +29,12 @@ export class SecurityService {
     return suspiciousPatterns.some(pattern => pattern);
   }
 
-  private async checkMultipleFailedLogins(userId: number): Promise<boolean> {
+  private async checkMultipleFailedLogins(userId: string): Promise<boolean> {
     const failedAttempts = await this.authLoggingService.getFailedLoginAttempts(userId);
     return failedAttempts > 5;
   }
 
-  private async checkMultipleDevices(userId: number): Promise<boolean> {
+  private async checkMultipleDevices(userId: string): Promise<boolean> {
     const activeSessions = await this.activeSessionRepository.find({
       where: { userId },
     });
@@ -43,13 +43,13 @@ export class SecurityService {
     return uniqueDevices.size > 5;
   }
 
-  private async checkUnusualLocations(userId: number): Promise<boolean> {
+  private async checkUnusualLocations(userId: string): Promise<boolean> {
     const recentLogs = await this.authLoggingService.getRecentActivity(userId, 10);
     const uniqueIPs = new Set(recentLogs.map(log => log.ip));
     return uniqueIPs.size > 3;
   }
 
-  private async checkBruteForceAttempts(userId: number): Promise<boolean> {
+  private async checkBruteForceAttempts(userId: string): Promise<boolean> {
     const timeWindow = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes
 
     const attempts = await this.authLoggingService.authLogRepository.count({

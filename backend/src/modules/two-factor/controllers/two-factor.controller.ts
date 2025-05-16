@@ -10,20 +10,20 @@ export class TwoFactorController {
 
   @Auth()
   @Post('enable')
-  enable(@CurrentUser('id') userId: number) {
+  enable(@CurrentUser('id') userId: string) {
     return this.twoFactorService.enable(userId);
   }
 
   @Auth()
   @Post('enableEmail')
-  enableEmail(@CurrentUser('id') userId: number) {
+  enableEmail(@CurrentUser('id') userId: string) {
     return this.twoFactorService.enableEmail(userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('verify-setup')
   verifySetup(
-    @CurrentUser('id') userId: number,
+    @CurrentUser('id') userId: string,
     @Body('token') token: string,
   ) {
     return this.twoFactorService.verifySetup(userId, token);
@@ -31,13 +31,13 @@ export class TwoFactorController {
 
   @Auth()
   @Post('disable')
-  disable(@CurrentUser('id') userId: number) {
+  disable(@CurrentUser('id') userId: string) {
     return this.twoFactorService.disable(userId);
   }
 
   @Auth()
   @Post('backup-codes')
-  generateNewBackupCodes(@CurrentUser('id') userId: number) {
+  generateNewBackupCodes(@CurrentUser('id') userId: string) {
     return this.twoFactorService.generateNewBackupCodes(userId);
   }
 }

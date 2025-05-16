@@ -33,7 +33,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async verify2FA(
     @Body() verify2FADto: Verify2FADto,
-    @CurrentUser('id') userId: number,
+    @CurrentUser('id') userId: string,
     @Headers('user-agent') userAgent: string,
     @Ip() ipAddress: string,
   ) {

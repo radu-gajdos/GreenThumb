@@ -7,7 +7,7 @@ export class TwoFactorCode {
   id: number;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   code: string;

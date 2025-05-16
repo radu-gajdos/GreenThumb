@@ -27,7 +27,7 @@ export class SeedService {
 
     async seedUsers() { 
         await this.userRepository.insert([
-            { // id = 1
+            {
                 name: "Gajdos Radu",
                 email: "radu@gmail.com",
                 phone: "0777333111",

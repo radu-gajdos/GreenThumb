@@ -4,6 +4,7 @@ import { Plot } from '../entities/plot.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePlotDto } from '../dto/create-plot.dto';
 import { UpdatePlotDto } from '../dto/update-plot.dto';
+import { AuthUserDto } from 'src/modules/auth/entities/auth-user.dto';
 @Injectable()
 export class PlotService {
   constructor(
@@ -11,32 +12,33 @@ export class PlotService {
     private readonly plotRepository: Repository<Plot>,
   ) {}
 
-  async create(input: CreatePlotDto): Promise<Plot> {
-    const plot = this.plotRepository.create(input);
+  async create(input: CreatePlotDto, user: AuthUserDto): Promise<Plot> {
+    console.log('user', user);
+    const plot = this.plotRepository.create({ ...input, ownerId: user.id });
     return this.plotRepository.save(plot);
   }
 
-  async findAll(): Promise<Plot[]> {
-    return this.plotRepository.find({ relations: ['actions'] });
+  async findAll(user: AuthUserDto): Promise<Plot[]> {
+    return this.plotRepository.find({where: {ownerId: user.id}, relations: ['actions'] });
   }
 
-  async findOne(id: string): Promise<Plot> {
+  async findOne(id: string, user: AuthUserDto): Promise<Plot> {
     const plot = await this.plotRepository.findOne({
-      where: { id },
+      where: { id, ownerId: user.id },
       relations: ['actions'],
     });
     if (!plot) throw new NotFoundException();
     return plot;
   }
 
-  async update(input: UpdatePlotDto): Promise<Plot> {
-    const plot = await this.findOne(input.id);
+  async update(input: UpdatePlotDto, user: AuthUserDto): Promise<Plot> {
+    const plot = await this.findOne(input.id, user);
     Object.assign(plot, input);
     return this.plotRepository.save(plot);
   }
 
-  async remove(id: string): Promise<boolean> {
-    const plot = await this.findOne(id);
+  async remove(id: string, user: AuthUserDto): Promise<boolean> {
+    const plot = await this.findOne(id, user);
     await this.plotRepository.remove(plot);
     return true;
   }

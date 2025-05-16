@@ -8,7 +8,7 @@ export class VerificationToken {
   id: number;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   token: string;

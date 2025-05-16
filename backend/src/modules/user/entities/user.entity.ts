@@ -10,65 +10,65 @@ import { Plot } from 'src/modules/plot/entities/plot.entity';
 @Entity()
 export class User {
     @Expose({ groups: ['user', 'relation'] })
-    @PrimaryGeneratedColumn()
-    id: number;
-    
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
     @Expose({ groups: ['user', 'relation'] })
     @Column({ nullable: false })
     name: string;
-    
+
     @Expose({ groups: ['user', 'relation'] })
     @Column({ nullable: false, unique: true })
     email: string;
-    
+
     @Expose({ groups: ['user', 'admin'] })
     @Column({ nullable: true, default: null })
     phone: string;
-    
+
     @Expose({ groups: ['admin'] })
     @Column({ type: 'timestamp', nullable: true, default: null })
     lastLogin: Date;
-    
+
     @Expose({ groups: ['admin'] })
     @Column({ type: 'timestamp', nullable: true, default: null })
     emailVerified: Date;
-    
+
     @Expose({ groups: ['user', 'admin'] })
     @Column({ default: true })
     twoFactorEnabled: boolean;
-    
+
     @Exclude()
     @Column({ nullable: true, default: null })
     twoFactorSecret?: string;
-    
+
     @Exclude()
     @Column({ nullable: true, default: null })
     twoFactorRecoveryCodes?: string;
-    
+
     @Expose({ groups: ['user', 'admin'] })
     @Column({ default: 'email' })
     twoFactorType: string;
-    
+
     @Exclude()
     @Column({ nullable: false })
     password: string;
-    
+
     @Expose({ groups: ['admin'] })
     @Column({ type: 'timestamp', nullable: true, default: null })
     passwordChangedAt: Date;
-    
+
     @Expose({ groups: ['admin'] })
     @Column({ default: 0 })
     passwordResetCount: number;
-    
+
     @Expose({ groups: ['admin'] })
     @CreateDateColumn()
     createdAt: Date;
-    
+
     @Expose({ groups: ['admin'] })
     @UpdateDateColumn()
     updatedAt: Date;
-    
+
     @Expose({ groups: ['admin'] })
     @DeleteDateColumn()
     deletedAt?: Date;
@@ -87,7 +87,7 @@ export class User {
 
     @OneToMany(() => ActiveSession, (activeSession) => activeSession.user)
     activeSessions: ActiveSession[];
-    
+
     // plots of a user
     @Expose({ groups: ['user', 'relation'] })
     @OneToMany(() => Plot, (plot) => plot.owner)

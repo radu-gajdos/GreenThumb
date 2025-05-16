@@ -1,11 +1,11 @@
 export interface PayloadTokenInterface {
-    sub: number;
+    sub: string;
     is2FAAuthenticated: boolean;
     passwordResetCount: number;
 };
 
 export interface JwtUser {
-    id: number;
+    id: string;
     passwordResetCount: number;
     twoFactorEnabled: boolean;
     is2FAAuthenticated: boolean;

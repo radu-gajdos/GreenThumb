@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Index, JoinColumn } from 'typeorm';
 import { Feature, Polygon } from 'geojson';
 import { User } from '../../user/entities/user.entity';
 import { Action } from '../../action/entities/action.entity';
@@ -51,9 +51,15 @@ export class Plot {
     @Column({ nullable: true, length: 255 })
     soilType?: string;
 
-    @Expose({ groups: ['plot'] })
-    @ManyToOne(() => User, (user) => user.plots, { eager: true, onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.plots, {
+        nullable: false,
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({ name: 'ownerId' })
     owner: User;
+
+    @Column()
+    ownerId: string;
 
     @Expose({ groups: ['plot'] })
     @OneToMany(() => Action, (action) => action.plot, { cascade: true, eager: true })

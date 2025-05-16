@@ -8,7 +8,7 @@ export class ActiveSession {
   id: number;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   refreshTokenId: number;
