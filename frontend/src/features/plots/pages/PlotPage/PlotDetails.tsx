@@ -1,45 +1,77 @@
-import React from 'react';
+/**
+ * PlotDetails.tsx
+ *
+ * Displays detailed information for a single plot, including:
+ *  - Plot name & size
+ *  - Interactive map of the boundary
+ *  - Metadata cards (soil, topography, owner, created date)
+ *  - Activity log with counts and individual actions
+ *  - “Add Action” button that opens a modal form
+ */
+
+import React, { useEffect, useMemo, useState } from 'react';
 import PlotMap from './PlotMap';
-import { Plot } from '../../interfaces/plot';
+import { Plot, IAction } from '../../interfaces/plot';
 import ActionsList from './ActionList';
+import { Button } from '@/components/ui/button';
+import ModalForm from '@/features/actions/pages/ModalForm';
 
 interface PlotDetailsProps {
-  /** The Plot object whose details we want to display */
+  /** The plot object to render details for */
   plot: Plot;
 }
 
-/**
- * PlotDetails
- *
- * Renders a detailed view of a single plot, including:
- *  - Title bar with plot name and size
- *  - Map of the plot boundary
- *  - Metadata cards (soil type, topography, owner, creation date)
- *  - Activity log of actions taken on the plot
- */
 const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
+  /** Local copy of plot.actions so we can append new actions client-side */
+  const [actionsState, setActionsState] = useState<IAction[]>(plot.actions);
+  /** Controls visibility of the “Add Action” modal */
+  const [showActionModal, setShowActionModal] = useState(false);
+
+  /**
+   * Sync local actionsState if parent plot.actions changes.
+   * This handles updates from upstream (e.g. via props).
+   */
+  useEffect(() => {
+    setActionsState(plot.actions);
+  }, [plot.actions]);
+
+  /**
+   * Compute counts of each action type for badges.
+   * useMemo ensures we only recalc when actionsState changes.
+   */
+  const actionGroups = useMemo(() => {
+    return actionsState.reduce<Record<string, number>>((groups, action) => {
+      groups[action.type] = (groups[action.type] || 0) + 1;
+      return groups;
+    }, {});
+  }, [actionsState]);
+
+  /**
+   * Handler invoked when ModalForm saves a new action.
+   * Appends to local state and closes the modal.
+   * @param newAction - The ActionFormType returned by the form
+   */
+  const handleAddAction = (newAction: any) => {
+    setActionsState((prev) => [...prev, newAction]);
+    setShowActionModal(false);
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      {/* Header: Plot name on the left, area badge on the right */}
+      {/* Header: plot name and area badge */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">{plot.name}</h1>
         <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-          {/* Display size with two decimals */}
           {plot.size.toFixed(2)} hectares
         </div>
       </div>
 
-      {/* Map rendering of the plot boundary */}
+      {/* Interactive map of the plot boundary */}
       <div className="mb-6">
-        {/* 
-          NOTE: PlotMap currently expects a `plots` prop in its signature.
-          Here we pass a single boundary; consider renaming or overloading PlotMap
-          to accept a `boundary` prop for clarity.
-        */}
         <PlotMap boundary={plot.boundary} />
       </div>
 
-      {/* Metadata grid: soil type, topography, owner, creation date */}
+      {/* Metadata grid: soil type, topography, owner, created date */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 mb-1">Soil Type</h3>
@@ -47,25 +79,19 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
             {plot.soilType || 'Not specified'}
           </p>
         </div>
-
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 mb-1">Topography</h3>
           <p className="text-gray-900">
             {plot.topography || 'Not specified'}
           </p>
         </div>
-
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 mb-1">Owner</h3>
-          <p className="text-gray-900">
-            {plot.owner?.name || '—'}
-          </p>
+          <p className="text-gray-900">{plot.owner?.name || '—'}</p>
         </div>
-
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 mb-1">Created</h3>
           <p className="text-gray-900">
-            {/* Format creation date in a human‐readable way */}
             {new Date(plot.createdAt).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -75,8 +101,40 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
         </div>
       </div>
 
-      {/* Activity log: list of past actions */}
-      <ActionsList actions={plot.actions} />
+      {/* Activity Log section with counts and add button */}
+      <div className="mt-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Activity Log</h2>
+          <div className="flex items-center space-x-2">
+            {/* “Add Action” opens the modal form */}
+            <Button size="sm" onClick={() => setShowActionModal(true)}>
+              + Add Action
+            </Button>
+          </div>
+        </div>
+
+        {/* Badges showing counts per action type */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {Object.entries(actionGroups).map(([type, count]) => (
+            <span
+              key={type}
+              className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+            >
+              {type}: {count}
+            </span>
+          ))}
+        </div>
+
+        {/* List of individual actions */}
+        <ActionsList actions={actionsState} />
+
+        {/* Modal for creating a new action */}
+        <ModalForm
+          showModal={showActionModal}
+          setShowModal={setShowActionModal}
+          onSave={handleAddAction}
+        />
+      </div>
     </div>
   );
 };
