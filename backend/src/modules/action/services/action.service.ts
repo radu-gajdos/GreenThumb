@@ -22,7 +22,7 @@ export class ActionService {
             throw new BadRequestException('Invalid action type');
         }
 
-        const action = this.actionRepository.create({ ...input, plot });
+        const action = this.actionRepository.create({ ...input, plotId });
         return this.actionRepository.save(action);
     }
 

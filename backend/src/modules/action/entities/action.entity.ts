@@ -11,6 +11,10 @@ export class Action {
     @Expose()
     @Column({ type: 'varchar' })
     type: string;
+    
+    @Expose()
+    @Column({ name: 'plotId' })
+    plotId: string;
 
     @Expose()
     @ManyToOne(() => Plot, (plot) => plot.actions, { onDelete: 'CASCADE' })

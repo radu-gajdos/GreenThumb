@@ -133,6 +133,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
           showModal={showActionModal}
           setShowModal={setShowActionModal}
           onSave={handleAddAction}
+          plotId={plot.id}
         />
       </div>
     </div>

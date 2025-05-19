@@ -1,13 +1,14 @@
 /**
  * ActionModalForm.tsx
  *
- * Renders a modal dialog to create a new plot action.
- * 1. First prompts the user to select an action type.
- * 2. Then displays the corresponding form (ActionFormContent).
- * On save, calls `onSave` and closes the modal.
+ * Renders a modal dialog for creating or editing an Action:
+ * 1. If `uid` is null, first prompts for action type selection.
+ * 2. If editing (`uid` provided), loads initial data and skips type selection.
+ * 3. Renders the form (`ActionFormContent`) once a type is known.
+ * 4. Handles create/update via ActionApi, shows toasts, and invokes `onSave`.
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,94 +25,127 @@ import {
   ActionType,
   getActionIcon,
 } from "../constants/formSchema";
+import { ActionApi } from "../api/action.api";
+import { ToastService } from "@/services/toast.service";
+import { Action } from "../interfaces/action";
 
 interface ActionModalFormProps {
-  /** Whether the modal is open */
+  /** Whether the dialog is open */
   showModal: boolean;
-  /** Setter to open/close the modal */
+  /** Setter to open/close the dialog */
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  /** Callback invoked with form data when saving a new action */
-  onSave: (data: ActionFormValues) => void;
+  /** Called after successful create/update, receives the saved Action */
+  onSave: (data: Action) => void;
+  /** If provided, loads this Action for editing */
+  uid?: string | null;
+  /** ID of the parent Plot to which this Action belongs */
+  plotId: string;
 }
 
-/**
- * ActionModalForm
- *
- * Controls the flow:
- * - If no action type is selected, show a grid of buttons for each type.
- * - Once a type is chosen, render the <ActionFormContent> for that type.
- */
 const ActionModalForm: React.FC<ActionModalFormProps> = ({
   showModal,
   setShowModal,
   onSave,
+  uid = null,
+  plotId,
 }) => {
-  /** Currently selected action type; null means "choose type" step */
+  /** Selected action type (e.g. 'planting'); determines which form to show */
   const [selectedType, setSelectedType] = useState<ActionType | null>(null);
+  /** Data loaded from API when editing */
+  const [initialData, setInitialData] = useState<ActionFormValues | null>(null);
+  /** Loading indicator for fetch/edit load */
+  const [loading, setLoading] = useState(false);
+  /** Memoized API client */
+  const actionApi = useMemo(() => new ActionApi(), []);
 
   /**
-   * List of all possible action types.
-   * Wrapped in useMemo to avoid recreating the array on every render.
+   * When the modal opens in edit mode (uid provided), fetch existing action.
+   * Otherwise, reset to create mode.
    */
-  const actionTypes: ActionType[] = useMemo(
-    () => [
-      "planting",
-      "harvesting",
-      "fertilizing",
-      "treatment",
-      "watering",
-      "soil_reading",
-    ],
-    []
-  );
+  useEffect(() => {
+    if (showModal && uid) {
+      setLoading(true);
+      actionApi
+        .findOne(uid)
+        .then((data) => {
+          // Pre-fill form and skip type-selection step
+          setInitialData(data as ActionFormValues);
+          setSelectedType(data.type as ActionType);
+        })
+        .catch((e) => {
+          ToastService.error("Eroare la încărcarea acțiunii.");
+          console.error("Fetch action failed:", e);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      // Reset form state when closing or switching to create mode
+      setInitialData(null);
+      setSelectedType(null);
+    }
+  }, [showModal, uid, actionApi]);
+
+  /**
+   * Called when form is submitted.
+   * Performs create or update, shows a toast, and notifies parent.
+   */
+  const handleSubmit = async (formData: ActionFormValues) => {
+    try {
+      const response = uid
+        ? await actionApi.update(formData, plotId)
+        : await actionApi.create(formData, plotId);
+
+      ToastService.success(
+        uid ? "Acțiunea a fost actualizată." : "Acțiunea a fost creată."
+      );
+      onSave(response);
+      setShowModal(false);
+    } catch (err) {
+      console.error("Save action error:", err);
+      ToastService.error("Eroare la salvarea acțiunii.");
+    }
+  };
 
   return (
     <Dialog open={showModal} onOpenChange={setShowModal} modal>
       <DialogContent className="sm:max-w-lg z-[1000]">
+        {/* Step 1: Type selection (only if no type yet) */}
         {!selectedType ? (
           <>
-            {/* Step 1: Action type selection */}
             <DialogHeader>
-              <DialogTitle>Select Action Type</DialogTitle>
+              <DialogTitle>Selectează tipul de acțiune</DialogTitle>
               <DialogDescription>
-                Pick one to create a new action.
+                Alege tipul de acțiune pentru a continua.
               </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-3 gap-4 p-4">
-              {actionTypes.map((type) => (
-                <button
-                  key={type}
-                  className="flex flex-col items-center justify-center p-4 border rounded hover:bg-gray-50"
-                  onClick={() => setSelectedType(type)}
-                >
-                  {/* Icon for this action */}
-                  <span className="text-2xl">{getActionIcon(type)}</span>
-                  {/* Human-readable label (replace underscores, capitalize) */}
-                  <span className="mt-2 capitalize">
-                    {type.replace("_", " ")}
-                  </span>
-                </button>
-              ))}
+              {(["planting", "harvesting", "fertilizing", "treatment", "watering", "soil_reading"] as ActionType[]).map(
+                (type) => (
+                  <button
+                    key={type}
+                    className="flex flex-col items-center justify-center p-4 border rounded hover:bg-gray-50"
+                    onClick={() => setSelectedType(type)}
+                  >
+                    <span className="text-2xl">{getActionIcon(type)}</span>
+                    <span className="mt-2 capitalize">{type.replace("_", " ")}</span>
+                  </button>
+                )
+              )}
             </div>
             <DialogFooter>
-              {/* Close without selecting */}
               <DialogClose asChild>
                 <Button variant="outline" size="sm">
-                  Close
+                  Închide
                 </Button>
               </DialogClose>
             </DialogFooter>
           </>
         ) : (
-          /* Step 2: Render the form for the chosen action type */
+          /* Step 2: Render the action form */
           <ActionFormContent
             type={selectedType}
-            onBack={() => setSelectedType(null)} // Go back to type selector
-            onSubmit={(data) => {
-              onSave(data);           // Pass data to parent
-              setSelectedType(null);  // Reset to initial step
-              setShowModal(false);    // Close modal
-            }}
+            initialData={initialData || undefined}
+            onBack={() => setSelectedType(null)}
+            onSubmit={handleSubmit}
           />
         )}
       </DialogContent>
