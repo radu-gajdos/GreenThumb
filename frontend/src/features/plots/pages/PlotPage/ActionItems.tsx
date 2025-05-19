@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { castAction } from '../../api/plot.api';
 import {
   IAction,
@@ -25,15 +26,17 @@ interface ActionItemProps {
  * 3. Displays the relevant fields for that action.
  */
 const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
+  const { t, i18n } = useTranslation();
+
   // Narrow the generic action into its specific interface
   const typedAction = castAction(action);
 
   /**
-   * Formats a Date or date-string into 'MMM dd, yyyy' in en-US locale.
+   * Formats a Date or date-string into localized format.
    * @param date - A Date object or date-string
    */
   const formatDate = (date: Date | string) =>
-    new Date(date).toLocaleDateString('en-US', {
+    new Date(date).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -49,20 +52,20 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         return (
           <div>
             <p>
-              <span className="font-medium">Crop:</span> {planting.cropType}
+              <span className="font-medium">{t('actionItem.labels.crop')}</span> {planting.cropType}
             </p>
             {planting.variety && (
               <p>
-                <span className="font-medium">Variety:</span> {planting.variety}
+                <span className="font-medium">{t('actionItem.labels.variety')}</span> {planting.variety}
               </p>
             )}
             {planting.seedingRate && (
               <p>
-                <span className="font-medium">Seeding Rate:</span> {planting.seedingRate}
+                <span className="font-medium">{t('actionItem.labels.seedingRate')}</span> {planting.seedingRate}
               </p>
             )}
             <p>
-              <span className="font-medium">Date:</span> {formatDate(planting.plantingDate)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(planting.plantingDate)}
             </p>
           </div>
         );
@@ -73,14 +76,15 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         return (
           <div>
             <p>
-              <span className="font-medium">Yield:</span> {harvesting.cropYield} tons
+              <span className="font-medium">{t('actionItem.labels.yield')}</span> {harvesting.cropYield}{' '}
+              {t('actionItem.units.tons')}
             </p>
             <p>
-              <span className="font-medium">Date:</span> {formatDate(harvesting.harvestDate)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.harvestDate)}
             </p>
             {harvesting.comments && (
               <p>
-                <span className="font-medium">Comments:</span> {harvesting.comments}
+                <span className="font-medium">{t('actionItem.labels.comments')}</span> {harvesting.comments}
               </p>
             )}
           </div>
@@ -92,14 +96,17 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         return (
           <div>
             <p>
-              <span className="font-medium">Fertilizer:</span> {fert.fertilizerType}
+              <span className="font-medium">{t('actionItem.labels.fertilizer')}</span> {fert.fertilizerType}
             </p>
             <p>
-              <span className="font-medium">Rate:</span> {fert.applicationRate} kg/ha
+              <span className="font-medium">{t('actionItem.labels.rate')}</span> {fert.applicationRate}{' '}
+              {t('actionItem.units.kgPerHa')}
             </p>
-            <p>
-              <span className="font-medium">Method:</span> {fert.method}
-            </p>
+            {fert.method && (
+              <p>
+                <span className="font-medium">{t('actionItem.labels.method')}</span> {fert.method}
+              </p>
+            )}
           </div>
         );
       }
@@ -109,17 +116,22 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         return (
           <div>
             <p>
-              <span className="font-medium">Pesticide:</span> {treat.pesticideType}
+              <span className="font-medium">{t('actionItem.labels.pesticide')}</span> {treat.pesticideType}
             </p>
+            {treat.targetPest && (
+              <p>
+                <span className="font-medium">{t('actionItem.labels.targetPest')}</span> {treat.targetPest}
+              </p>
+            )}
             <p>
-              <span className="font-medium">Target Pest:</span> {treat.targetPest}
+              <span className="font-medium">{t('actionItem.labels.dosage')}</span> {treat.dosage}{' '}
+              {t('actionItem.units.lPerHa')}
             </p>
-            <p>
-              <span className="font-medium">Dosage:</span> {treat.dosage} l/ha
-            </p>
-            <p>
-              <span className="font-medium">Method:</span> {treat.applicationMethod}
-            </p>
+            {treat.applicationMethod && (
+              <p>
+                <span className="font-medium">{t('actionItem.labels.method')}</span> {treat.applicationMethod}
+              </p>
+            )}
           </div>
         );
       }
@@ -128,17 +140,20 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         const water = typedAction as IWatering;
         return (
           <div>
-            <p>
-              <span className="font-medium">Method:</span> {water.method}
-            </p>
-            {water.amount && (
+            {water.method && (
               <p>
-                <span className="font-medium">Amount:</span> {water.amount} mm
+                <span className="font-medium">{t('actionItem.labels.method')}</span> {water.method}
+              </p>
+            )}
+            {water.amount !== undefined && (
+              <p>
+                <span className="font-medium">{t('actionItem.labels.amount')}</span> {water.amount}{' '}
+                {t('actionItem.units.mm')}
               </p>
             )}
             {water.waterSource && (
               <p>
-                <span className="font-medium">Source:</span> {water.waterSource}
+                <span className="font-medium">{t('actionItem.labels.source')}</span> {water.waterSource}
               </p>
             )}
           </div>
@@ -149,27 +164,32 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
         const soil = typedAction as ISoilReading;
         return (
           <div>
-            <p>
-              <span className="font-medium">pH:</span> {soil.ph}
-            </p>
+            {soil.ph !== undefined && (
+              <p>
+                <span className="font-medium">{t('actionItem.labels.ph')}</span> {soil.ph}
+              </p>
+            )}
             {soil.nitrogen !== undefined && (
               <p>
-                <span className="font-medium">Nitrogen:</span> {soil.nitrogen} mg/kg
+                <span className="font-medium">{t('actionItem.labels.nitrogen')}</span> {soil.nitrogen}{' '}
+                {t('actionItem.units.mgPerKg')}
               </p>
             )}
             {soil.phosphorus !== undefined && (
               <p>
-                <span className="font-medium">Phosphorus:</span> {soil.phosphorus} mg/kg
+                <span className="font-medium">{t('actionItem.labels.phosphorus')}</span> {soil.phosphorus}{' '}
+                {t('actionItem.units.mgPerKg')}
               </p>
             )}
             {soil.potassium !== undefined && (
               <p>
-                <span className="font-medium">Potassium:</span> {soil.potassium} mg/kg
+                <span className="font-medium">{t('actionItem.labels.potassium')}</span> {soil.potassium}{' '}
+                {t('actionItem.units.mgPerKg')}
               </p>
             )}
             {soil.organicMatter && (
               <p>
-                <span className="font-medium">Organic Matter:</span> {soil.organicMatter}
+                <span className="font-medium">{t('actionItem.labels.organicMatter')}</span> {soil.organicMatter}
               </p>
             )}
           </div>
@@ -178,7 +198,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
 
       default:
         // Fallback if a new type is added but not handled
-        return <p>Unknown action type</p>;
+        return <p>{t('actionItem.unknownType')}</p>;
     }
   };
 
@@ -230,23 +250,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
    * Human-readable title for each action type.
    */
   const getActionTitle = () => {
-    switch (action.type) {
-      case 'planting':
-        return 'Planting';
-      case 'harvesting':
-        return 'Harvesting';
-      case 'fertilizing':
-        return 'Fertilizing';
-      case 'treatment':
-        return 'Treatment';
-      case 'watering':
-        return 'Watering';
-      case 'soil_reading':
-        return 'Soil Reading';
-      default:
-        // Capitalize unknown type
-        return action.type.charAt(0).toUpperCase() + action.type.slice(1);
-    }
+    return t(`actionItem.types.${action.type}`);
   };
 
   return (

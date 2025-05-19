@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { IAction } from '../../interfaces/plot';
 import ActionItem from './ActionItems';
 
@@ -22,11 +23,13 @@ interface ActionsListProps {
  *  2. Otherwise, maps each action to an <ActionItem>.
  */
 const ActionsList: React.FC<ActionsListProps> = ({ actions }) => {
+  const { t } = useTranslation();
+
   // Early return for the empty state
   if (actions.length === 0) {
     return (
       <p className="text-gray-500 italic">
-        No activities recorded yet.
+        {t('actionsList.noActivities')}
       </p>
     );
   }

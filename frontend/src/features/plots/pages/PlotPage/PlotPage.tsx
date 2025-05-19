@@ -1,12 +1,13 @@
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PlotDetails from './PlotDetails';
 import AIChatPlaceholder from './AIChatPlaceholder';
 import { Plot } from '../../interfaces/plot';
 import { PlotApi } from '../../api/plot.api';
 
 const PlotPage: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [plot, setPlot] = useState<Plot | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,7 +17,7 @@ const PlotPage: React.FC = () => {
   useEffect(() => {
     const loadPlot = async () => {
       if (!id) {
-        setError('Plot ID is required');
+        setError(t('plotPage.error.noId'));
         setLoading(false);
         return;
       }
@@ -26,13 +27,13 @@ const PlotPage: React.FC = () => {
         setPlot(data);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(err instanceof Error ? err.message : t('plotPage.error.unknown'));
       } finally {
         setLoading(false);
       }
     };
     loadPlot();
-  }, [id, plotApi]);
+  }, [id, plotApi, t]);
 
   if (loading) {
     return (
@@ -48,13 +49,13 @@ const PlotPage: React.FC = () => {
         className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-auto max-w-6xl mt-10"
         role="alert"
       >
-        <p className="font-bold">Error</p>
+        <p className="font-bold">{t('plotPage.error.title')}</p>
         <p>{error}</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
         >
-          Retry
+          {t('plotPage.error.retry')}
         </button>
       </div>
     );
@@ -66,8 +67,8 @@ const PlotPage: React.FC = () => {
         className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mx-auto max-w-6xl mt-10"
         role="alert"
       >
-        <p className="font-bold">Plot Not Found</p>
-        <p>The requested plot information could not be found.</p>
+        <p className="font-bold">{t('plotPage.notFound.title')}</p>
+        <p>{t('plotPage.notFound.message')}</p>
       </div>
     );
   }

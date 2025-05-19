@@ -1,6 +1,7 @@
 // src/contexts/LanguageContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { RO, US } from 'country-flag-icons/react/3x2'
+import { DE, RO, US } from 'country-flag-icons/react/3x2'
+import i18n from '@/i18n';
 
 interface Language {
   code: string;
@@ -17,8 +18,9 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const languages: Language[] = [
-    { code: 'en', name: 'English', flag: US },
-    { code: 'ro', name: 'Română', flag: RO },
+  { code: 'en', name: 'English', flag: US },
+  { code: 'ro', name: 'Română', flag: RO },
+  { code: 'de', name: 'Deutsch', flag: DE },
 ];
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -31,10 +33,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try {
       setCurrentLanguage(code);
       localStorage.setItem('language', code);
+      await i18n.changeLanguage(code);  // <— aici
     } catch (error) {
       console.error('Failed to change language:', error);
     }
   };
+
 
   useEffect(() => {
     changeLanguage(currentLanguage);
