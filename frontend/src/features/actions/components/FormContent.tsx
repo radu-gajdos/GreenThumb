@@ -1,9 +1,11 @@
 /**
  * ActionFormContent.tsx
  *
- * Renders a dynamic form for creating various plot actions (planting, harvesting, etc.).
- * Uses React Hook Form with Zod schema validation, and conditionally shows extra fields
- * based on the selected `type`.
+ * Renders a form for creating or editing an agricultural action.
+ * - Uses React Hook Form with Zod for validation
+ * - Initializes default values based on `type` or `initialData`
+ * - Conditionally shows fields relevant to the chosen action type
+ * - Provides Back, Cancel, and Save controls
  */
 
 import React from "react";
@@ -30,142 +32,247 @@ import {
 } from "../constants/formSchema";
 
 interface ActionFormContentProps {
-  /** The type of action being created (controls which extra fields appear) */
+  /** Determines which extra fields are rendered */
   type: ActionType;
-  /** Called when the form is successfully submitted */
+  /** Called with validated form values on submit */
   onSubmit: (data: ActionFormValues) => void;
-  /** Called when the user clicks the "Back" button */
+  /** Called when the Back button is clicked */
   onBack: () => void;
+  /** If provided, pre-fills the form (edit mode) */
+  initialData?: ActionFormValues | null;
 }
 
 /**
  * ActionFormContent
  *
- * A form component that:
- *  - Initializes RHF with a Zod schema
- *  - Always shows date, operator, notes fields
- *  - Conditionally shows extra inputs based on `type`
- *  - Provides "Cancel" and "Save" actions
+ * Main form component for an action. Sets up RHF + Zod and conditionally
+ * renders fields based on `type`. Wraps inputs in our shared UI components.
  */
 const ActionFormContent: React.FC<ActionFormContentProps> = ({
   type,
   onSubmit,
   onBack,
+  initialData = null,
 }) => {
-  // Initialize the form, defaulting the date/operator/notes to empty
+  // Initialize form, seeding defaultValues from `initialData` if editing,
+  // otherwise setting sensible defaults per action type.
   const form = useForm<ActionFormValues>({
     resolver: zodResolver(actionFormSchema),
-    defaultValues: {
-      type,
-      date: "",
-      operator: "",
-      notes: "",
-    },
+    defaultValues:
+      initialData || ({
+        type,
+        comments: "",
+        // Planting defaults
+        ...(type === "planting" && {
+          cropType: "",
+          variety: "",
+          seedingRate: "",
+          plantingDate: "",
+        }),
+        // Harvesting defaults
+        ...(type === "harvesting" && {
+          cropYield: 0,
+          harvestDate: "",
+        }),
+        // Fertilizing defaults
+        ...(type === "fertilizing" && {
+          fertilizerType: "",
+          applicationRate: 0,
+          method: "",
+        }),
+        // Treatment defaults
+        ...(type === "treatment" && {
+          pesticideType: "",
+          targetPest: "",
+          dosage: 0,
+          applicationMethod: "",
+        }),
+        // Watering defaults
+        ...(type === "watering" && {
+          waterSource: "",
+          amount: 0,
+        }),
+        // Soil reading defaults
+        ...(type === "soil_reading" && {
+          ph: 7,
+          nitrogen: 0,
+          phosphorus: 0,
+          potassium: 0,
+          organicMatter: "",
+        }),
+      } as ActionFormValues),
   });
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
-      >
-        {/* Header with back button, title, and icon */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Header with Back button, icon + title */}
         <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-          >
+          <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft />
           </Button>
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            {getActionIcon(type)} Create {type}
+            {getActionIcon(type)}{" "}
+            {type.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
           </h3>
-          {/* Empty placeholder to balance flex */}
+          {/* Spacer to balance flex layout */}
           <div />
         </div>
 
-        {/* Common fields */}
+        {/* Common field: comments */}
         <FormField
           control={form.control}
-          name="date"
+          name="comments"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Comments</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="operator"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Operator</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="Operator name" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes</FormLabel>
-              <FormControl>
-                <Textarea {...field} placeholder="Optional notes" />
+                <Textarea {...field} placeholder="Optional comments" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Type-specific fields */}
-        {type === "harvesting" && (
-          <FormField
-            control={form.control}
-            name="yield"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Yield (kg)</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* --- Planting fields --- */}
+        {type === "planting" && (
+          <>
+            <FormField
+              control={form.control}
+              name="cropType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Crop Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Wheat" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="variety"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variety</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Durum" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="seedingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Seeding Rate</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="kg/ha" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="plantingDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Planting Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
 
+        {/* --- Harvesting fields --- */}
+        {type === "harvesting" && (
+          <>
+            <FormField
+              control={form.control}
+              name="cropYield"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Yield (kg)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="harvestDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Harvest Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+
+        {/* --- Fertilizing fields --- */}
         {type === "fertilizing" && (
           <>
+            <FormField
+              control={form.control}
+              name="fertilizerType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fertilizer Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Urea" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="applicationRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Application Rate (kg/ha)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="method"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Method</FormLabel>
+                  <FormLabel>Application Method</FormLabel>
                   <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
+                    <Input {...field} placeholder="e.g. Broadcast" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,32 +281,81 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
+        {/* --- Treatment fields --- */}
         {type === "treatment" && (
-          <FormField
-            control={form.control}
-            name="treatmentName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Treatment</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <>
+            <FormField
+              control={form.control}
+              name="pesticideType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pesticide Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Glyphosate" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="targetPest"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Target Pest</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Aphids" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dosage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dosage (l/ha)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="applicationMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Application Method</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g. Sprayer" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
 
+        {/* --- Watering fields --- */}
         {type === "watering" && (
           <>
             <FormField
               control={form.control}
-              name="duration"
+              name="waterSource"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Duration (hrs)</FormLabel>
+                  <FormLabel>Water Source</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input {...field} placeholder="e.g. Well" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,12 +363,18 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             />
             <FormField
               control={form.control}
-              name="volume"
+              name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Volume (m³)</FormLabel>
+                  <FormLabel>Amount (m³)</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -221,20 +383,108 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
+        {/* --- Soil Reading fields --- */}
         {type === "soil_reading" && (
-          <FormField
-            control={form.control}
-            name="method"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Reading Method</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <>
+            <FormField
+              control={form.control}
+              name="ph"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>pH Level (0–14)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={14}
+                      step={0.1}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="nitrogen"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nitrogen (mg/kg)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phosphorus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phosphorus (mg/kg)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="potassium"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Potassium (mg/kg)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="organicMatter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Organic Matter (%)</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g. 3.5"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
 
         {/* Form actions */}

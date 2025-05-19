@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, Min, Max, IsPositive } from 'class-validator';
 
 export class CreateActionDto {
@@ -27,6 +28,7 @@ export class CreateActionDto {
 
     @IsOptional()
     @IsDate()
+    @Type(() => Date)
     harvestDate?: Date;
 
     @IsOptional()
@@ -48,6 +50,7 @@ export class CreateActionDto {
 
     @IsOptional()
     @IsDate()
+    @Type(() => Date)
     plantingDate?: Date;
 
     // SoilReading fields

@@ -36,42 +36,66 @@ const commonFields = {
     "watering",
     "soil_reading",
   ]),
-  date: z.string({ required_error: "Date is required" }).nonempty(),
-  operator: z.string({ required_error: "Operator is required" }).nonempty(),
-  notes: z.string().optional(),
+  // Unlike original, we won't require operator and date as common fields,
+  // since they don't appear in the DTO. We'll handle them differently in the UI.
+  comments: z.string().optional(),
 };
 
 export const actionFormSchema = z.discriminatedUnion("type", [
+  // Planting fields
   z.object({
     ...commonFields,
     type: z.literal("planting"),
+    cropType: z.string({ required_error: "Crop type is required" }).nonempty(),
+    variety: z.string().optional(),
+    seedingRate: z.string().optional(),
+    plantingDate: z.string().optional(),
   }),
+  
+  // Harvesting fields
   z.object({
     ...commonFields,
     type: z.literal("harvesting"),
-    yield: z.number({ required_error: "Yield is required" }),
+    cropYield: z.number({ required_error: "Yield is required" }).min(0),
+    harvestDate: z.string().optional(),
   }),
+  
+  // Fertilizing fields
   z.object({
     ...commonFields,
     type: z.literal("fertilizing"),
-    method: z.string({ required_error: "Method is required" }).nonempty(),
-    quantity: z.number({ required_error: "Quantity is required" }),
+    fertilizerType: z.string({ required_error: "Fertilizer type is required" }).nonempty(),
+    applicationRate: z.number({ required_error: "Application rate is required" }).positive(),
+    method: z.string().optional(),
   }),
+  
+  // Treatment fields
   z.object({
     ...commonFields,
     type: z.literal("treatment"),
-    treatmentName: z.string({ required_error: "Treatment name is required" }).nonempty(),
+    pesticideType: z.string({ required_error: "Pesticide type is required" }).nonempty(),
+    targetPest: z.string().optional(),
+    dosage: z.number({ required_error: "Dosage is required" }).positive(),
+    applicationMethod: z.string().optional(),
   }),
+  
+  // Watering fields
   z.object({
     ...commonFields,
     type: z.literal("watering"),
-    duration: z.number({ required_error: "Duration is required" }),
-    volume: z.number({ required_error: "Volume is required" }),
+    waterSource: z.string().optional(),
+    amount: z.number({ required_error: "Amount is required" }).min(0),
   }),
+  
+  // Soil reading fields
   z.object({
     ...commonFields,
     type: z.literal("soil_reading"),
-    method: z.string({ required_error: "Reading method is required" }).nonempty(),
+    ph: z.number().min(0).max(14).optional(),
+    nitrogen: z.number().min(0).optional(),
+    phosphorus: z.number().min(0).optional(),
+    potassium: z.number().min(0).optional(),
+    organicMatter: z.string().optional(),
   }),
 ]);
 

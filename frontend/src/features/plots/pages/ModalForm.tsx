@@ -84,14 +84,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
     action
       .then((saved) => {
         onSave(saved); // Notify parent to refresh list/local state
-        ToastService.success(
-          `Parcela a fost ${uid ? "actualizată" : "creată"} cu succes!`
-        );
         setShowModal(false);
       })
       .catch((error) => {
         console.error("Error saving plot:", error);
-        // Note: PlotApi already shows a toast on failure
       });
   };
 
