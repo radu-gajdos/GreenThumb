@@ -1,0 +1,75 @@
+{
+  "plotDetails": {
+    "hectares": "Hektar",
+    "soilType": "Bodenart",
+    "notSpecified": "Nicht angegeben",
+    "topography": "Topografie",
+    "owner": "Eigentümer",
+    "notAvailable": "—",
+    "created": "Erstellt am",
+    "activityLog": "Aktivitätsprotokoll",
+    "addAction": "+ Aktion hinzufügen",
+    "actionTypes": {
+      "planting": "Pflanzung",
+      "harvesting": "Ernte",
+      "fertilizing": "Düngung",
+      "treatment": "Behandlung",
+      "watering": "Bewässerung",
+      "soil_reading": "Bodenanalyse"
+    }
+  },
+  "actionsList": {
+    "noActivities": "Bisher keine Aktivitäten aufgezeichnet."
+  },
+  "actionItem": {
+    "labels": {
+      "crop": "Kulturpflanze",
+      "variety": "Sorte",
+      "seedingRate": "Aussaatmenge",
+      "date": "Datum",
+      "yield": "Ertrag",
+      "comments": "Kommentare",
+      "fertilizer": "Dünger",
+      "rate": "Menge",
+      "method": "Methode",
+      "pesticide": "Pestizid",
+      "targetPest": "Zielschädling",
+      "dosage": "Dosierung",
+      "amount": "Menge",
+      "source": "Quelle",
+      "ph": "pH-Wert",
+      "nitrogen": "Stickstoff",
+      "phosphorus": "Phosphor",
+      "potassium": "Kalium",
+      "organicMatter": "Organische Substanz"
+    },
+    "units": {
+      "tons": "Tonnen",
+      "kgPerHa": "kg/ha",
+      "lPerHa": "l/ha",
+      "mm": "mm",
+      "mgPerKg": "mg/kg"
+    },
+    "unknownType": "Unbekannter Aktionstyp",
+    "types": {
+      "planting": "Pflanzung",
+      "harvesting": "Ernte",
+      "fertilizing": "Düngung",
+      "treatment": "Behandlung",
+      "watering": "Bewässerung",
+      "soil_reading": "Bodenanalyse"
+    }
+  },
+  "plotPage": {
+    "error": {
+      "title": "Fehler",
+      "retry": "Erneut versuchen",
+      "noId": "Parzellen-ID ist erforderlich",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten"
+    },
+    "notFound": {
+      "title": "Parzelle nicht gefunden",
+      "message": "Die angeforderten Informationen zur Parzelle konnten nicht gefunden werden."
+    }
+  }
+}

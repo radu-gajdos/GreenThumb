@@ -1,0 +1,75 @@
+{
+    "plotDetails": {
+        "hectares": "hectare",
+        "soilType": "Soil type",
+        "notSpecified": "Not specified",
+        "topography": "Topography",
+        "owner": "Owner",
+        "notAvailable": "—",
+        "created": "Created on",
+        "activityLog": "Activity log",
+        "addAction": "+ Add action",
+        "actionTypes": {
+            "planting": "Planting",
+            "harvesting": "Harvesting",
+            "fertilizing": "Fertilizing",
+            "treatment": "Treatment",
+            "watering": "Watering",
+            "soil_reading": "Soil analysis"
+        }
+    },
+    "actionsList": {
+        "noActivities": "No activities recorded yet."
+    },
+    "actionItem": {
+        "labels": {
+            "crop": "Crop",
+            "variety": "Variety",
+            "seedingRate": "Seeding Rate",
+            "date": "Date",
+            "yield": "Yield",
+            "comments": "Comments",
+            "fertilizer": "Fertilizer",
+            "rate": "Rate",
+            "method": "Method",
+            "pesticide": "Pesticide",
+            "targetPest": "Target Pest",
+            "dosage": "Dosage",
+            "amount": "Amount",
+            "source": "Source",
+            "ph": "pH",
+            "nitrogen": "Nitrogen",
+            "phosphorus": "Phosphorus",
+            "potassium": "Potassium",
+            "organicMatter": "Organic Matter"
+        },
+        "units": {
+            "tons": "tons",
+            "kgPerHa": "kg/ha",
+            "lPerHa": "l/ha",
+            "mm": "mm",
+            "mgPerKg": "mg/kg"
+        },
+        "unknownType": "Unknown action type",
+        "types": {
+            "planting": "Planting",
+            "harvesting": "Harvesting",
+            "fertilizing": "Fertilizing",
+            "treatment": "Treatment",
+            "watering": "Watering",
+            "soil_reading": "Soil Reading"
+        }
+    },
+    "plotPage": {
+        "error": {
+            "title": "Error",
+            "retry": "Retry",
+            "noId": "Plot ID is required",
+            "unknown": "An unknown error occurred"
+        },
+        "notFound": {
+            "title": "Plot Not Found",
+            "message": "The requested plot information could not be found."
+        }
+    }
+}

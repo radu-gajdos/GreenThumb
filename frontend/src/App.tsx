@@ -16,6 +16,8 @@ import './custom.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import exp from 'constants';
+import { LanguageProvider } from './contexts/LanguageContext';
+import './i18n';
 
 // AG Grid - Register Modules
 ModuleRegistry.registerModules([
@@ -33,9 +35,11 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <LanguageProvider>
+          <AppRoutes />
+        </LanguageProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 };
 

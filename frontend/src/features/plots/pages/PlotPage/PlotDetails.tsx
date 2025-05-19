@@ -8,8 +8,8 @@
  *  - Activity log with counts and individual actions
  *  - “Add Action” button that opens a modal form
  */
-
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PlotMap from './PlotMap';
 import { Plot, IAction } from '../../interfaces/plot';
 import ActionsList from './ActionList';
@@ -22,6 +22,8 @@ interface PlotDetailsProps {
 }
 
 const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
+  const { t, i18n } = useTranslation();
+  
   /** Local copy of plot.actions so we can append new actions client-side */
   const [actionsState, setActionsState] = useState<IAction[]>(plot.actions);
   /** Controls visibility of the “Add Action” modal */
@@ -62,7 +64,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">{plot.name}</h1>
         <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-          {plot.size.toFixed(2)} hectares
+          {plot.size.toFixed(2)} {t('plotDetails.hectares')}
         </div>
       </div>
 
@@ -74,25 +76,27 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
       {/* Metadata grid: soil type, topography, owner, created date */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Soil Type</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-1">{t('plotDetails.soilType')}</h3>
           <p className="text-gray-900">
-            {plot.soilType || 'Not specified'}
+            {plot.soilType || t('plotDetails.notSpecified')}
           </p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Topography</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-1">{t('plotDetails.topography')}</h3>
           <p className="text-gray-900">
-            {plot.topography || 'Not specified'}
+            {plot.topography || t('plotDetails.notSpecified')}
           </p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Owner</h3>
-          <p className="text-gray-900">{plot.owner?.name || '—'}</p>
+          <h3 className="text-sm font-medium text-gray-500 mb-1">{t('plotDetails.owner')}</h3>
+          <p className="text-gray-900">
+            {plot.owner?.name || t('plotDetails.notAvailable')}
+          </p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-500 mb-1">Created</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-1">{t('plotDetails.created')}</h3>
           <p className="text-gray-900">
-            {new Date(plot.createdAt).toLocaleDateString('en-US', {
+            {new Date(plot.createdAt).toLocaleDateString(i18n.language, {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -104,11 +108,11 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
       {/* Activity Log section with counts and add button */}
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Activity Log</h2>
+          <h2 className="text-xl font-semibold">{t('plotDetails.activityLog')}</h2>
           <div className="flex items-center space-x-2">
             {/* “Add Action” opens the modal form */}
             <Button size="sm" onClick={() => setShowActionModal(true)}>
-              + Add Action
+              {t('plotDetails.addAction')}
             </Button>
           </div>
         </div>
@@ -120,7 +124,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
               key={type}
               className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
             >
-              {type}: {count}
+              {t(`plotDetails.actionTypes.${type}`)}: {count}
             </span>
           ))}
         </div>

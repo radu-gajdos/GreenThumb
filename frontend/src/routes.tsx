@@ -11,13 +11,11 @@ const AppRoutes: React.FC = () => {
     <Suspense fallback={<Loader className="animate-spin" size={24} />}>
       {/* Wrapping the routes with ThemeProvider and LanguageProvider */}
       <ThemeProvider>
-        <LanguageProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
             <Route path="/app/*" element={<LayoutAppRoutes />} />
           </Routes>
-        </LanguageProvider>
       </ThemeProvider>
     </Suspense>
   );

@@ -1,0 +1,75 @@
+{
+  "plotDetails": {
+    "hectares": "hectare",
+    "soilType": "Tip sol",
+    "notSpecified": "Nespecificat",
+    "topography": "Topografie",
+    "owner": "Proprietar",
+    "notAvailable": "—",
+    "created": "Creat la",
+    "activityLog": "Jurnal de activități",
+    "addAction": "+ Adaugă acțiune",
+    "actionTypes": {
+      "planting": "Plantări",
+      "harvesting": "Recoltări",
+      "fertilizing": "Fertilizări",
+      "treatment": "Tratamente",
+      "watering": "Udări",
+      "soil_reading": "Analize sol"
+    }
+  },
+  "actionsList": {
+    "noActivities": "Nici o activitate înregistrată încă."
+  },
+  "actionItem": {
+    "labels": {
+      "crop": "Cultura",
+      "variety": "Varietate",
+      "seedingRate": "Rată de semănat",
+      "date": "Dată",
+      "yield": "Recoltă",
+      "comments": "Comentarii",
+      "fertilizer": "Fertilizant",
+      "rate": "Rată",
+      "method": "Metodă",
+      "pesticide": "Pesticid",
+      "targetPest": "Dăunător țintă",
+      "dosage": "Doză",
+      "amount": "Cantitate",
+      "source": "Sursă",
+      "ph": "pH",
+      "nitrogen": "Azot",
+      "phosphorus": "Fosfor",
+      "potassium": "Potasiu",
+      "organicMatter": "Materie organică"
+    },
+    "units": {
+      "tons": "tone",
+      "kgPerHa": "kg/ha",
+      "lPerHa": "l/ha",
+      "mm": "mm",
+      "mgPerKg": "mg/kg"
+    },
+    "unknownType": "Tip acțiune necunoscut",
+    "types": {
+      "planting": "Semănare",
+      "harvesting": "Recoltare",
+      "fertilizing": "Fertilizare",
+      "treatment": "Tratare",
+      "watering": "Udire",
+      "soil_reading": "Analiză sol"
+    }
+  },
+  "plotPage": {
+    "error": {
+      "title": "Eroare",
+      "retry": "Reîncearcă",
+      "noId": "ID-ul parcelei este necesar",
+      "unknown": "A apărut o eroare necunoscută"
+    },
+    "notFound": {
+      "title": "Parcelă inexistentă",
+      "message": "Informațiile despre parcela solicitată nu au putut fi găsite."
+    }
+  }
+}
