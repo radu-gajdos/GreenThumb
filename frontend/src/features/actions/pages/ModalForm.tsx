@@ -40,6 +40,12 @@ interface ActionModalFormProps {
   uid?: string | null;
   /** ID of the parent Plot to which this Action belongs */
   plotId: string;
+  /** Selected action type (only needed for controlled components) */
+  actionType?: string | null;
+  /** Setter for action type (only needed for controlled components) */
+  setActionType?: React.Dispatch<React.SetStateAction<string | null>>;
+  /** Available action types (only needed for controlled components) */
+  actionTypes?: string[];
 }
 
 const ActionModalForm: React.FC<ActionModalFormProps> = ({
@@ -48,15 +54,67 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
   onSave,
   uid = null,
   plotId,
+  actionType = null,
+  setActionType: externalSetActionType,
+  actionTypes = ["planting", "harvesting", "fertilizing", "treatment", "watering", "soil_reading"],
 }) => {
   /** Selected action type (e.g. 'planting'); determines which form to show */
-  const [selectedType, setSelectedType] = useState<ActionType | null>(null);
+  const [internalSelectedType, setInternalSelectedType] = useState<ActionType | null>(null);
+  
+  // Use either external or internal state management for action type
+  const selectedType = actionType as ActionType | null || internalSelectedType;
+  const setSelectedType = externalSetActionType || setInternalSelectedType;
+  
   /** Data loaded from API when editing */
   const [initialData, setInitialData] = useState<ActionFormValues | null>(null);
   /** Loading indicator for fetch/edit load */
   const [loading, setLoading] = useState(false);
   /** Memoized API client */
   const actionApi = useMemo(() => new ActionApi(), []);
+
+  /**
+   * Maps action types to tailwind color classes.
+   */
+  const getActionColor = (type: string) => {
+    switch (type) {
+      case 'planting':
+        return 'bg-green-50 border-green-200 hover:bg-green-100 text-green-700';
+      case 'harvesting':
+        return 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100 text-yellow-700';
+      case 'fertilizing':
+        return 'bg-amber-50 border-amber-200 hover:bg-amber-100 text-amber-700';
+      case 'treatment':
+        return 'bg-red-50 border-red-200 hover:bg-red-100 text-red-700';
+      case 'watering':
+        return 'bg-blue-50 border-blue-200 hover:bg-blue-100 text-blue-700';
+      case 'soil_reading':
+        return 'bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700';
+      default:
+        return 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700';
+    }
+  };
+
+  /**
+   * Returns the appropriate icon color class for each action type.
+   */
+  const getIconColor = (type: string) => {
+    switch (type) {
+      case 'planting':
+        return 'text-green-600';
+      case 'harvesting':
+        return 'text-yellow-600';
+      case 'fertilizing':
+        return 'text-amber-600';
+      case 'treatment':
+        return 'text-red-600';
+      case 'watering':
+        return 'text-blue-600';
+      case 'soil_reading':
+        return 'text-purple-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
 
   /**
    * When the modal opens in edit mode (uid provided), fetch existing action.
@@ -77,12 +135,12 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
           console.error("Fetch action failed:", e);
         })
         .finally(() => setLoading(false));
-    } else {
+    } else if (!showModal) {
       // Reset form state when closing or switching to create mode
       setInitialData(null);
       setSelectedType(null);
     }
-  }, [showModal, uid, actionApi]);
+  }, [showModal, uid, actionApi, setSelectedType]);
 
   /**
    * Called when form is submitted.
@@ -118,15 +176,19 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
               </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-3 gap-4 p-4">
-              {(["planting", "harvesting", "fertilizing", "treatment", "watering", "soil_reading"] as ActionType[]).map(
+              {(actionTypes as ActionType[]).map(
                 (type) => (
                   <button
                     key={type}
-                    className="flex flex-col items-center justify-center p-4 border rounded hover:bg-gray-50"
-                    onClick={() => setSelectedType(type)}
+                    className={`flex flex-col items-center justify-center p-4 border rounded ${getActionColor(type)} transition-colors duration-200`}
+                    onClick={() => setSelectedType(type as ActionType)}
                   >
-                    <span className="text-2xl">{getActionIcon(type)}</span>
-                    <span className="mt-2 capitalize">{type.replace("_", " ")}</span>
+                    <div className={`mb-2 ${getIconColor(type)}`}>
+                      {React.cloneElement(getActionIcon(type as ActionType) as React.ReactElement, { size: 28 })}
+                    </div>
+                    <span className="mt-1 capitalize text-sm font-medium">
+                      {type.replace("_", " ")}
+                    </span>
                   </button>
                 )
               )}
