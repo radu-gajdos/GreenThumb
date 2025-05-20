@@ -1,0 +1,212 @@
+/* calendar-styles.css */
+
+/* Base styles to integrate with Shadcn UI */
+.shadcn-calendar .fc {
+  --fc-border-color: hsl(240 5.9% 90%);
+  --fc-button-bg-color: white;
+  --fc-button-border-color: hsl(240 5.9% 90%);
+  --fc-button-text-color: hsl(240 10% 3.9%);
+  --fc-button-active-bg-color: hsl(240 5.9% 95%);
+  --fc-button-active-border-color: hsl(240 5.9% 90%);
+  --fc-button-hover-bg-color: hsl(240 5.9% 95%);
+  --fc-button-hover-border-color: hsl(240 5.9% 90%);
+  --fc-event-border-color: transparent;
+  --fc-page-bg-color: white;
+  --fc-today-bg-color: rgba(0, 0, 0, 0.02);
+  font-family: inherit;
+}
+
+/* Header toolbar */
+.shadcn-calendar .fc .fc-toolbar {
+  padding: 0.75rem;
+  margin-bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Today button */
+.shadcn-calendar .fc .fc-today-button {
+  background-color: hsl(240 5.9% 95%);
+  border: 1px solid hsl(240 5.9% 90%);
+  color: hsl(240 10% 3.9%);
+  font-weight: 500;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  height: auto;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.shadcn-calendar .fc .fc-today-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Navigation buttons (prev, next) */
+.shadcn-calendar .fc .fc-prev-button,
+.shadcn-calendar .fc .fc-next-button {
+  background-color: white;
+  border: 1px solid hsl(240 5.9% 90%);
+  color: hsl(240 10% 3.9%);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.shadcn-calendar .fc .fc-prev-button:hover,
+.shadcn-calendar .fc .fc-next-button:hover {
+  background-color: hsl(240 5.9% 95%);
+}
+
+/* View buttons (month, week, day, list) */
+.shadcn-calendar .fc .fc-button-group {
+  background-color: hsl(240 5.9% 95%);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.shadcn-calendar .fc .fc-button-primary {
+  background-color: transparent;
+  border: 1px solid hsl(240 5.9% 90%);
+  color: hsl(240 10% 3.9%);
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  height: auto;
+  margin: 0;
+}
+
+.shadcn-calendar .fc .fc-button-primary:not(:disabled):hover {
+  background-color: hsl(240 5.9% 90%);
+}
+
+.shadcn-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: white;
+  color: hsl(240 10% 3.9%);
+  border: 1px solid hsl(240 5.9% 90%);
+  z-index: 1;
+  font-weight: 600;
+}
+
+/* Title */
+.shadcn-calendar .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(240 10% 3.9%);
+}
+
+/* Table header */
+.shadcn-calendar .fc th {
+  border-bottom-width: 1px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: hsl(240 4% 46%);
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Day cells */
+.shadcn-calendar .fc .fc-daygrid-day {
+  border-bottom-width: 1px;
+}
+
+.shadcn-calendar .fc .fc-daygrid-day-top {
+  padding: 0.5rem;
+}
+
+.shadcn-calendar .fc .fc-daygrid-day-number {
+  font-size: 0.875rem;
+  color: hsl(240 10% 3.9%);
+}
+
+/* Today highlighting */
+.shadcn-calendar .fc .fc-day-today {
+  background-color: hsl(0 0% 98%) !important;
+}
+
+/* Event styling */
+.shadcn-calendar .fc-event {
+  border-radius: 0.25rem;
+  border-width: 0;
+  padding: 0;
+  margin: 1px 0;
+}
+
+.shadcn-calendar .fc-event-main {
+  padding: 0.125rem 0.25rem;
+}
+
+/* Week and Day view specific */
+.shadcn-calendar .fc .fc-timegrid-slot {
+  height: 3rem;
+}
+
+.shadcn-calendar .fc .fc-timegrid-slot-lane {
+  border-bottom: 1px solid var(--fc-border-color);
+}
+
+.shadcn-calendar .fc .fc-timegrid-now-indicator-line {
+  border-color: hsl(0 72.2% 50.6%);
+}
+
+.shadcn-calendar .fc .fc-timegrid-now-indicator-arrow {
+  border-color: hsl(0 72.2% 50.6%);
+  border-width: 5px;
+}
+
+/* List view */
+.shadcn-calendar .fc-list {
+  border: 1px solid var(--fc-border-color);
+  border-radius: 0.5rem;
+}
+
+.shadcn-calendar .fc .fc-list-day-cushion {
+  background-color: hsl(240 5.9% 95%);
+  padding: 0.5rem 1rem;
+}
+
+.shadcn-calendar .fc .fc-list-event {
+  cursor: pointer;
+}
+
+.shadcn-calendar .fc .fc-list-event:hover td {
+  background-color: hsl(240 5.9% 95%);
+}
+
+.shadcn-calendar .fc .fc-list-event-time {
+  width: 1%;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.shadcn-calendar .fc .fc-list-event-title {
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .shadcn-calendar .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .shadcn-calendar .fc .fc-toolbar-chunk {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .shadcn-calendar .fc .fc-toolbar-title {
+    font-size: 1.125rem;
+  }
+}
