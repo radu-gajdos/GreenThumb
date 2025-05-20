@@ -1,5 +1,5 @@
 export interface Action {
-    id?: number;
+    id: string;
     type: string;
     
     // Fertilizing fields
@@ -34,4 +34,6 @@ export interface Action {
     // Watering fields
     waterSource?: string;
     amount?: number;
+
+    createdAt?: Date;
 }

@@ -6,7 +6,7 @@
  *  - Interactive map of the boundary
  *  - Metadata cards (soil, topography, owner, created date)
  *  - Activity log with counts and individual actions
- *  - “Add Action” button that opens a modal form
+ *  - "Add Action" button that opens a modal form
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,19 +15,31 @@ import { Plot, IAction } from '../../interfaces/plot';
 import ActionsList from './ActionList';
 import { Button } from '@/components/ui/button';
 import ModalForm from '@/features/actions/pages/ModalForm';
+import ActionsIndex from '@/features/actions/pages/Index';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface PlotDetailsProps {
   /** The plot object to render details for */
   plot: Plot;
+  /** Optional callback when actions change to notify parent components */
+  onActionsChange?: (actions: IAction[]) => void;
 }
 
-const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
+const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
   const { t, i18n } = useTranslation();
   
   /** Local copy of plot.actions so we can append new actions client-side */
   const [actionsState, setActionsState] = useState<IAction[]>(plot.actions);
-  /** Controls visibility of the “Add Action” modal */
+  /** Controls visibility of the "Add Action" modal */
   const [showActionModal, setShowActionModal] = useState(false);
+  /** Controls visibility of the "Actions Index" modal */
+  const [showActionsIndex, setShowActionsIndex] = useState(false);
 
   /**
    * Sync local actionsState if parent plot.actions changes.
@@ -36,6 +48,15 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
   useEffect(() => {
     setActionsState(plot.actions);
   }, [plot.actions]);
+
+  /**
+   * Notify parent when our actions change
+   */
+  useEffect(() => {
+    if (onActionsChange) {
+      onActionsChange(actionsState);
+    }
+  }, [actionsState, onActionsChange]);
 
   /**
    * Compute counts of each action type for badges.
@@ -53,9 +74,32 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
    * Appends to local state and closes the modal.
    * @param newAction - The ActionFormType returned by the form
    */
-  const handleAddAction = (newAction: any) => {
+  const handleAddAction = (newAction: IAction) => {
     setActionsState((prev) => [...prev, newAction]);
     setShowActionModal(false);
+  };
+
+  /**
+   * Handlers for the ActionsIndex component
+   */
+  const handleActionAdded = (action: IAction) => {
+    setActionsState(prev => {
+      // Check if action already exists to avoid duplicates
+      if (prev.some(a => a.id === action.id)) {
+        return prev;
+      }
+      return [...prev, action];
+    });
+  };
+
+  const handleActionUpdated = (action: IAction) => {
+    setActionsState(prev => 
+      prev.map(a => a.id === action.id ? action : a)
+    );
+  };
+
+  const handleActionDeleted = (id: string) => {
+    setActionsState(prev => prev.filter(a => a.id !== id));
   };
 
   return (
@@ -110,23 +154,19 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{t('plotDetails.activityLog')}</h2>
           <div className="flex items-center space-x-2">
-            {/* “Add Action” opens the modal form */}
+            {/* "Add Action" opens the modal form */}
             <Button size="sm" onClick={() => setShowActionModal(true)}>
               {t('plotDetails.addAction')}
             </Button>
-          </div>
-        </div>
-
-        {/* Badges showing counts per action type */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {Object.entries(actionGroups).map(([type, count]) => (
-            <span
-              key={type}
-              className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+            {/* "View All Actions" opens the Actions Index */}
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={() => setShowActionsIndex(true)}
             >
-              {t(`plotDetails.actionTypes.${type}`)}: {count}
-            </span>
-          ))}
+              {t('plotDetails.viewAllActions')}
+            </Button>
+          </div>
         </div>
 
         {/* List of individual actions */}
@@ -139,6 +179,29 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot }) => {
           onSave={handleAddAction}
           plotId={plot.id}
         />
+        
+        {/* Modal for browsing all actions */}
+        <Dialog open={showActionsIndex} onOpenChange={setShowActionsIndex} modal>
+          <DialogContent className="max-w-5xl">
+            <DialogHeader>
+              <DialogTitle>{t('plotDetails.allActions')} - {plot.name}</DialogTitle>
+            </DialogHeader>
+            <div className="h-[70vh] overflow-auto">
+              <ActionsIndex 
+                plotId={plot.id} 
+                actions={actionsState}
+                onActionAdded={handleActionAdded}
+                onActionUpdated={handleActionUpdated}
+                onActionDeleted={handleActionDeleted}
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowActionsIndex(false)}>
+                {t('common.close')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
