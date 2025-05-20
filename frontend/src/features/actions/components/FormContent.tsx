@@ -103,20 +103,68 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
       } as ActionFormValues),
   });
 
+  /**
+   * Returns the appropriate icon color class for each action type.
+   */
+  const getIconColor = () => {
+    switch (type) {
+      case 'planting':
+        return 'text-green-600';
+      case 'harvesting':
+        return 'text-yellow-600';
+      case 'fertilizing':
+        return 'text-amber-600';
+      case 'treatment':
+        return 'text-red-600';
+      case 'watering':
+        return 'text-blue-600';
+      case 'soil_reading':
+        return 'text-purple-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  /**
+   * Returns the appropriate text color class for each action type.
+   */
+  const getTextColor = () => {
+    switch (type) {
+      case 'planting':
+        return 'text-green-700';
+      case 'harvesting':
+        return 'text-yellow-700';
+      case 'fertilizing':
+        return 'text-amber-700';
+      case 'treatment':
+        return 'text-red-700';
+      case 'watering':
+        return 'text-blue-700';
+      case 'soil_reading':
+        return 'text-purple-700';
+      default:
+        return 'text-gray-700';
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Header with Back button, icon + title */}
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={onBack}>
-            <ArrowLeft />
+        <div className="flex items-center mb-4">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mr-2">
+            <ArrowLeft size={16} />
           </Button>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            {getActionIcon(type)}{" "}
-            {type.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
-          </h3>
-          {/* Spacer to balance flex layout */}
-          <div />
+          <div className="flex-1 flex items-center justify-center">
+            <h3 className={`text-lg font-semibold flex items-center gap-2 ${getTextColor()}`}>
+              <span className={getIconColor()}>
+                {React.cloneElement(getActionIcon(type) as React.ReactElement, { size: 22 })}
+              </span>
+              {type.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
+            </h3>
+          </div>
+          {/* Empty div to balance the back button */}
+          <div className="w-10" />
         </div>
 
         {/* Common field: comments */}
@@ -494,7 +542,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit" size="sm">
+          <Button type="submit" size="sm" className={type ? `bg-${type === 'planting' ? 'green' : type === 'harvesting' ? 'yellow' : type === 'fertilizing' ? 'amber' : type === 'treatment' ? 'red' : type === 'watering' ? 'blue' : type === 'soil_reading' ? 'purple' : 'primary'}-600 hover:bg-${type === 'planting' ? 'green' : type === 'harvesting' ? 'yellow' : type === 'fertilizing' ? 'amber' : type === 'treatment' ? 'red' : type === 'watering' ? 'blue' : type === 'soil_reading' ? 'purple' : 'primary'}-700` : ''}>
             Save
           </Button>
         </DialogFooter>

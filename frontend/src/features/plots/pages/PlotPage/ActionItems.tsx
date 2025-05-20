@@ -10,6 +10,15 @@ import {
   IWatering,
   ISoilReading,
 } from '../../interfaces/plot';
+import { 
+  Sprout, 
+  Tractor, 
+  Wind, 
+  Droplets, 
+  FlaskConical, 
+  FileText, 
+  PillBottle
+} from 'lucide-react';
 
 interface ActionItemProps {
   /** The generic action object to render; will be narrowed via `castAction`. */
@@ -19,7 +28,7 @@ interface ActionItemProps {
 /**
  * ActionItem
  *
- * Renders a styled “card” for an agricultural action (planting, harvesting, etc.).
+ * Renders a styled "card" for an agricultural action (planting, harvesting, etc.).
  * It:
  * 1. Casts the generic `IAction` to its specific subtype.
  * 2. Chooses an icon, title, and color based on `action.type`.
@@ -203,24 +212,24 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
   };
 
   /**
-   * Maps action types to emoji icons.
+   * Returns the Lucide icon component for each action type.
    */
   const getActionIcon = () => {
     switch (action.type) {
       case 'planting':
-        return '🌱';
+        return <Sprout className="text-green-600" />;
       case 'harvesting':
-        return '🚜';
+        return <Tractor className="text-yellow-600" />;
       case 'fertilizing':
-        return '💩';
+        return <Wind className="text-amber-600" />;
       case 'treatment':
-        return '🧪';
+        return <PillBottle className="text-red-600" />;
       case 'watering':
-        return '💧';
+        return <Droplets className="text-blue-600" />;
       case 'soil_reading':
-        return '🧪';
+        return <FlaskConical className="text-purple-600" />;
       default:
-        return '📋';
+        return <FileText className="text-gray-600" />;
     }
   };
 
@@ -257,7 +266,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
     <div className={`border rounded-lg p-4 mb-4 ${getActionColor()}`}>
       <div className="flex items-center mb-3">
         {/* Icon representing the action */}
-        <div className="text-2xl mr-2">{getActionIcon()}</div>
+        <div className="mr-2">{getActionIcon()}</div>
         {/* Title, e.g. "Planting" */}
         <h3 className="text-lg font-semibold">{getActionTitle()}</h3>
       </div>

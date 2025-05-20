@@ -1,4 +1,14 @@
+import React from "react";
 import { z } from "zod";
+import { 
+  Sprout, 
+  Tractor, 
+  Wind, 
+  Droplets, 
+  FlaskConical, 
+  HelpCircle, 
+  PillBottle
+} from "lucide-react";
 
 export type ActionType =
   | "planting"
@@ -11,19 +21,19 @@ export type ActionType =
 export const getActionIcon = (type: ActionType) => {
   switch (type) {
     case "planting":
-      return "🌱";
+      return <Sprout size={24} />;
     case "harvesting":
-      return "🚜";
+      return <Tractor size={24} />;
     case "fertilizing":
-      return "💩";
+      return <Wind size={24} />;
     case "treatment":
-      return "🧪";
+      return <PillBottle size={24} />;
     case "watering":
-      return "💧";
+      return <Droplets size={24} />;
     case "soil_reading":
-      return "🧪";
+      return <FlaskConical size={24} />;
     default:
-      return "❓";
+      return <HelpCircle size={24} />;
   }
 };
 
