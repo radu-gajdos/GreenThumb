@@ -11,14 +11,14 @@ import { ActionFormValues } from "../constants/formSchema";
  */
 export class ActionApi {
   /**
-   * Fetch all actions.
+   * Fetch all actions by the plot id.
    * @returns Promise resolving to an array of Action objects.
    *          Returns an empty array on error (toast shown).
    */
-  async findAll(): Promise<Action[]> {
+  async findAllByPlot(plotId: string): Promise<Action[]> {
     try {
       // GET /actions → { data: { data: Action[] } }
-      const response = await http.get("/actions");
+      const response = await http.get(`/actions/${plotId}`);
       return response.data.data;
     } catch (error) {
       // Notify user, but do not throw so the UI can handle an empty list gracefully

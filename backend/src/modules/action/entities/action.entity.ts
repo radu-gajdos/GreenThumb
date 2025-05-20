@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TableInheritance, ChildEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TableInheritance, ChildEntity, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { Plot } from '../../plot/entities/plot.entity';
 
@@ -11,7 +11,7 @@ export class Action {
     @Expose()
     @Column({ type: 'varchar' })
     type: string;
-    
+
     @Expose()
     @Column({ name: 'plotId' })
     plotId: string;
@@ -19,4 +19,13 @@ export class Action {
     @Expose()
     @ManyToOne(() => Plot, (plot) => plot.actions, { onDelete: 'CASCADE' })
     plot: Plot;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
 }
