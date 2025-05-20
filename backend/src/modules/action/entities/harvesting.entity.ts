@@ -12,11 +12,6 @@ export class Harvesting extends Action {
     cropYield: number;
 
     @Expose()
-    @IsDate()
-    @Column({ type: 'date' })
-    harvestDate: Date;
-
-    @Expose()
     @IsOptional()
     @IsString()
     @Column({ length: 500, nullable: true })

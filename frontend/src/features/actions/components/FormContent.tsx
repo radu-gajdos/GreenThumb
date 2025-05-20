@@ -30,6 +30,7 @@ import {
   getActionIcon,
   ActionType,
 } from "../constants/formSchema";
+import DatePicker from "@/components/ui/date-picker";
 
 interface ActionFormContentProps {
   /** Determines which extra fields are rendered */
@@ -181,6 +182,22 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Data Contract</FormLabel>
+              <FormControl>
+                <DatePicker
+                  value={field.value}
+                  onValueChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* --- Planting fields --- */}
         {type === "planting" && (
@@ -224,19 +241,6 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="plantingDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Planting Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </>
         )}
 
@@ -257,19 +261,6 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                         field.onChange(parseFloat(e.target.value))
                       }
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="harvestDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Harvest Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

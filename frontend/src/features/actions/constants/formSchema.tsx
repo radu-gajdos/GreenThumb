@@ -1,5 +1,5 @@
 import React from "react";
-import { z } from "zod";
+import { date, z } from "zod";
 import { 
   Sprout, 
   Tractor, 
@@ -46,8 +46,7 @@ const commonFields = {
     "watering",
     "soil_reading",
   ]),
-  // Unlike original, we won't require operator and date as common fields,
-  // since they don't appear in the DTO. We'll handle them differently in the UI.
+  date: z.date().default(() => new Date()),
   comments: z.string().optional(),
 };
 
@@ -59,7 +58,6 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     cropType: z.string({ required_error: "Crop type is required" }).nonempty(),
     variety: z.string().optional(),
     seedingRate: z.string().optional(),
-    plantingDate: z.string().optional(),
   }),
   
   // Harvesting fields
@@ -67,7 +65,6 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     ...commonFields,
     type: z.literal("harvesting"),
     cropYield: z.number({ required_error: "Yield is required" }).min(0),
-    harvestDate: z.string().optional(),
   }),
   
   // Fertilizing fields

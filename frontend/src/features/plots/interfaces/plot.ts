@@ -1,3 +1,5 @@
+import { Action } from "@/features/actions/interfaces/action";
+
 export interface Plot {
   id: string;
   name: string;
@@ -9,7 +11,7 @@ export interface Plot {
   updatedAt: string;
   deletedAt?: string | null;
   owner: IUser;
-  actions: IAction[];
+  actions: Action[];
 }
 
 export interface GeoJsonPolygon {
