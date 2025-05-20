@@ -11,7 +11,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PlotMap from './PlotMap';
-import { Plot, IAction } from '../../interfaces/plot';
+import { Plot } from '../../interfaces/plot';
 import ActionsList from './ActionList';
 import { Button } from '@/components/ui/button';
 import ModalForm from '@/features/actions/pages/ModalForm';
@@ -23,19 +23,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { Action } from '@/features/actions/interfaces/action';
 
 interface PlotDetailsProps {
   /** The plot object to render details for */
   plot: Plot;
   /** Optional callback when actions change to notify parent components */
-  onActionsChange?: (actions: IAction[]) => void;
+  onActionsChange?: (actions: Action[]) => void;
 }
 
 const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
   const { t, i18n } = useTranslation();
   
   /** Local copy of plot.actions so we can append new actions client-side */
-  const [actionsState, setActionsState] = useState<IAction[]>(plot.actions);
+  const [actionsState, setActionsState] = useState<Action[]>(plot.actions);
   /** Controls visibility of the "Add Action" modal */
   const [showActionModal, setShowActionModal] = useState(false);
   /** Controls visibility of the "Actions Index" modal */
@@ -74,7 +75,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
    * Appends to local state and closes the modal.
    * @param newAction - The ActionFormType returned by the form
    */
-  const handleAddAction = (newAction: IAction) => {
+  const handleAddAction = (newAction: Action) => {
     setActionsState((prev) => [...prev, newAction]);
     setShowActionModal(false);
   };
@@ -82,7 +83,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
   /**
    * Handlers for the ActionsIndex component
    */
-  const handleActionAdded = (action: IAction) => {
+  const handleActionAdded = (action: Action) => {
     setActionsState(prev => {
       // Check if action already exists to avoid duplicates
       if (prev.some(a => a.id === action.id)) {
@@ -92,7 +93,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
     });
   };
 
-  const handleActionUpdated = (action: IAction) => {
+  const handleActionUpdated = (action: Action) => {
     setActionsState(prev => 
       prev.map(a => a.id === action.id ? action : a)
     );

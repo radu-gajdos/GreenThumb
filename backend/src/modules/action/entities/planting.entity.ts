@@ -22,9 +22,4 @@ export class Planting extends Action {
     @IsString()
     @Column({ length: 50, nullable: true })
     seedingRate?: string;
-
-    @Expose()
-    @IsDate()
-    @Column({ type: 'date' })
-    plantingDate: Date;
 }

@@ -1,6 +1,7 @@
 export interface Action {
     id: string;
     type: string;
+    date: Date;
     
     // Fertilizing fields
     fertilizerType?: string;
@@ -9,14 +10,12 @@ export interface Action {
     
     // Harvesting fields
     cropYield?: number;
-    harvestDate?: Date;
     comments?: string;
     
     // Planting fields
     cropType?: string;
     variety?: string;
     seedingRate?: string;
-    plantingDate?: Date;
     
     // SoilReading fields
     ph?: number;

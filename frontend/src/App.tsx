@@ -18,6 +18,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import exp from 'constants';
 import { LanguageProvider } from './contexts/LanguageContext';
 import './i18n';
+import { StyledEngineProvider } from '@mui/material';
 
 // AG Grid - Register Modules
 ModuleRegistry.registerModules([
@@ -31,17 +32,18 @@ LicenseManager.setLicenseKey(process.env.REACT_APP_AG_GRID_LICENSE_KEY!);
 window.Buffer = window.Buffer || Buffer;
 
 // Main App Component
-const App: React.FC = () => {
-  return (
+const App = () => (
+  <StyledEngineProvider injectFirst>
     <BrowserRouter>
       <AuthProvider>
         <LanguageProvider>
           <AppRoutes />
         </LanguageProvider>
       </AuthProvider>
-    </BrowserRouter >
-  );
-};
+    </BrowserRouter>
+  </StyledEngineProvider>
+);
+
 
 // Render
 const root = ReactDOM.createRoot(

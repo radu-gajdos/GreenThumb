@@ -6,6 +6,11 @@ export class CreateActionDto {
     @IsString()
     type: string;
 
+    @IsNotEmpty()
+    @IsDate()
+    @Type(() => Date)
+    date: Date;
+
     // Fertilizing fields
     @IsOptional()
     @IsString()
@@ -27,11 +32,6 @@ export class CreateActionDto {
     cropYield?: number;
 
     @IsOptional()
-    @IsDate()
-    @Type(() => Date)
-    harvestDate?: Date;
-
-    @IsOptional()
     @IsString()
     comments?: string;
 
@@ -47,11 +47,6 @@ export class CreateActionDto {
     @IsOptional()
     @IsString()
     seedingRate?: string;
-
-    @IsOptional()
-    @IsDate()
-    @Type(() => Date)
-    plantingDate?: Date;
 
     // SoilReading fields
     @IsOptional()

@@ -81,7 +81,7 @@ const PlotPage: React.FC = () => {
           <PlotDetails plot={plot} />
         </div>
         {/* Right: AI chat placeholder */}
-        <div className="w-full lg:w-1/3">
+        <div className="w-full h-[80vh] lg:w-1/3">
           <AIChatPlaceholder />
         </div>
       </div>
