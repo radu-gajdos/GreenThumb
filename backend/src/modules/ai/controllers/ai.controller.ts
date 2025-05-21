@@ -5,18 +5,14 @@ import { AiService } from '../services/ai.service';
 export class AiController {
     constructor(private readonly aiService: AiService) { }
 
-    @Post('recommend')
-    async recommend(@Body() body: {
+    // Changes to ai.controller.ts
+    @Post('query')
+    async queryAI(@Body() body: {
         language?: string;
-        crop: string;
-        soil: string;
-        weather: string;
-        recentActions: string;
-        goal: string;
-        plotId?: string;
-        coordinates?: string;
+        query: string;  // The question or task
+        plotId: string; // Plot ID is now required
     }) {
-        const result = await this.aiService.getRecommendationFromFieldData(body);
+        const result = await this.aiService.getAIResponseForPlot(body);
         return { result };
     }
 

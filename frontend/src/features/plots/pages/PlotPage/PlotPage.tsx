@@ -1,8 +1,9 @@
+// src/components/plots/PlotPage.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PlotDetails from './PlotDetails';
-import AIChatPlaceholder from './AIChatPlaceholder';
+import AIChat from './AiChat';
 import { Plot } from '../../interfaces/plot';
 import { PlotApi } from '../../api/plot.api';
 
@@ -80,9 +81,9 @@ const PlotPage: React.FC = () => {
         <div className="w-full lg:w-2/3">
           <PlotDetails plot={plot} />
         </div>
-        {/* Right: AI chat placeholder */}
+        {/* Right: AI chat */}
         <div className="w-full h-[80vh] lg:w-1/3">
-          <AIChatPlaceholder />
+          <AIChat plot={plot} />
         </div>
       </div>
     </div>
