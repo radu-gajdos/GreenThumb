@@ -13,7 +13,6 @@ export class PlotService {
   ) {}
 
   async create(input: CreatePlotDto, user: AuthUserDto): Promise<Plot> {
-    console.log('user', user);
     const plot = this.plotRepository.create({ ...input, ownerId: user.id });
     return this.plotRepository.save(plot);
   }

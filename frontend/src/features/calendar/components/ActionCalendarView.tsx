@@ -30,22 +30,17 @@ const ActionsCalendarView: React.FC = () => {
     }, [])
 
     return (
-        <div className="container mx-auto py-8">
-            <Card className="shadow-sm">
-                <CardHeader>
-                    <CardTitle>Actions Calendar</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {loading ? (
-                        <div className="flex justify-center items-center h-[60vh]">
-                            <p>Loading calendar...</p>
-                        </div>
-                    ) : (
-                        <ActionCalendar actions={actions} />
-                    )}
-
-                </CardContent>
-            </Card>
+        <div className="container mx-auto py-10 px-6">
+            <h1 className="text-3xl font-bold mb-6">Actions Calendar</h1>
+            {loading ? (
+            <div className="flex justify-center items-center h-[70vh]">
+                <p className="text-xl">Loading calendar...</p>
+            </div>
+            ) : (
+            <div className="w-full h-[80vh]">
+                <ActionCalendar actions={actions} />
+            </div>
+            )}
         </div>
     )
 }
