@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster"
 import PlotRoutes from '../plots/routes';
 import MapRoutes from '../map/routes';
 import CalendarRoutes from '../calendar/routes';
+import FieldNotesViewer from '../fieldNotes/components/FieldNoteViewer';
 
 const LayoutAppRoutes: React.FC = () => {
     return (
@@ -29,6 +30,7 @@ const LayoutAppRoutes: React.FC = () => {
                                     <Route path="/calendar/*" element={<CalendarRoutes />} />
                                     <Route path="/maps/*" element={<MapRoutes />} />
                                     <Route path="/two-step" element={<TwoStepConfigure />} />
+                                    <Route path="/field-notes" element={<FieldNotesViewer />} />
                                 </Routes>
                             </div>
                         </div>

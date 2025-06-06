@@ -29,6 +29,7 @@ import { SharedModule } from './shared/modules/shared.module';
 import { PlotModule } from './modules/plot/plot.module';
 import { ActionModule } from './modules/action/action.module';
 import { AiModule } from './modules/ai/ai.module';
+import { FieldNoteModule } from './modules/fieldNote/fieldNote.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { AiModule } from './modules/ai/ai.module';
     PlotModule,
     ActionModule,
     AiModule,
+    FieldNoteModule
   ],
   providers: [
     // Global interceptors

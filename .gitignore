@@ -2,3 +2,5 @@ node_modules/
 
 # Database files
 /postgres-data/
+
+.DS_Store
