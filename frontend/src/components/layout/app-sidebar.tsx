@@ -1,5 +1,5 @@
 import React from "react"
-import { Bot, LifeBuoy, Map, Send, SidebarIcon, Users, Calendar, LayoutDashboard } from "lucide-react"
+import { Bot, LifeBuoy, Map, Send, SidebarIcon, Users, Calendar, LayoutDashboard, Notebook } from "lucide-react"
 import { NavProjects } from "@/components/layout/nav-projects"
 import { NavSecondary } from "@/components/layout/nav-secondary"
 import { NavUser } from "@/components/layout/nav-user"
@@ -42,6 +42,11 @@ const data = {
       name: "AI Chat",
       url: "ai-chat",
       icon: Bot,
+    },
+    {
+      name: "Field Notes",
+      url: "field-notes",
+      icon: Notebook,
     },
     {
       name: "Community",

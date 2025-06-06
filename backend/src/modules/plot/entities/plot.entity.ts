@@ -3,6 +3,7 @@ import { Feature, Polygon } from 'geojson';
 import { User } from '../../user/entities/user.entity';
 import { Action } from '../../action/entities/action.entity';
 import { Expose } from 'class-transformer';
+import { FieldNote } from 'src/modules/fieldNote/entities/fieldNote.entity';
 
 @Entity({ name: 'plots' })
 export class Plot {
@@ -64,6 +65,11 @@ export class Plot {
     @Expose({ groups: ['plot'] })
     @OneToMany(() => Action, (action) => action.plot, { cascade: true, eager: true })
     actions: Action[];
+
+    @OneToMany(() => FieldNote, (fieldNote) => fieldNote.plot, { cascade: true, eager: true })
+    @Expose({ groups: ['plot'] })
+    fieldNotes: FieldNote[];
+
 
     @CreateDateColumn()
     createdAt: Date;
