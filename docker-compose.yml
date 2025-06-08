@@ -30,7 +30,7 @@ services:
       
   # database
   db_radu:
-    image: postgres:17.2
+    image: postgis/postgis:17-3.4
     container_name: db_radu
     restart: unless-stopped
     environment:
@@ -71,9 +71,23 @@ services:
     depends_on:
       - redis_radu
 
+  ai_model:
+    container_name: ai_model
+    build:
+      context: ./ai-model
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai-model:/app
+    # mem_limit: 1g
+
+
 volumes:
   postgres-data:
   redisinsight:
+
+
+
 
 # Backend: 3005
 # DB: 5432

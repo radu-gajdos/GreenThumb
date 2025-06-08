@@ -1,5 +1,5 @@
 import React from "react"
-import { Bot, LifeBuoy, Map, Send, SidebarIcon, Users, Calendar, LayoutDashboard, Notebook } from "lucide-react"
+import { Bot, LifeBuoy, Map, Send, SidebarIcon, Users, Calendar, LayoutDashboard, Notebook, BarChart } from "lucide-react"
 import { NavProjects } from "@/components/layout/nav-projects"
 import { NavSecondary } from "@/components/layout/nav-secondary"
 import { NavUser } from "@/components/layout/nav-user"
@@ -49,9 +49,9 @@ const data = {
       icon: Notebook,
     },
     {
-      name: "Community",
-      url: "community",
-      icon: Users,
+      name: "Yield Predictor",
+      url: "yield",
+      icon: BarChart,
     },
 
   ]
