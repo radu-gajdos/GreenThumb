@@ -3,4 +3,4 @@ node_modules/
 # Database files
 /postgres-data/
 
-.DS_Store
+.DS_Storeai-model/model_global_enhanced.pkl
