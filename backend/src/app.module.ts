@@ -30,6 +30,7 @@ import { PlotModule } from './modules/plot/plot.module';
 import { ActionModule } from './modules/action/action.module';
 import { AiModule } from './modules/ai/ai.module';
 import { FieldNoteModule } from './modules/fieldNote/fieldNote.module';
+import { ConversationModule } from './modules/conversation/conversation.module';
 
 @Module({
   imports: [
@@ -69,7 +70,8 @@ import { FieldNoteModule } from './modules/fieldNote/fieldNote.module';
     PlotModule,
     ActionModule,
     AiModule,
-    FieldNoteModule
+    FieldNoteModule,
+    ConversationModule
   ],
   providers: [
     // Global interceptors

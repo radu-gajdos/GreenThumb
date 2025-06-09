@@ -4,6 +4,7 @@ import { User } from '../../user/entities/user.entity';
 import { Action } from '../../action/entities/action.entity';
 import { Expose } from 'class-transformer';
 import { FieldNote } from 'src/modules/fieldNote/entities/fieldNote.entity';
+import { Conversation } from 'src/modules/conversation/entities/conversation.entity';
 
 @Entity({ name: 'plots' })
 export class Plot {
@@ -69,7 +70,10 @@ export class Plot {
     @OneToMany(() => FieldNote, (fieldNote) => fieldNote.plot, { cascade: true, eager: true })
     @Expose({ groups: ['plot'] })
     fieldNotes: FieldNote[];
-
+    
+    @OneToMany(() => Conversation, (conversation) => conversation.plot, { cascade: true, eager: true })
+    @Expose({ groups: ['plot'] })
+    conversations: Conversation[];
 
     @CreateDateColumn()
     createdAt: Date;

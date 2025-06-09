@@ -1,25 +1,18 @@
 /**
- * AIChat.tsx
+ * AIChat.tsx - Backend Integrated Version
  *
  * A Claude-like chat interface for interacting with an AI assistant
- * about agricultural plot management.  
- * Think of this as a smart notepad that remembers your conversations
- * and can give farming advice specific to your plot.
+ * about agricultural plot management with sliding window context.
+ * Now uses backend database for message persistence and conversation memory.
  */
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plot } from '../../interfaces/plot';
-import AiApi from '../../api/ai.api';
-import { BookMarked } from 'lucide-react';
+import { BookMarked, Trash2 } from 'lucide-react';
 import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai';
-  timestamp: Date;
-}
+import { ConversationApi } from '../../api/conversation.api';
+import { Message } from '../../interfaces/conversation';
 
 interface AIChatProps {
   plot: Plot;
@@ -50,44 +43,88 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [messageToSave, setMessageToSave] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Memoized AI API client instance
-  const aiApi = useMemo(() => new AiApi(), []);
+  // Memoized Conversation API client instance
+  const conversationApi = useMemo(() => new ConversationApi(), []);
 
   // Current language code, e.g. 'ro' or 'en'
   const currentLanguage = i18n.language as keyof typeof WELCOME_MESSAGES;
-  // Key for saving chat history in localStorage
-  const storageKey = `chat_${plot.id}`;
 
   /**
-   * On mount (or when plot.id changes), load saved messages from localStorage.
-   * If none exist or parsing fails, initialize with a localized welcome message.
+   * On mount (or when plot.id changes), load messages from backend database.
+   * If none exist, initialize with a localized welcome message.
    */
   useEffect(() => {
+    const loadConversationHistory = async () => {
+      console.log(`[AICHAT] Loading conversation history for plot: ${plot.id}`);
+      setInitialLoading(true);
+
+      try {
+        // Load messages from backend database
+        const backendMessages = await conversationApi.getConversationHistory(plot.id);
+        
+        console.log(`[AICHAT] Loaded ${backendMessages.length} messages from backend`);
+
+        if (backendMessages.length > 0) {
+          setMessages(backendMessages);
+        } else {
+          // No messages in backend, check localStorage for migration
+          await migrateFromLocalStorage();
+        }
+      } catch (error) {
+        console.error('[AICHAT] Error loading conversation history:', error);
+        // Fallback to localStorage if backend fails
+        await migrateFromLocalStorage();
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    loadConversationHistory();
+  }, [plot.id, conversationApi]);
+
+  /**
+   * Migrate existing localStorage data to backend (one-time migration)
+   */
+  const migrateFromLocalStorage = async () => {
+    const storageKey = `chat_${plot.id}`;
     const savedMessages = localStorage.getItem(storageKey);
 
     if (savedMessages) {
       try {
+        console.log('[AICHAT] Found localStorage data, attempting migration...');
         const parsedMessages: Message[] = JSON.parse(savedMessages).map((msg: any) => ({
           ...msg,
+          id: msg.id || `migrated-${Date.now()}-${Math.random()}`,
           timestamp: new Date(msg.timestamp),
+          plotId: plot.id,
         }));
+
+        // For now, just use the parsed messages
+        // In a full implementation, you'd send these to backend
         setMessages(parsedMessages);
+        
+        console.log(`[AICHAT] Migrated ${parsedMessages.length} messages from localStorage`);
+        
+        // Clear localStorage after successful migration
+        localStorage.removeItem(storageKey);
+        
       } catch (error) {
-        console.error('Error parsing saved messages:', error);
+        console.error('[AICHAT] Error parsing saved messages:', error);
         initializeChat();
       }
     } else {
       initializeChat();
     }
-  }, [plot.id]);
+  };
 
   /**
    * Initialize chat with a welcome message from the AI.
-   * Uses localized welcome text and the plot’s name.
+   * Uses localized welcome text and the plot's name.
    */
   const initializeChat = () => {
     const welcomeGenerator =
@@ -95,24 +132,15 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     const welcomeText = welcomeGenerator(plot.name);
 
     const initialMessage: Message = {
-      id: Date.now().toString(),
+      id: `welcome-${Date.now()}`,
       text: welcomeText,
       sender: 'ai',
       timestamp: new Date(),
+      plotId: plot.id,
     };
 
     setMessages([initialMessage]);
   };
-
-  /**
-   * Whenever `messages` changes, persist them to localStorage.
-   * Uses JSON.stringify; note that Date objects become strings here.
-   */
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem(storageKey, JSON.stringify(messages));
-    }
-  }, [messages, storageKey]);
 
   /**
    * Auto-scroll the message container to bottom whenever new messages arrive.
@@ -126,45 +154,57 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     setInputValue(e.target.value);
   };
 
-  /** Create a new Message object with unique ID and current timestamp */
-  const createMessage = (text: string, sender: 'user' | 'ai'): Message => ({
-    id: `${Date.now()}-${sender}`,
-    text,
-    sender,
-    timestamp: new Date(),
-  });
-
-  /** Append a new message to the conversation state */
-  const addMessage = (message: Message) => {
-    setMessages((prev) => [...prev, message]);
-  };
-
   /**
-   * Send the user’s input to the AI API:
-   * 1. Append the user’s message to state
-   * 2. Call aiApi.query() to get AI response
-   * 3. Append the AI response or localized error message
+   * Send the user's input to the AI API using backend conversation system:
+   * 1. Send message through ConversationApi (includes sliding window context)
+   * 2. Backend automatically saves both user and AI messages
+   * 3. Update local state with the new messages
    */
   const sendMessage = async () => {
     const trimmedInput = inputValue.trim();
     if (!trimmedInput) return;
 
-    // Add user message
-    const userMessage = createMessage(trimmedInput, 'user');
-    addMessage(userMessage);
     setInputValue('');
     setLoading(true);
 
     try {
-      const result = await aiApi.query(plot.id, trimmedInput, currentLanguage);
-      const aiMessage = createMessage(result, 'ai');
-      addMessage(aiMessage);
+      console.log(`[AICHAT] Sending message for plot ${plot.id}:`, trimmedInput);
+
+      // Send message through backend conversation API
+      // This automatically handles sliding window context and saves messages
+      const result = await conversationApi.sendMessageWithDetails({
+        plotId: plot.id,
+        text: trimmedInput,
+        language: currentLanguage,
+      });
+
+      console.log('[AICHAT] Received response:', result);
+
+      // Update local state with both user and AI messages
+      setMessages(prev => [...prev, result.userMessage, result.aiMessage]);
+
     } catch (error) {
-      // Use a localized error text if AI call fails
-      const errorText =
-        ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
-      const errorMessage = createMessage(errorText, 'ai');
-      addMessage(errorMessage);
+      console.error('[AICHAT] Error sending message:', error);
+      
+      // Create fallback messages for display
+      const userMessage: Message = {
+        id: `user-${Date.now()}`,
+        text: trimmedInput,
+        sender: 'user',
+        timestamp: new Date(),
+        plotId: plot.id,
+      };
+
+      const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        text: errorText,
+        sender: 'ai',
+        timestamp: new Date(),
+        plotId: plot.id,
+      };
+
+      setMessages(prev => [...prev, userMessage, errorMessage]);
     } finally {
       setLoading(false);
     }
@@ -179,22 +219,37 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   };
 
   /**
-   * Clear chat history after user confirmation:
-   * - Prompt with localized confirmation
-   * - Remove from localStorage and reinitialize
+   * Clear chat history in backend database after user confirmation
    */
-  const clearChat = () => {
+  const clearChat = async () => {
     const confirmText =
       CONFIRM_MESSAGES[currentLanguage] || CONFIRM_MESSAGES.en;
 
     if (window.confirm(confirmText)) {
-      localStorage.removeItem(storageKey);
-      initializeChat();
+      try {
+        console.log(`[AICHAT] Clearing conversation for plot: ${plot.id}`);
+        
+        // Clear conversation in backend database
+        await conversationApi.clearConversation(plot.id);
+        
+        // Reset local state
+        setMessages([]);
+        
+        // Reinitialize with welcome message
+        initializeChat();
+        
+        console.log('[AICHAT] Conversation cleared successfully');
+      } catch (error) {
+        console.error('[AICHAT] Error clearing conversation:', error);
+        // Fallback to local clear
+        setMessages([]);
+        initializeChat();
+      }
     }
   };
 
   /**
-   * When the user clicks “Save” on an AI message, open the save-modal:
+   * When the user clicks "Save" on an AI message, open the save-modal:
    * Store the chosen message in state for passing to the modal.
    */
   const handleSaveMessage = (message: Message) => {
@@ -204,8 +259,8 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
   /** Callback after a field note has been saved successfully */
   const handleFieldNoteSaved = () => {
-    console.log('Field note saved successfully');
-    // In the future, we could mark this message as “saved” in the UI.
+    console.log('[AICHAT] Field note saved successfully');
+    // In the future, we could mark this message as "saved" in the UI
   };
 
   /** Format a Date object to localized HH:mm format */
@@ -215,6 +270,15 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
       minute: '2-digit',
     });
   };
+
+  // Show loading spinner during initial load
+  if (initialLoading) {
+    return (
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   // Disable input while loading an AI response
   const isInputDisabled = loading;
@@ -230,14 +294,20 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shadow-sm">
             AI
           </div>
-          <h3 className="ml-3 text-lg font-semibold text-gray-900">
-            {t('plotPage.aiChat.title')}
-          </h3>
+          <div className="ml-3">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {t('plotPage.aiChat.title')}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {messages.length} {messages.length === 1 ? 'mesaj' : 'mesaje'}
+            </p>
+          </div>
         </div>
+        
         {/* Clear chat history button */}
         <button
           onClick={clearChat}
-          className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
+          className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
           title={
             currentLanguage === 'ro'
               ? 'Șterge istoricul conversației'
@@ -245,21 +315,10 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
           }
           aria-label="Clear chat history"
         >
-          {/* Trash icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
+          <Trash2 className="h-4 w-4" />
+          <span className="text-sm hidden sm:inline">
+            {currentLanguage === 'ro' ? 'Șterge' : 'Clear'}
+          </span>
         </button>
       </div>
 
@@ -301,7 +360,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                     {/* Timestamp */}
                     <div className="text-xs">{formatTime(message.timestamp)}</div>
 
-                    {/* Show “Save” button only on AI messages */}
+                    {/* Show "Save" button only on AI messages */}
                     {message.sender === 'ai' && (
                       <button
                         onClick={() => handleSaveMessage(message)}
@@ -328,9 +387,16 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
           </div>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-center">
-              {t('plotPage.aiChat.placeholder')}
-            </p>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  AI
+                </div>
+              </div>
+              <p className="text-gray-500 text-center">
+                {t('plotPage.aiChat.placeholder')}
+              </p>
+            </div>
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Plot } from 'src/modules/plot/entities/plot.entity';
 import { Action } from 'src/modules/action/entities/action.entity';
+import { Polygon } from 'geojson';
 
 interface FieldData {
   language?: string;
@@ -16,12 +17,18 @@ interface FieldData {
   coordinates?: string;
 }
 
+interface ConversationMessage {
+  sender: 'user' | 'ai';
+  text: string;
+  timestamp: string;
+}
+
 @Injectable()
 export class AiService {
   constructor(
     @InjectRepository(Plot)
     private readonly plotRepository: Repository<Plot>,
-  ) { }
+  ) {}
 
   async getRecommendationFromFieldData(data: FieldData): Promise<string> {
     const prompt = this.buildPrompt(data);
@@ -48,32 +55,39 @@ export class AiService {
     language?: string;
     query: string;
     plotId: string;
+    conversationHistory?: ConversationMessage[];
   }): Promise<string> {
-    // Fetch the plot with its actions
     const plot = await this.plotRepository.findOne({
       where: { id: data.plotId },
-      relations: ['actions']
+      relations: ['actions'],
     });
 
     if (!plot) {
       throw new Error(`Plot with ID ${data.plotId} not found`);
     }
 
-    // Get the last 5 actions sorted by date
     const recentActions = plot.actions
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 5);
 
-    const prompt = this.buildAIPrompt(plot, recentActions, data.query, data.language);
+    const coordinates = this.extractCentroidCoordinates(plot.boundary);
 
-    console.log('Prompt:', prompt); // Debugging line
+    const messages = this.buildConversationMessages(
+      plot,
+      recentActions,
+      data.query,
+      data.language,
+      data.conversationHistory,
+      coordinates
+    );
 
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
+        messages: messages,
         temperature: 0.7,
+        max_tokens: 500,
       },
       {
         headers: {
@@ -98,47 +112,98 @@ export class AiService {
       : 'Return clear, practical, and actionable advice based on the current situation of the field.';
 
     return `
-  ${intro}
-  
-  Field ID: ${data.plotId || 'N/A'}
-  Crop: ${data.crop}
-  Soil Type: ${data.soil}
-  Location Coordinates: ${data.coordinates || 'N/A'}
-  Weather Forecast: ${data.weather}
-  Recent Actions: ${data.recentActions}
-  Farmer's Goal: ${data.goal}
-  
-  ${instruction}
-  `.trim();
+${intro}
+
+Field ID: ${data.plotId || 'N/A'}
+Crop: ${data.crop}
+Soil Type: ${data.soil}
+Location Coordinates: ${data.coordinates || 'N/A'}
+Weather Forecast: ${data.weather}
+Recent Actions: ${data.recentActions}
+Farmer's Goal: ${data.goal}
+
+${instruction}
+`.trim();
   }
 
-  private buildAIPrompt(
+  private buildConversationMessages(
     plot: Plot,
     recentActions: Action[],
-    query: string,
-    language?: string
+    currentQuery: string,
+    language?: string,
+    conversationHistory?: ConversationMessage[],
+    coordinates?: string
+  ): any[] {
+    const isRomanian = language === 'ro';
+
+    const systemPrompt = this.buildSystemPrompt(plot, recentActions, language, coordinates);
+
+    const messages = [
+      {
+        role: 'system',
+        content: systemPrompt,
+      },
+    ];
+
+    if (conversationHistory && conversationHistory.length > 0) {
+      const recentHistory = conversationHistory.slice(-7);
+      recentHistory.forEach((msg) => {
+        messages.push({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.text,
+        });
+      });
+    }
+
+    messages.push({
+      role: 'user',
+      content: currentQuery,
+    });
+
+    return messages;
+  }
+
+  private buildSystemPrompt(
+    plot: Plot,
+    recentActions: Action[],
+    language?: string,
+    coordinates?: string
   ): string {
     const isRomanian = language === 'ro';
 
     const intro = isRomanian
-      ? 'Ești un asistent agricol inteligent specializat în monitorizarea și gestionarea parcelelor agricole.'
-      : 'You are an intelligent agriculture assistant specialized in monitoring and managing agricultural plots.';
+      ? 'Ești un asistent agricol inteligent specializat în monitorizarea și gestionarea parcelelor agricole. Ai acces la informații despre această parcelă și istoricul conversațiilor.'
+      : 'You are an intelligent agriculture assistant specialized in monitoring and managing agricultural plots. You have access to information about this plot and conversation history.';
 
-    const actionDetails = recentActions.map(action => {
+    const actionDetails = recentActions.map((action) => {
       const date = new Date(action.date).toLocaleDateString();
       let details = `Type: ${action.type}, Date: ${date}`;
 
-      // Add specific details based on action type
       if (action.type === 'harvesting') {
-        const harvesting = action as any; // Type assertion for accessing property
+        const harvesting = action as any;
         details += `, Yield: ${harvesting.cropYield} ${harvesting.comments ? `, Comments: ${harvesting.comments}` : ''}`;
       } else if (action.type === 'treatment') {
-        const treatment = action as any; // Type assertion for accessing property
+        const treatment = action as any;
         details += `, Pesticide: ${treatment.pesticideType}, Target: ${treatment.targetPest}, Dosage: ${treatment.dosage}, Method: ${treatment.applicationMethod}`;
       }
 
       return details;
     }).join('\n');
+
+    const guidelines = isRomanian
+      ? `
+Instrucțiuni importante:
+- Folosește informațiile despre parcelă și conversațiile anterioare pentru a oferi răspunsuri personalizate
+- Dacă utilizatorul se referă la ceva menționat anterior, recunoaște contextul
+- Oferă sfaturi practice și acționabile specifice pentru cultura și condițiile parcelei
+- Răspunde în limba română
+- Păstrează un ton prietenos și profesional`
+      : `
+Important guidelines:
+- Use the plot information and previous conversations to provide personalized responses
+- If the user refers to something mentioned earlier, acknowledge the context
+- Provide practical and actionable advice specific to the crop and plot conditions
+- Maintain a friendly and professional tone`;
 
     return `
 ${intro}
@@ -148,17 +213,24 @@ Plot ID: ${plot.id}
 Plot Name: ${plot.name}
 Size: ${plot.size} hectares
 Soil Type: ${plot.soilType || 'Unknown'}
-Topography: ${plot.topography || 'Unknown'} 
+Topography: ${plot.topography || 'Unknown'}
+Coordinates (approx.): ${coordinates || 'Unknown'}
 
 RECENT ACTIONS (Last 5):
 ${actionDetails || 'No recent actions recorded.'}
 
-USER QUERY:
-${query}
-
-${isRomanian
-        ? 'Folosește informațiile de mai sus despre parcelă și acțiunile recente pentru a răspunde la întrebarea utilizatorului. Oferă un răspuns clar, detaliat și personalizat în limba română.'
-        : 'Use the above information about the plot and recent actions to respond to the user query. Provide a clear, detailed, and personalized response.'}
+${guidelines}
 `.trim();
+  }
+
+  private extractCentroidCoordinates(boundary: Polygon): string {
+    if (!boundary?.coordinates?.length) return 'Unknown';
+
+    const allCoords = boundary.coordinates[0];
+    const n = allCoords.length;
+    const avgLat = allCoords.reduce((sum, c) => sum + c[1], 0) / n;
+    const avgLng = allCoords.reduce((sum, c) => sum + c[0], 0) / n;
+
+    return `${avgLat.toFixed(6)}, ${avgLng.toFixed(6)}`;
   }
 }

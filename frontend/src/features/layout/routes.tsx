@@ -12,6 +12,7 @@ import MapRoutes from '../map/routes';
 import CalendarRoutes from '../calendar/routes';
 import FieldNotesViewer from '../fieldNotes/components/FieldNoteViewer';
 import YieldRoutes from '../fieldNotes/yieldPredictor/routes';
+import AiRoutes from '../plots/aiRoutes';
 
 const LayoutAppRoutes: React.FC = () => {
     return (
@@ -31,6 +32,7 @@ const LayoutAppRoutes: React.FC = () => {
                                 <Route path="two-step" element={<TwoStepConfigure />} />
                                 <Route path="field-notes" element={<FieldNotesViewer />} />
                                 <Route path="yield/*" element={<YieldRoutes />} />
+                                <Route path="ai-chat/*" element={<AiRoutes />} />
                                 <Route index element={<Navigate to="dashboard" replace />} />
                                 <Route path="*" element={<Navigate to="dashboard" replace />} />
                             </Routes>

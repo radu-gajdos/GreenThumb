@@ -10,6 +10,6 @@ import { Plot } from '../plot/entities/plot.entity';
   ],
   providers: [AiService],
   controllers: [AiController],
-  exports: [AiService],
+  exports: [AiService], // Export AiService so ConversationModule can use it
 })
 export class AiModule { }
