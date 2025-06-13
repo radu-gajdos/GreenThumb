@@ -1,64 +1,120 @@
 import http from "@/api/http";
 import { ToastService } from "@/services/toast.service";
 import { Action } from "../interfaces/action";
-import { ActionFormValues } from "../constants/formSchema";
 
 /**
  * @class ActionApi
  * @description
  * Encapsulates all CRUD operations for Action entities via HTTP calls.
- * Displays toast notifications on errors and successes.
+ * Uses a shared HTTP client and displays toast notifications on errors/success.
  */
 export class ActionApi {
   /**
-   * Fetch all actions by the plot id.
-   * @returns Promise resolving to an array of Action objects.
-   *          Returns an empty array on error (toast shown).
+   * Update action status.
+   * @param actionId - Unique identifier of the action
+   * @param status - New status for the action
+   * @returns Promise resolving to the updated Action object.
    */
-  async findAllByPlot(plotId: string): Promise<Action[]> {
+  async updateStatus(actionId: string, status: 'planned' | 'in_progress' | 'completed' | 'cancelled'): Promise<Action> {
     try {
-      // GET /actions → { data: { data: Action[] } }
-      const response = await http.get(`/actions/${plotId}`);
+      const response = await http.patch(`/actions/${actionId}/status`, { status });
+      ToastService.success("Statusul acțiunii a fost actualizat.");
       return response.data.data;
     } catch (error) {
-      // Notify user, but do not throw so the UI can handle an empty list gracefully
+      ToastService.error("Actualizarea statusului a eșuat.");
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch a single action by its ID.
+   * @param actionId - Unique identifier of the action
+   * @returns Promise resolving to an Action object.
+   */
+  async findOne(actionId: string): Promise<Action> {
+    try {
+      const response = await http.get(`/actions/${actionId}`);
+      return response.data.data;
+    } catch (error) {
+      ToastService.error("Nu s-a putut încărca acțiunea.");
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch all actions.
+   * @returns Promise resolving to an array of Action objects.
+   */
+  async findAll(): Promise<Action[]> {
+    try {
+      const response = await http.get("/actions");
+      return response.data.data;
+    } catch (error) {
       ToastService.error("Nu s-au putut încărca acțiunile.");
       return [];
     }
   }
 
   /**
-   * Fetch a single action by its ID.
-   * @param id - Unique identifier of the action
-   * @returns Promise resolving to an Action object.
-   *          Returns a blank Action on error (toast shown).
+   * Fetch actions for a specific plot.
+   * @param plotId - Unique identifier of the plot
+   * @returns Promise resolving to an array of Action objects.
    */
-  async findOne(id: string): Promise<Action> {
+  async findByPlot(plotId: string): Promise<Action[]> {
     try {
-      const response = await http.get(`/actions/${id}`);
+      const response = await http.get(`/actions/plot/${plotId}`);
       return response.data.data;
     } catch (error) {
-      ToastService.error("Nu s-a putut încărca acțiunea.");
-      // Casting to Action to satisfy the return type; caller should handle missing fields
-      return {} as Action;
+      ToastService.error("Nu s-au putut încărca acțiunile pentru teren.");
+      return [];
     }
   }
 
   /**
-   * Create a new action for a given plot.
-   * @param data   - Partial form values defining the action
-   * @param plotId - ID of the plot to which this action belongs
-   * @returns Promise resolving to the newly created Action object.
-   * @throws Propagates HTTP errors after showing a toast.
+   * Fetch actions by date range.
+   * @param startDate - Start date for the range
+   * @param endDate - End date for the range
+   * @returns Promise resolving to an array of Action objects.
    */
-  async create(
-    data: Partial<ActionFormValues>,
-    plotId: string
-  ): Promise<Action> {
+  async getActionsByDateRange(startDate: Date, endDate: Date): Promise<Action[]> {
     try {
-      // POST /actions/:plotId with action data
-      const response = await http.post(`/actions/${plotId}`, data);
-      ToastService.success("Acțiunea a fost creată cu succes.");
+      const params = {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      };
+      const response = await http.get("/actions", { params });
+      return response.data.data;
+    } catch (error) {
+      ToastService.error("Nu s-au putut încărca acțiunile pentru perioada selectată.");
+      return [];
+    }
+  }
+
+  /**
+   * Fetch overdue actions.
+   * @returns Promise resolving to an array of overdue Action objects.
+   */
+  async getOverdueActions(): Promise<Action[]> {
+    try {
+      const response = await http.get("/actions/overdue");
+      return response.data.data;
+    } catch (error) {
+      ToastService.error("Nu s-au putut încărca acțiunile întârziate.");
+      return [];
+    }
+  }
+
+  /**
+   * Create a new action for a plot.
+   * @param plotId - Unique identifier of the plot
+   * @param actionData - Partial action data
+   * @returns Promise resolving to the newly created Action object.
+   */
+  async create(plotId: string, actionData: Partial<Action>): Promise<Action> {
+    try {
+      delete actionData.id; // Ensure no ID is sent for creation
+      const response = await http.post(`/actions/${plotId}`, actionData);
+      ToastService.success("Acțiunea a fost creată.");
       return response.data.data;
     } catch (error) {
       ToastService.error("Crearea acțiunii a eșuat.");
@@ -67,20 +123,15 @@ export class ActionApi {
   }
 
   /**
-   * Update an existing action for a given plot.
-   * @param data   - Partial form values (must include the action ID)
-   * @param plotId - ID of the plot that owns this action
+   * Update an existing action.
+   * @param actionId - Unique identifier of the action
+   * @param actionData - Partial action data to update
    * @returns Promise resolving to the updated Action object.
-   * @throws Propagates HTTP errors after showing a toast.
    */
-  async update(
-    data: Partial<ActionFormValues>,
-    plotId: string
-  ): Promise<Action> {
+  async update(actionId: string, actionData: Partial<Action>): Promise<Action> {
     try {
-      // PUT /actions/:plotId with updated data
-      const response = await http.put(`/actions/${plotId}`, data);
-      ToastService.success("Acțiunea a fost actualizată cu succes.");
+      const response = await http.put(`/actions/${actionId}`, actionData);
+      ToastService.success("Acțiunea a fost actualizată.");
       return response.data.data;
     } catch (error) {
       ToastService.error("Actualizarea acțiunii a eșuat.");
@@ -90,16 +141,16 @@ export class ActionApi {
 
   /**
    * Delete an action by its ID.
-   * @param id - Unique identifier of the action to remove
-   * @returns Promise resolving to void. Shows a toast on success or failure.
+   * @param actionId - Unique identifier of the action to remove
+   * @returns Promise resolving to void.
    */
-  async delete(id: string): Promise<void> {
+  async delete(actionId: string): Promise<void> {
     try {
-      // DELETE /actions/:id
-      await http.delete(`/actions/${id}`);
-      ToastService.success("Acțiunea a fost ștearsă cu succes.");
+      await http.delete(`/actions/${actionId}`);
+      ToastService.success("Acțiunea a fost ștearsă.");
     } catch (error) {
       ToastService.error("Ștergerea acțiunii a eșuat.");
+      throw error;
     }
   }
 }

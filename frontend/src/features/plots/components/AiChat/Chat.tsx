@@ -54,14 +54,14 @@ const GeneralAIChat: React.FC = () => {
         // Create conversation objects for each plot
         const plotConversations: PlotConversation[] = await Promise.all(
           plots.map(async (plot) => {
-            
+
             const messages = await conversationApi.getConversationHistory(plot.id);
 
             return {
               plotId: plot.id,
               plotName: plot.name,
               messages,
-              lastMessageAt: messages.length > 0 
+              lastMessageAt: messages.length > 0
                 ? new Date(Math.max(...messages.map(m => m.timestamp.getTime())))
                 : new Date(),
               unreadCount: 0,
@@ -72,14 +72,14 @@ const GeneralAIChat: React.FC = () => {
 
 
         // Sort by last activity
-        plotConversations.sort((a, b) => 
+        plotConversations.sort((a, b) =>
           b.lastMessageAt.getTime() - a.lastMessageAt.getTime()
         );
 
         // Auto-select first conversation or one with messages
         const conversationWithMessages = plotConversations.find(conv => conv.messages.length > 0);
-        const firstConversationId = conversationWithMessages?.plotId || 
-                                   (plotConversations.length > 0 ? plotConversations[0].plotId : null);
+        const firstConversationId = conversationWithMessages?.plotId ||
+          (plotConversations.length > 0 ? plotConversations[0].plotId : null);
 
 
         setState({
@@ -123,13 +123,23 @@ const GeneralAIChat: React.FC = () => {
   /**
    * Handle new messages
    */
-  const handleMessageSent = useCallback(async (plotId: string, userMessage: Message, aiMessage: Message) => {
-    // Update UI immediately
+  const handleMessageSent = useCallback(async (plotId: string, userMessage: Message | null, aiMessage: Message | null) => {
     setState(prev => ({
       ...prev,
       plotConversations: prev.plotConversations.map(conv => {
         if (conv.plotId === plotId) {
-          const newMessages = [...conv.messages, userMessage, aiMessage];
+          const newMessages = [...conv.messages];
+
+          // Adaugă mesajul utilizatorului dacă există
+          if (userMessage) {
+            newMessages.push(userMessage);
+          }
+
+          // Adaugă mesajul AI-ului dacă există
+          if (aiMessage) {
+            newMessages.push(aiMessage);
+          }
+
           return {
             ...conv,
             messages: newMessages,
@@ -147,7 +157,7 @@ const GeneralAIChat: React.FC = () => {
   const handleConversationCleared = useCallback(async (plotId: string) => {
     try {
       await conversationApi.clearConversation(plotId);
-      
+
       setState(prev => ({
         ...prev,
         plotConversations: prev.plotConversations.map(conv => {
@@ -171,7 +181,7 @@ const GeneralAIChat: React.FC = () => {
    * Handle starting new conversation
    */
   const handleStartNewConversation = useCallback(() => {
-    const plotWithoutConversation = availablePlots.find(plot => 
+    const plotWithoutConversation = availablePlots.find(plot =>
       !state.plotConversations.some(conv => conv.plotId === plot.id)
     );
 

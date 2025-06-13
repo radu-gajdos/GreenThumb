@@ -1,13 +1,14 @@
 /**
- * ChatContent.tsx - Final Version
+ * ChatContent.tsx - Final Version with React Markdown
  * 
- * Main chat interface using hybrid API
+ * Main chat interface using hybrid API with proper Markdown formatting
  */
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookMarked, MapPin, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ReactMarkdown from 'react-markdown';
 import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal';
 import { ConversationApi } from '../../api/conversation.api';
 import { PlotConversation, Message } from '../../interfaces/conversation';
@@ -15,7 +16,7 @@ import { PlotConversation, Message } from '../../interfaces/conversation';
 interface ChatContentProps {
   conversation: PlotConversation | null;
   loading: boolean;
-  onMessageSent: (plotId: string, userMessage: Message, aiMessage: Message) => void;
+  onMessageSent: (plotId: string, userMessage: Message | null, aiMessage: Message | null) => void;
   onConversationCleared: (plotId: string) => void;
 }
 
@@ -74,6 +75,10 @@ const ChatContent: React.FC<ChatContentProps> = ({
     if (!trimmedInput || !conversation) return;
 
     setSendingMessage(true);
+    const userMessage = createMessage(trimmedInput, 'user');
+    
+    // Afișează imediat mesajul utilizatorului
+    onMessageSent(conversation.plotId, userMessage, null);
     setInputValue('');
 
     try {
@@ -83,16 +88,16 @@ const ChatContent: React.FC<ChatContentProps> = ({
         language: currentLanguage,
       });
 
-      onMessageSent(conversation.plotId, result.userMessage, result.aiMessage);
+      // Actualizează doar cu răspunsul AI-ului (mesajul user este deja afișat)
+      onMessageSent(conversation.plotId, null, result.aiMessage);
 
     } catch (error) {
       console.error('Error sending message:', error);
       
       const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
       const errorMessage = createMessage(errorText, 'ai');
-      const userMessage = createMessage(trimmedInput, 'user');
       
-      onMessageSent(conversation.plotId, userMessage, errorMessage);
+      onMessageSent(conversation.plotId, null, errorMessage);
     } finally {
       setSendingMessage(false);
     }
@@ -133,6 +138,88 @@ const ChatContent: React.FC<ChatContentProps> = ({
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  // Custom markdown components for better styling
+  const markdownComponents = {
+    // Paragraphs
+    p: ({ children }: any) => (
+      <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>
+    ),
+    
+    // Bold text
+    strong: ({ children }: any) => (
+      <strong className="font-semibold text-gray-900">{children}</strong>
+    ),
+    
+    // Italic text
+    em: ({ children }: any) => (
+      <em className="italic text-gray-800">{children}</em>
+    ),
+    
+    // Inline code
+    code: ({ children }: any) => (
+      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800 border">
+        {children}
+      </code>
+    ),
+    
+    // Code blocks
+    pre: ({ children }: any) => (
+      <pre className="bg-gray-100 p-3 rounded-md overflow-x-auto mb-3 border">
+        {children}
+      </pre>
+    ),
+    
+    // Ordered lists
+    ol: ({ children }: any) => (
+      <ol className="list-decimal list-outside ml-6 mb-3 space-y-1">{children}</ol>
+    ),
+    
+    // Unordered lists
+    ul: ({ children }: any) => (
+      <ul className="list-disc list-outside ml-6 mb-3 space-y-1">{children}</ul>
+    ),
+    
+    // List items
+    li: ({ children }: any) => (
+      <li className="leading-relaxed pl-1">{children}</li>
+    ),
+    
+    // Headings
+    h1: ({ children }: any) => (
+      <h1 className="text-xl font-bold mb-3 text-gray-900">{children}</h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-lg font-semibold mb-2 text-gray-900">{children}</h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-base font-semibold mb-2 text-gray-900">{children}</h3>
+    ),
+    
+    // Blockquotes
+    blockquote: ({ children }: any) => (
+      <blockquote className="border-l-4 border-gray-300 pl-4 py-2 mb-3 italic text-gray-700 bg-gray-50 rounded-r">
+        {children}
+      </blockquote>
+    ),
+    
+    // Horizontal rules
+    hr: () => (
+      <hr className="border-gray-300 my-4" />
+    ),
+    
+    // Links (if any)
+    a: ({ href, children }: any) => (
+      <a 
+        href={href} 
+        className="text-blue-600 hover:text-blue-800 underline" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    ),
   };
 
   if (loading) {
@@ -208,32 +295,41 @@ const ChatContent: React.FC<ChatContentProps> = ({
                   }`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg shadow-sm ${
+                    className={`max-w-[85%] rounded-lg shadow-sm ${
                       message.sender === 'user'
                         ? 'bg-primary text-white'
                         : 'bg-white border border-gray-200'
                     }`}
                   >
                     <div className="px-4 py-3">
-                      <div className="whitespace-pre-wrap leading-relaxed">
-                        {/* Ultra-safe message rendering - no TypeScript errors */}
-                        {String(message.text || 'Mesaj fără conținut')}
-                      </div>
+                      {message.sender === 'user' ? (
+                        // User messages - simple text formatting
+                        <div className="leading-relaxed break-words whitespace-pre-wrap">
+                          {String(message.text || 'Mesaj fără conținut')}
+                        </div>
+                      ) : (
+                        // AI messages - full markdown formatting
+                        <div className="prose prose-sm max-w-none leading-relaxed break-words">
+                          <ReactMarkdown components={markdownComponents}>
+                            {String(message.text || 'Mesaj fără conținut')}
+                          </ReactMarkdown>
+                        </div>
+                      )}
                     </div>
 
                     <div
-                      className={`px-4 pb-3 flex items-center justify-between ${
+                      className={`px-4 pb-2 flex items-center justify-between text-xs ${
                         message.sender === 'user'
-                          ? 'text-primary/70'
+                          ? 'text-primary-foreground/70'
                           : 'text-gray-500'
                       }`}
                     >
-                      <div className="text-xs">{formatTime(message.timestamp)}</div>
+                      <div className="flex-shrink-0">{formatTime(message.timestamp)}</div>
 
                       {message.sender === 'ai' && (
                         <button
                           onClick={() => handleSaveMessage(message)}
-                          className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1.5 rounded-md hover:bg-primary/10 group"
+                          className="flex items-center gap-1.5 ml-2 font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1 rounded-md hover:bg-primary/10 group flex-shrink-0"
                           title="Salvează ca notiță"
                         >
                           <BookMarked className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
@@ -255,10 +351,12 @@ const ChatContent: React.FC<ChatContentProps> = ({
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Bun venit la chat-ul pentru {conversation.plotName}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {WELCOME_MESSAGES[currentLanguage]?.(conversation.plotName) || 
-                   WELCOME_MESSAGES.en(conversation.plotName)}
-                </p>
+                <div className="text-gray-600 leading-relaxed">
+                  <ReactMarkdown components={markdownComponents}>
+                    {WELCOME_MESSAGES[currentLanguage]?.(conversation.plotName) || 
+                     WELCOME_MESSAGES.en(conversation.plotName)}
+                  </ReactMarkdown>
+                </div>
               </div>
             </div>
           )}

@@ -1,12 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TableInheritance, ChildEntity, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TableInheritance, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { Plot } from '../../plot/entities/plot.entity';
-import { IsDate } from 'class-validator';
 
 @Entity({ name: 'actions' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Action {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Expose()
@@ -24,6 +23,22 @@ export class Action {
     @Expose()
     @Column({ type: 'timestamp' })
     date: Date;
+
+    @Expose()
+    @Column({ 
+        type: 'enum', 
+        enum: ['planned', 'in_progress', 'completed', 'cancelled'],
+        default: 'planned'
+    })
+    status: 'planned' | 'in_progress' | 'completed' | 'cancelled';
+
+    @Expose()
+    @Column({ type: 'text', nullable: true })
+    description?: string;
+
+    @Expose()
+    @Column({ type: 'text', nullable: true })
+    notes?: string;
 
     @CreateDateColumn()
     createdAt: Date;

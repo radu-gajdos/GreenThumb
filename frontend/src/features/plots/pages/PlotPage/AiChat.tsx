@@ -1,15 +1,17 @@
 /**
- * AIChat.tsx - Backend Integrated Version
+ * AIChat.tsx - Backend Integrated Version with Markdown Support
  *
  * A Claude-like chat interface for interacting with an AI assistant
  * about agricultural plot management with sliding window context.
  * Now uses backend database for message persistence and conversation memory.
+ * Includes immediate message display and Markdown formatting.
  */
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plot } from '../../interfaces/plot';
 import { BookMarked, Trash2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal';
 import { ConversationApi } from '../../api/conversation.api';
 import { Message } from '../../interfaces/conversation';
@@ -53,6 +55,88 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
   // Current language code, e.g. 'ro' or 'en'
   const currentLanguage = i18n.language as keyof typeof WELCOME_MESSAGES;
+
+  // Custom markdown components for better styling
+  const markdownComponents = {
+    // Paragraphs
+    p: ({ children }: any) => (
+      <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>
+    ),
+    
+    // Bold text
+    strong: ({ children }: any) => (
+      <strong className="font-semibold text-gray-900">{children}</strong>
+    ),
+    
+    // Italic text
+    em: ({ children }: any) => (
+      <em className="italic text-gray-800">{children}</em>
+    ),
+    
+    // Inline code
+    code: ({ children }: any) => (
+      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800 border">
+        {children}
+      </code>
+    ),
+    
+    // Code blocks
+    pre: ({ children }: any) => (
+      <pre className="bg-gray-100 p-3 rounded-md overflow-x-auto mb-3 border">
+        {children}
+      </pre>
+    ),
+    
+    // Ordered lists
+    ol: ({ children }: any) => (
+      <ol className="list-decimal list-outside ml-6 mb-3 space-y-1">{children}</ol>
+    ),
+    
+    // Unordered lists
+    ul: ({ children }: any) => (
+      <ul className="list-disc list-outside ml-6 mb-3 space-y-1">{children}</ul>
+    ),
+    
+    // List items
+    li: ({ children }: any) => (
+      <li className="leading-relaxed pl-1">{children}</li>
+    ),
+    
+    // Headings
+    h1: ({ children }: any) => (
+      <h1 className="text-xl font-bold mb-3 text-gray-900">{children}</h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-lg font-semibold mb-2 text-gray-900">{children}</h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-base font-semibold mb-2 text-gray-900">{children}</h3>
+    ),
+    
+    // Blockquotes
+    blockquote: ({ children }: any) => (
+      <blockquote className="border-l-4 border-gray-300 pl-4 py-2 mb-3 italic text-gray-700 bg-gray-50 rounded-r">
+        {children}
+      </blockquote>
+    ),
+    
+    // Horizontal rules
+    hr: () => (
+      <hr className="border-gray-300 my-4" />
+    ),
+    
+    // Links (if any)
+    a: ({ href, children }: any) => (
+      <a 
+        href={href} 
+        className="text-blue-600 hover:text-blue-800 underline" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    ),
+  };
 
   /**
    * On mount (or when plot.id changes), load messages from backend database.
@@ -155,17 +239,33 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   };
 
   /**
+   * Create a message object with proper typing
+   */
+  const createMessage = (text: string, sender: 'user' | 'ai'): Message => ({
+    id: `${Date.now()}-${sender}`,
+    text,
+    sender,
+    timestamp: new Date(),
+    plotId: plot.id,
+  });
+
+  /**
    * Send the user's input to the AI API using backend conversation system:
-   * 1. Send message through ConversationApi (includes sliding window context)
-   * 2. Backend automatically saves both user and AI messages
-   * 3. Update local state with the new messages
+   * 1. Show user message immediately
+   * 2. Send message through ConversationApi (includes sliding window context)
+   * 3. Backend automatically saves both user and AI messages
+   * 4. Update local state with the AI response
    */
   const sendMessage = async () => {
     const trimmedInput = inputValue.trim();
     if (!trimmedInput) return;
 
-    setInputValue('');
     setLoading(true);
+    
+    // Create and show user message immediately
+    const userMessage = createMessage(trimmedInput, 'user');
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
 
     try {
       console.log(`[AICHAT] Sending message for plot ${plot.id}:`, trimmedInput);
@@ -180,31 +280,17 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
       console.log('[AICHAT] Received response:', result);
 
-      // Update local state with both user and AI messages
-      setMessages(prev => [...prev, result.userMessage, result.aiMessage]);
+      // Add only the AI response (user message already shown)
+      setMessages(prev => [...prev, result.aiMessage]);
 
     } catch (error) {
       console.error('[AICHAT] Error sending message:', error);
       
-      // Create fallback messages for display
-      const userMessage: Message = {
-        id: `user-${Date.now()}`,
-        text: trimmedInput,
-        sender: 'user',
-        timestamp: new Date(),
-        plotId: plot.id,
-      };
-
+      // Create fallback error message
       const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
-      const errorMessage: Message = {
-        id: `error-${Date.now()}`,
-        text: errorText,
-        sender: 'ai',
-        timestamp: new Date(),
-        plotId: plot.id,
-      };
+      const errorMessage = createMessage(errorText, 'ai');
 
-      setMessages(prev => [...prev, userMessage, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
@@ -336,7 +422,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                 }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg shadow-sm ${
+                  className={`max-w-[85%] rounded-lg shadow-sm ${
                     message.sender === 'user'
                       ? 'bg-primary text-white'
                       : 'bg-gray-50 border border-gray-200'
@@ -344,27 +430,37 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                 >
                   {/* Message content */}
                   <div className="px-4 py-3">
-                    <div className="whitespace-pre-wrap leading-relaxed">
-                      {message.text}
-                    </div>
+                    {message.sender === 'user' ? (
+                      // User messages - simple text formatting
+                      <div className="leading-relaxed break-words whitespace-pre-wrap">
+                        {String(message.text || 'Mesaj fără conținut')}
+                      </div>
+                    ) : (
+                      // AI messages - full markdown formatting
+                      <div className="prose prose-sm max-w-none leading-relaxed break-words">
+                        <ReactMarkdown components={markdownComponents}>
+                          {String(message.text || 'Mesaj fără conținut')}
+                        </ReactMarkdown>
+                      </div>
+                    )}
                   </div>
 
                   {/* Message footer: time + optional Save button */}
                   <div
-                    className={`px-4 pb-3 flex items-center justify-between ${
+                    className={`px-4 pb-2 flex items-center justify-between text-xs ${
                       message.sender === 'user'
-                        ? 'text-primary/70'
+                        ? 'text-primary-foreground/70'
                         : 'text-gray-500'
                     }`}
                   >
                     {/* Timestamp */}
-                    <div className="text-xs">{formatTime(message.timestamp)}</div>
+                    <div className="flex-shrink-0">{formatTime(message.timestamp)}</div>
 
                     {/* Show "Save" button only on AI messages */}
                     {message.sender === 'ai' && (
                       <button
                         onClick={() => handleSaveMessage(message)}
-                        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1.5 rounded-md hover:bg-primary/10 group"
+                        className="flex items-center gap-1.5 ml-2 font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1 rounded-md hover:bg-primary/10 group flex-shrink-0"
                         title={
                           currentLanguage === 'ro'
                             ? 'Salvează ca notiță'
@@ -393,9 +489,11 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                   AI
                 </div>
               </div>
-              <p className="text-gray-500 text-center">
-                {t('plotPage.aiChat.placeholder')}
-              </p>
+              <div className="text-gray-500 text-center leading-relaxed">
+                <ReactMarkdown components={markdownComponents}>
+                  {t('plotPage.aiChat.placeholder')}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         )}

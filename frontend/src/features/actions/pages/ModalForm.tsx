@@ -148,14 +148,14 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
    */
   const handleSubmit = async (formData: ActionFormValues) => {
     try {
-      const response = uid
-        ? await actionApi.update(formData, plotId)
-        : await actionApi.create(formData, plotId);
+      // const response = uid
+      //   ? await actionApi.update(formData, plotId)
+      //   : await actionApi.create(formData, plotId);
 
       ToastService.success(
         uid ? "Acțiunea a fost actualizată." : "Acțiunea a fost creată."
       );
-      onSave(response);
+      // onSave(response);
       setShowModal(false);
     } catch (err) {
       console.error("Save action error:", err);

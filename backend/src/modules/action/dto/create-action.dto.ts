@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, Min, Max, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, Min, Max, IsPositive, IsEnum } from 'class-validator';
 
 export class CreateActionDto {
     @IsNotEmpty()
@@ -10,6 +10,18 @@ export class CreateActionDto {
     @IsDate()
     @Type(() => Date)
     date: Date;
+
+    @IsOptional()
+    @IsEnum(['planned', 'in_progress', 'completed', 'cancelled'])
+    status?: 'planned' | 'in_progress' | 'completed' | 'cancelled';
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsString()
+    notes?: string;
 
     // Fertilizing fields
     @IsOptional()
@@ -28,7 +40,7 @@ export class CreateActionDto {
     // Harvesting fields
     @IsOptional()
     @IsNumber()
-    @Min(0) // Equivalent to @PositiveOrZero in Java
+    @Min(0)
     cropYield?: number;
 
     @IsOptional()
@@ -102,4 +114,3 @@ export class CreateActionDto {
     @Min(0)
     amount?: number;
 }
-

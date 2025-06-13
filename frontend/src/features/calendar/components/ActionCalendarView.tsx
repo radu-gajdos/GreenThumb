@@ -6,6 +6,7 @@ import { IAction } from '@/features/plots/interfaces/plot'
 import ActionCalendar from './ActionCalendar'
 import { PlotApi } from '@/features/plots/api/plot.api'
 import { Action } from '@/features/actions/interfaces/action'
+import CustomCalendar from './CustomCalendar'
 
 const ActionsCalendarView: React.FC = () => {
     const [actions, setActions] = useState<Action[]>([])
@@ -37,7 +38,7 @@ const ActionsCalendarView: React.FC = () => {
                 <p className="text-xl">Loading calendar...</p>
             </div>
             ) : (
-                <ActionCalendar actions={actions} />
+                <CustomCalendar/>
             )}
         </div>
     )
