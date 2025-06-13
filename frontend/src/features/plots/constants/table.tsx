@@ -30,7 +30,7 @@ export const getColumns = (
     cellRenderer: (params: any) => (
       <span
         onClick={() => params.context.onNameClick(params.data.id)}
-        className="text-primary hover:text-primary/20 underline text-left w-full cursor-pointer hover:bg-primary/20 px-1 py-1 rounded transition-colors"
+        className="text-primary hover:text-primary/20 underline text-left w-full cursor-pointer px-1 py-1 rounded transition-colors"
       >
         {params.value}
       </span>
