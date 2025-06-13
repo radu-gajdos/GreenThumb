@@ -30,16 +30,14 @@ const ActionsCalendarView: React.FC = () => {
     }, [])
 
     return (
-        <div className="container mx-auto py-10 px-6">
+        <div className="container mx-auto py-4 px-6">
             <h1 className="text-3xl font-bold mb-6">Actions Calendar</h1>
             {loading ? (
-            <div className="flex justify-center items-center h-[70vh]">
+            <div className="flex justify-center items-center h-[calc(100vh-8rem)]">
                 <p className="text-xl">Loading calendar...</p>
             </div>
             ) : (
-            <div className="w-full h-[80vh]">
                 <ActionCalendar actions={actions} />
-            </div>
             )}
         </div>
     )

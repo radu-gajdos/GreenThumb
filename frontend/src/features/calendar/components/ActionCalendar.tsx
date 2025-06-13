@@ -71,7 +71,7 @@ const ActionCalendar: React.FC<CalendarViewProps> = ({ actions }) => {
   }
 
   return (
-    <Card className="shadow-sm">
+    <div>
       <CardContent className="p-0">
         <div className="flex h-[75vh] flex-col shadcn-calendar">
           <FullCalendar
@@ -133,7 +133,7 @@ const ActionCalendar: React.FC<CalendarViewProps> = ({ actions }) => {
           )}
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   )
 }
 

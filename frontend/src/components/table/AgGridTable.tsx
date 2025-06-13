@@ -36,7 +36,7 @@ const AgGridTable = <T extends { id?: string },>({
     createButton,
     compactComponent,
     activeRowId,
-    modules = { columns: true, sorting: true, filters: true, grouping: true }, // Default - show all modules
+    modules = { columns: true, sorting: true, filters: true, grouping: false }, // Default - show all modules
     ...props
 }: AgGridTableProps<T>) => {
     const [gridReady, setGridReady] = useState<boolean>(false);

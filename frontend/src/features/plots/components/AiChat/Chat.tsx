@@ -2,6 +2,7 @@
  * GeneralAIChat.tsx - Final Version
  * 
  * Main component for the general AI chat interface.
+ * Fixed to fit within the allocated content area without scrolling.
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -201,7 +202,7 @@ const GeneralAIChat: React.FC = () => {
   // Loading state
   if (state.loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-[calc(100vh-120px)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
       </div>
     );
@@ -210,7 +211,7 @@ const GeneralAIChat: React.FC = () => {
   // Error state
   if (state.error) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-center p-8">
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
         <div className="mb-4">
           <svg
             className="w-16 h-16 text-red-400 mx-auto"
@@ -245,7 +246,7 @@ const GeneralAIChat: React.FC = () => {
   // Empty state
   if (availablePlots.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-center p-8">
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
         <div className="mb-4">
           <svg
             className="w-16 h-16 text-gray-400 mx-auto"
@@ -279,7 +280,7 @@ const GeneralAIChat: React.FC = () => {
 
   // Main UI
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-[calc(100vh-120px)] bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
       <ChatSidebar
         conversations={state.plotConversations}
         selectedPlotId={state.selectedPlotId}

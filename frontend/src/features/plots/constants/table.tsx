@@ -10,7 +10,8 @@ export const gridOptions = { alwaysMultiSort: true };
 
 export const getColumns = (
   onEdit: (id: string) => void,
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
+  onNameClick: (id: string) => void
 ): ColDefType<Plot>[] => [
   {
     headerName: '#',
@@ -26,6 +27,14 @@ export const getColumns = (
     filter: 'agTextColumnFilter',
     minWidth: 150,
     dataType: 'string',
+    cellRenderer: (params: any) => (
+      <span
+        onClick={() => params.context.onNameClick(params.data.id)}
+        className="text-primary hover:text-primary/20 underline text-left w-full cursor-pointer hover:bg-primary/20 px-1 py-1 rounded transition-colors"
+      >
+        {params.value}
+      </span>
+    ),
   },
   {
     headerName: 'Dimensiune (ha)',

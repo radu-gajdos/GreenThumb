@@ -23,7 +23,7 @@ const LayoutAppRoutes: React.FC = () => {
                     <AppSidebar />
                     <div className="flex-1">
                         <SiteHeader />
-                        <main className="p-6">
+                        <main className="p-4">
                             <Routes>
                                 <Route path="dashboard/*" element={<DashboardRoutes />} />
                                 <Route path="plots/*" element={<PlotRoutes />} />

@@ -18,13 +18,14 @@ import ModalDelete from '@/components/modals/ModalDelete';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { PlotApi } from '../api/plot.api';
+import PlotViewModal from './PlotPage/PlotViewPage';
 
 /**
  * @component Index
  * @description
  * Main listing page for plots. Displays an AG Grid table with
  * pagination, and supports creating, editing, and deleting plots
- * via modals.
+ * via modals. Also supports viewing plot details in a modal overlay.
  */
 const Index: React.FC = () => {
     // State for fetched plots
@@ -35,9 +36,12 @@ const Index: React.FC = () => {
     const plotApi = useMemo(() => new PlotApi(), []);
     // ID of the plot currently being edited or deleted
     const [uidToEdit, setUidToEdit] = useState<string | null>(null);
+    // ID of the plot currently being viewed
+    const [uidToView, setUidToView] = useState<string | null>(null);
     // Control modal visibility
     const [showModalForm, setShowModalForm] = useState<boolean>(false);
     const [deleteModal, setDeleteModal] = useState<boolean>(false);
+    const [showViewModal, setShowViewModal] = useState<boolean>(false);
 
     /**
      * Fetch all plots from the server.
@@ -74,6 +78,15 @@ const Index: React.FC = () => {
     }, []);
 
     /**
+     * Open view modal for given plot ID
+     * @param uid - Plot ID to view
+     */
+    const onNameClick = useCallback((uid: string) => {
+        setUidToView(uid);
+        setShowViewModal(true);
+    }, []);
+
+    /**
      * Handle confirming deletion of the selected plot.
      * Calls API and removes from local state.
      */
@@ -103,11 +116,47 @@ const Index: React.FC = () => {
         );
     }, []);
 
+    /**
+     * Close the view modal and reset the view ID
+     */
+    const closeViewModal = useCallback(() => {
+        setShowViewModal(false);
+        setUidToView(null);
+    }, []);
+
     // Column definitions for AG Grid, memoized for performance
     const columns = useMemo(
-        () => getColumns(onEdit, onDelete),
-        [onEdit, onDelete]
+        () => getColumns(onEdit, onDelete, onNameClick),
+        [onEdit, onDelete, onNameClick]
     );
+
+    // Render plot view modal if it's open, otherwise render the main table
+    if (showViewModal) {
+        return (
+            <>
+                <PlotViewModal
+                    isOpen={showViewModal}
+                    onClose={closeViewModal}
+                    plotId={uidToView}
+                />
+                
+                {/* Keep other modals available even in view mode */}
+                <ModalDelete
+                    isOpen={deleteModal}
+                    onClose={() => setDeleteModal(false)}
+                    onConfirm={handleDelete}
+                    confirmText="Sigur doriți să ștergeți acest teren?"
+                />
+
+                <ModalForm
+                    showModal={showModalForm}
+                    setShowModal={setShowModalForm}
+                    onSave={onSave}
+                    uid={uidToEdit}
+                />
+            </>
+        );
+    }
 
     return (
         <>
@@ -121,6 +170,7 @@ const Index: React.FC = () => {
                 paginationPageSize={paginationPageSize}
                 paginationPageSizeSelector={paginationPageSizeSelector}
                 gridOptions={gridOptions}
+                context={{ onNameClick }}
                 createButton={
                     <Button
                         onClick={() => {
