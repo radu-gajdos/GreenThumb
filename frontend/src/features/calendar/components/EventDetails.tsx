@@ -15,6 +15,7 @@ import {
 import { CalendarEvent } from '../types/calendar';
 import { ActionType, getActionIcon } from '@/features/actions/constants/formSchema';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface EventDetailsProps {
   event: CalendarEvent;
@@ -23,6 +24,7 @@ interface EventDetailsProps {
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpdate }) => {
+  const { t } = useTranslation();
   const { action, plotName } = event;
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -30,61 +32,57 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
     switch (status) {
       case 'planned':
         return {
-          label: 'Planificat',
+          label: t('calendarEventDetails.status.planned'),
           icon: Clock,
           color: 'bg-blue-100 text-blue-800 border-blue-200',
         };
       case 'in_progress':
         return {
-          label: 'În progres',
+          label: t('calendarEventDetails.status.in_progress'),
           icon: Activity,
           color: 'bg-amber-100 text-amber-800 border-amber-200',
         };
       case 'completed':
         return {
-          label: 'Completat',
+          label: t('calendarEventDetails.status.completed'),
           icon: CheckCircle,
           color: 'bg-green-100 text-green-800 border-green-200',
         };
       case 'cancelled':
         return {
-          label: 'Anulat',
+          label: t('calendarEventDetails.status.cancelled'),
           icon: X,
           color: 'bg-red-100 text-red-800 border-red-200',
         };
       default:
         return {
-          label: 'Necunoscut',
+          label: t('calendarEventDetails.status.unknown'),
           icon: AlertTriangle,
           color: 'bg-gray-100 text-gray-800 border-gray-200',
         };
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ro-RO', {
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-GB', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-  };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleDateString('ro-RO', {
+  const formatTime = (date: Date) =>
+    date.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     });
-  };
-
 
   const handleStatusUpdate = async (newStatus: 'completed' | 'cancelled' | 'in_progress' | 'planned') => {
     if (!onStatusUpdate) return;
     try {
       setIsUpdating(true);
       await onStatusUpdate(action.id, newStatus);
-      // Închide direct modalul după actualizare
       onClose();
     } catch (error) {
       console.error('Error updating status:', error);
@@ -98,28 +96,24 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
   const StatusIcon = statusInfo.icon;
   const ActionIconComponent = getActionIcon(action.type as ActionType);
 
-  // Get available status transitions
   const getAvailableActions = () => {
     switch (action.status) {
       case 'planned':
         return [
-          { status: 'in_progress', label: 'Începe', icon: Play, color: 'bg-amber-600 hover:bg-amber-700' },
-          { status: 'completed', label: 'Marchează Completat', icon: CheckCircle, color: 'bg-green-600 hover:bg-green-700' },
-          { status: 'cancelled', label: 'Anulează', icon: X, color: 'bg-red-600 hover:bg-red-700' },
+          { status: 'in_progress', label: t('calendarEventDetails.buttons.start'), icon: Play, color: 'bg-amber-600 hover:bg-amber-700' },
+          { status: 'completed', label: t('calendarEventDetails.buttons.complete'), icon: CheckCircle, color: 'bg-green-600 hover:bg-green-700' },
+          { status: 'cancelled', label: t('calendarEventDetails.buttons.cancel'), icon: X, color: 'bg-red-600 hover:bg-red-700' },
         ];
       case 'in_progress':
         return [
-          { status: 'completed', label: 'Completează', icon: CheckCircle, color: 'bg-green-600 hover:bg-green-700' },
-          { status: 'planned', label: 'Oprește', icon: Square, color: 'bg-gray-600 hover:bg-gray-700' },
-          { status: 'cancelled', label: 'Anulează', icon: X, color: 'bg-red-600 hover:bg-red-700' },
+          { status: 'completed', label: t('calendarEventDetails.buttons.complete'), icon: CheckCircle, color: 'bg-green-600 hover:bg-green-700' },
+          { status: 'planned', label: t('calendarEventDetails.buttons.stop'), icon: Square, color: 'bg-gray-600 hover:bg-gray-700' },
+          { status: 'cancelled', label: t('calendarEventDetails.buttons.cancel'), icon: X, color: 'bg-red-600 hover:bg-red-700' },
         ];
       case 'completed':
-        return [
-          { status: 'planned', label: 'Reactivează', icon: Clock, color: 'bg-blue-600 hover:bg-blue-700' },
-        ];
       case 'cancelled':
         return [
-          { status: 'planned', label: 'Reactivează', icon: Clock, color: 'bg-blue-600 hover:bg-blue-700' },
+          { status: 'planned', label: t('calendarEventDetails.buttons.reopen'), icon: Clock, color: 'bg-blue-600 hover:bg-blue-700' },
         ];
       default:
         return [];
@@ -163,10 +157,8 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
           <AlertTriangle className="w-5 h-5 text-red-600" />
           <div>
-            <p className="text-red-800 font-medium">Acțiune întârziată</p>
-            <p className="text-red-600 text-sm">
-              Această acțiune a trecut de termenul programat
-            </p>
+            <p className="text-red-800 font-medium">{t('calendarEventDetails.overdue.title')}</p>
+            <p className="text-red-600 text-sm">{t('calendarEventDetails.overdue.subtitle')}</p>
           </div>
         </div>
       )}
@@ -177,11 +169,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex items-center space-x-2 mb-2">
             <Calendar className="w-4 h-4 text-gray-600" />
-            <h4 className="text-sm font-medium text-gray-700">Data Programată</h4>
+            <h4 className="text-sm font-medium text-gray-700">{t('calendarEventDetails.sections.scheduledDate')}</h4>
           </div>
-          <p className="text-gray-900 capitalize">
-            {formatDate(event.start)}
-          </p>
+          <p className="text-gray-900 capitalize">{formatDate(event.start)}</p>
         </div>
 
         {/* Description */}
@@ -189,7 +179,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
               <FileText className="w-4 h-4 text-gray-600" />
-              <h4 className="text-sm font-medium text-gray-700">Descriere</h4>
+              <h4 className="text-sm font-medium text-gray-700">{t('calendarEventDetails.sections.description')}</h4>
             </div>
             <p className="text-gray-900">{action.description}</p>
           </div>
@@ -200,64 +190,61 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
               <FileText className="w-4 h-4 text-gray-600" />
-              <h4 className="text-sm font-medium text-gray-700">Notițe</h4>
+              <h4 className="text-sm font-medium text-gray-700">{t('calendarEventDetails.sections.notes')}</h4>
             </div>
             <p className="text-gray-900">{action.notes}</p>
           </div>
         )}
 
-        {/* Specific Action Fields */}
+        {/* Fertilizing Fields */}
         {action.type === 'fertilizing' && (action as any).fertilizerType && (
           <div className="bg-amber-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
               <Activity className="w-4 h-4 text-amber-600" />
-              <h4 className="text-sm font-medium text-amber-700">Detalii Fertilizare</h4>
+              <h4 className="text-sm font-medium text-amber-700">{t('calendarEventDetails.sections.fertilizing')}</h4>
             </div>
             <div className="space-y-1 text-sm">
               {(action as any).fertilizerType && (
-                <p><span className="font-medium">Tip:</span> {(action as any).fertilizerType}</p>
+                <p><span className="font-medium">{t('calendarEventDetails.fields.type')}:</span> {(action as any).fertilizerType}</p>
               )}
               {(action as any).applicationRate && (
-                <p><span className="font-medium">Rată aplicare:</span> {(action as any).applicationRate} kg/ha</p>
+                <p><span className="font-medium">{t('calendarEventDetails.fields.rate')}:</span> {(action as any).applicationRate} kg/ha</p>
               )}
               {(action as any).method && (
-                <p><span className="font-medium">Metodă:</span> {(action as any).method}</p>
+                <p><span className="font-medium">{t('calendarEventDetails.fields.method')}:</span> {(action as any).method}</p>
               )}
             </div>
           </div>
         )}
 
+        {/* Harvesting Fields */}
         {action.type === 'harvesting' && (action as any).cropYield && (
           <div className="bg-yellow-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
               <Activity className="w-4 h-4 text-yellow-600" />
-              <h4 className="text-sm font-medium text-yellow-700">Detalii Recoltare</h4>
+              <h4 className="text-sm font-medium text-yellow-700">{t('calendarEventDetails.sections.harvesting')}</h4>
             </div>
             <div className="space-y-1 text-sm">
               {(action as any).cropYield && (
-                <p><span className="font-medium">Randament:</span> {(action as any).cropYield} tone/ha</p>
+                <p><span className="font-medium">{t('calendarEventDetails.fields.yield')}:</span> {(action as any).cropYield} t/ha</p>
               )}
               {(action as any).comments && (
-                <p><span className="font-medium">Comentarii:</span> {(action as any).comments}</p>
+                <p><span className="font-medium">{t('calendarEventDetails.fields.comments')}:</span> {(action as any).comments}</p>
               )}
             </div>
           </div>
         )}
 
-        {/* Created Info */}
+        {/* Info */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex items-center space-x-2 mb-2">
             <User className="w-4 h-4 text-gray-600" />
-            <h4 className="text-sm font-medium text-gray-700">Informații</h4>
+            <h4 className="text-sm font-medium text-gray-700">{t('calendarEventDetails.sections.info')}</h4>
           </div>
           <div className="space-y-1 text-sm text-gray-600">
-            <p>
-              Creat: {formatTime(new Date(action.createdAt))}
-            </p>
+            <p>{t('calendarEventDetails.fields.created')}: {formatTime(new Date(action.createdAt))}</p>
             {action.updatedAt && action.updatedAt !== action.createdAt && (
-              <p>
-                Actualizat: {formatTime(new Date(action.updatedAt))}
-              </p>
+              <p>{t('calendarEventDetails.fields.updated')}: {formatTime(new Date(action.updatedAt))}</p>
             )}
           </div>
         </div>
@@ -266,7 +253,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-200">
         <Button variant="outline" onClick={onClose}>
-          Închide
+          {t('calendarEventDetails.buttons.close')}
         </Button>
 
         <div className="flex items-center space-x-2">
@@ -288,10 +275,10 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
         </div>
       </div>
 
-      {/* Success Message */}
+      {/* Loading Message */}
       {isUpdating && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-          <p className="text-blue-800 text-sm">Se actualizează statusul...</p>
+          <p className="text-blue-800 text-sm">{t('calendarEventDetails.loading')}</p>
         </div>
       )}
     </div>

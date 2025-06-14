@@ -12,6 +12,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   FormField,
@@ -58,12 +59,14 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
   onBack,
   initialData = null,
 }) => {
-  // Status options for SearchSelect
+  const { t } = useTranslation();
+
+  // Status options for SearchSelect - now translated
   const statusOptions = [
-    { label: 'Planificat', value: 'planned' },
-    { label: 'În progres', value: 'in_progress' },
-    { label: 'Completat', value: 'completed' },
-    { label: 'Anulat', value: 'cancelled' },
+    { label: t('actionForm.status.planned'), value: 'planned' },
+    { label: t('actionForm.status.inProgress'), value: 'in_progress' },
+    { label: t('actionForm.status.completed'), value: 'completed' },
+    { label: t('actionForm.status.cancelled'), value: 'cancelled' },
   ];
 
   // Initialize form, seeding defaultValues from `initialData` if editing,
@@ -157,25 +160,10 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
   };
 
   /**
-   * Returns human-readable labels for action types.
+   * Returns human-readable labels for action types - now translated.
    */
   const getActionLabel = (type: ActionType) => {
-    switch (type) {
-      case 'planting':
-        return 'Plantare';
-      case 'harvesting':
-        return 'Recoltare';
-      case 'fertilizing':
-        return 'Fertilizare';
-      case 'treatment':
-        return 'Tratament';
-      case 'watering':
-        return 'Udare';
-      case 'soil_reading':
-        return 'Analiză Sol';
-      default:
-        return (type as string).replace("_", " ").replace(/^\w/, (c: any) => c.toUpperCase());
-    }
+    return t(`actionForm.types.${type}`);
   };
 
   return (
@@ -204,7 +192,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Data Planificată</FormLabel>
+              <FormLabel>{t('actionForm.fields.plannedDate')}</FormLabel>
               <FormControl>
                 <DateTimePicker
                   value={field.value}
@@ -221,12 +209,12 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>{t('actionForm.fields.status')}</FormLabel>
               <FormControl>
                 <div className="relative z-50">
                   <SearchSelect
                     options={statusOptions}
-                    placeholder="Selectează statusul"
+                    placeholder={t('actionForm.placeholders.selectStatus')}
                     value={field.value}
                     onValueChange={field.onChange}
                     modal={true}
@@ -243,12 +231,12 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Descriere</FormLabel>
+              <FormLabel>{t('actionForm.fields.description')}</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   value={field.value || ''}
-                  placeholder="Descrierea acțiunii"
+                  placeholder={t('actionForm.placeholders.description')}
                 />
               </FormControl>
               <FormMessage />
@@ -261,12 +249,12 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notițe</FormLabel>
+              <FormLabel>{t('actionForm.fields.notes')}</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   value={field.value || ''}
-                  placeholder="Notițe suplimentare"
+                  placeholder={t('actionForm.placeholders.notes')}
                 />
               </FormControl>
               <FormMessage />
@@ -282,9 +270,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="cropType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tip Cultură</FormLabel>
+                  <FormLabel>{t('actionForm.fields.cropType')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Grâu" />
+                    <Input {...field} placeholder={t('actionForm.placeholders.cropType')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -295,9 +283,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="variety"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Varietate</FormLabel>
+                  <FormLabel>{t('actionForm.fields.variety')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="ex: Dropia" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.variety')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -308,9 +296,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="seedingRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Norma de Însămânțare</FormLabel>
+                  <FormLabel>{t('actionForm.fields.seedingRate')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="kg/ha" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.seedingRate')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -325,7 +313,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             name="cropYield"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Randament (kg/ha)</FormLabel>
+                <FormLabel>{t('actionForm.fields.cropYield')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -348,9 +336,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="fertilizerType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tip Îngrășământ</FormLabel>
+                  <FormLabel>{t('actionForm.fields.fertilizerType')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Uree" />
+                    <Input {...field} placeholder={t('actionForm.placeholders.fertilizerType')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -361,7 +349,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="applicationRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Doză Aplicare (kg/ha)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.applicationRate')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -380,9 +368,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="method"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Metodă Aplicare</FormLabel>
+                  <FormLabel>{t('actionForm.fields.applicationMethod')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="ex: Împrăștiat" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.applicationMethod')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -398,9 +386,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="pesticideType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tip Pesticid</FormLabel>
+                  <FormLabel>{t('actionForm.fields.pesticideType')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Glifosat" />
+                    <Input {...field} placeholder={t('actionForm.placeholders.pesticideType')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -411,9 +399,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="targetPest"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dăunător Țintă</FormLabel>
+                  <FormLabel>{t('actionForm.fields.targetPest')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="ex: Afide" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.targetPest')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -424,7 +412,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="dosage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Doză (l/ha)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.dosage')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -443,9 +431,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="applicationMethod"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Metodă Aplicare</FormLabel>
+                  <FormLabel>{t('actionForm.fields.applicationMethod')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="ex: Pulverizare" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.treatmentMethod')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -461,9 +449,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="waterSource"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sursa de Apă</FormLabel>
+                  <FormLabel>{t('actionForm.fields.waterSource')}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} placeholder="ex: Fântână" />
+                    <Input {...field} value={field.value || ''} placeholder={t('actionForm.placeholders.waterSource')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -474,7 +462,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cantitate (m³/ha)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.waterAmount')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -498,7 +486,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="ph"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nivel pH (0–14)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.phLevel')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -520,7 +508,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="nitrogen"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Azot (mg/kg)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.nitrogen')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -540,7 +528,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="phosphorus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fosfor (mg/kg)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.phosphorus')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -560,7 +548,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="potassium"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Potasiu (mg/kg)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.potassium')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -580,11 +568,11 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="organicMatter"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Materie Organică (%)</FormLabel>
+                  <FormLabel>{t('actionForm.fields.organicMatter')}</FormLabel>
                   <FormControl>
                     <Input
                       {...field} value={field.value || ''}
-                      placeholder="ex: 3.5"
+                      placeholder={t('actionForm.placeholders.organicMatter')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -598,7 +586,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
         <DialogFooter className="flex justify-end space-x-2 pt-4">
           <DialogClose asChild>
             <Button variant="outline" size="sm">
-              Anulează
+              {t('common.cancel')}
             </Button>
           </DialogClose>
           <Button
@@ -606,7 +594,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             size="sm"
             className={`${getButtonColor(type)} text-white`}
           >
-            Salvează
+            {t('common.save')}
           </Button>
         </DialogFooter>
       </form>

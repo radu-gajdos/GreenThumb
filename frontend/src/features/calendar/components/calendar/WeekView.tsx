@@ -1,6 +1,7 @@
 import React from 'react';
 import EventCard from './EventCard';
 import { CalendarEvent } from '../../types/calendar';
+import { useTranslation } from 'react-i18next';
 
 interface WeekViewProps {
   days: Date[];
@@ -9,7 +10,17 @@ interface WeekViewProps {
 }
 
 const WeekView: React.FC<WeekViewProps> = ({ days, getEventsForDate, onEventClick }) => {
-  const weekDays = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
+  const { t } = useTranslation();
+
+  const weekDays = [
+    t('calendarWeekView.weekdays.mon'),
+    t('calendarWeekView.weekdays.tue'),
+    t('calendarWeekView.weekdays.wed'),
+    t('calendarWeekView.weekdays.thu'),
+    t('calendarWeekView.weekdays.fri'),
+    t('calendarWeekView.weekdays.sat'),
+    t('calendarWeekView.weekdays.sun'),
+  ];
 
   return (
     <div className="grid grid-cols-7 gap-4">

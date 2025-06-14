@@ -116,6 +116,58 @@
             "amountRequired": "Water amount is required.",
             "positiveNumber": "Value must be positive.",
             "minZero": "Value cannot be negative."
+        },
+        "types": {
+            "planting": "Planting",
+            "harvesting": "Harvesting",
+            "fertilizing": "Fertilizing",
+            "treatment": "Treatment",
+            "watering": "Watering",
+            "soil_reading": "Soil Analysis"
+        },
+        "status": {
+            "planned": "Planned",
+            "inProgress": "In Progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "fields": {
+            "plannedDate": "Planned Date",
+            "status": "Status",
+            "description": "Description",
+            "notes": "Notes",
+            "cropType": "Crop Type",
+            "variety": "Variety",
+            "seedingRate": "Seeding Rate",
+            "cropYield": "Yield (kg/ha)",
+            "fertilizerType": "Fertilizer Type",
+            "applicationRate": "Application Rate (kg/ha)",
+            "applicationMethod": "Application Method",
+            "pesticideType": "Pesticide Type",
+            "targetPest": "Target Pest",
+            "dosage": "Dosage (l/ha)",
+            "waterSource": "Water Source",
+            "waterAmount": "Amount (m³/ha)",
+            "phLevel": "pH Level (0–14)",
+            "nitrogen": "Nitrogen (mg/kg)",
+            "phosphorus": "Phosphorus (mg/kg)",
+            "potassium": "Potassium (mg/kg)",
+            "organicMatter": "Organic Matter (%)"
+        },
+        "placeholders": {
+            "selectStatus": "Select status",
+            "description": "Action description",
+            "notes": "Additional notes",
+            "cropType": "e.g., Wheat",
+            "variety": "e.g., Dropia",
+            "seedingRate": "kg/ha",
+            "fertilizerType": "e.g., Urea",
+            "applicationMethod": "e.g., Broadcast",
+            "pesticideType": "e.g., Glyphosate",
+            "targetPest": "e.g., Aphids",
+            "treatmentMethod": "e.g., Spraying",
+            "waterSource": "e.g., Well",
+            "organicMatter": "e.g., 3.5"
         }
     },
     "actionTable": {
@@ -130,5 +182,195 @@
         "title": "Actions",
         "addAction": "Add action",
         "confirmDelete": "Are you sure you want to delete this action?"
+    },
+    "loginForm": {
+        "title": "Login to your account",
+        "subtitle": "Enter your email below to login to your account",
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "test123",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "********",
+        "forgotPassword": "Forgot your password?",
+        "rememberMe": "Remember me",
+        "errorTitle": "Error!",
+        "submit": "Login",
+        "loading": "Loading...",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign up"
+    },
+    "registerForm": {
+        "title": "Create your account",
+        "subtitle": "Enter your details below to create your account",
+        "nameLabel": "Full Name",
+        "namePlaceholder": "John Doe",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "john@example.com",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "+1234567890",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "********",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "********",
+        "passwordTooShort": "Password must be at least 6 characters long",
+        "passwordMismatch": "Passwords do not match",
+        "errorTitle": "Error!",
+        "submit": "Create Account",
+        "loading": "Creating Account...",
+        "hasAccount": "Already have an account?",
+        "signIn": "Sign in"
+    },
+    "twoStepForm": {
+        "title": "Two-Step Challenge",
+        "messages": {
+            "app": "Please enter the code from your authenticator app",
+            "email": "Please enter the code sent to your email"
+        },
+        "fields": {
+            "code": "Code"
+        },
+        "placeholders": {
+            "code": "123456"
+        },
+        "errorTitle": "Error!",
+        "buttons": {
+            "login": "Login",
+            "loading": "Loading...",
+            "back": "Back to login"
+        }
+    },
+    "calendarFilters": {
+        "open": "Filters",
+        "clearFilters": "Clear filters",
+        "clearAll": "Clear all",
+        "title": "Calendar Filters",
+        "actionTypes": "Action Types",
+        "plots": "Plots",
+        "status": {
+            "label": "Status",
+            "planned": "Planned",
+            "in_progress": "In Progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "overdue": {
+            "title": "Show Overdue",
+            "subtitle": "Include actions past their due date"
+        }
+    },
+    "calendarToolbar": {
+        "today": "Today",
+        "view": {
+            "month": "Month",
+            "week": "Week",
+            "list": "List"
+        }
+    },
+    "calendarListView": {
+        "open": "Filters",
+        "clearFilters": "Clear filters",
+        "clearAll": "Clear all",
+        "title": "Calendar Filters",
+        "actionTypes": "Action Types",
+        "plots": "Plots",
+        "status": {
+            "label": "Status",
+            "planned": "Planned",
+            "in_progress": "In Progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "overdue": {
+            "title": "Show Overdue",
+            "subtitle": "Include actions past their due date"
+        }
+    },
+    "calendarMonthView": {
+        "weekdays": {
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+        },
+        "more": "+{{count}} more"
+    },
+    "calendarWeekView": {
+        "weekdays": {
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday",
+            "sun": "Sunday"
+        }
+    },
+    "calendarHeader": {
+        "today": {
+            "title": "Today",
+            "description": "scheduled events"
+        },
+        "week": {
+            "title": "This Week",
+            "description": "planned events"
+        },
+        "overdue": {
+            "title": "Overdue",
+            "description": "overdue actions"
+        },
+        "completed": {
+            "title": "Completed",
+            "description": "this month"
+        }
+    },
+    "calendarIndex": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "tomorrow": "Tomorrow",
+        "errorFallbackTitle": "Error loading calendar",
+        "errorFallbackDescription": "There was a problem while loading the calendar data.",
+        "retry": "Try again",
+        "dialogActionDetails": "Action Details"
+    },
+    "calendarEventDetails": {
+        "status": {
+            "planned": "Planned",
+            "in_progress": "In Progress",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+            "unknown": "Unknown"
+        },
+        "overdue": {
+            "title": "Overdue Action",
+            "subtitle": "This action is past its scheduled date"
+        },
+        "sections": {
+            "scheduledDate": "Scheduled Date",
+            "description": "Description",
+            "notes": "Notes",
+            "info": "Information",
+            "fertilizing": "Fertilizing Details",
+            "harvesting": "Harvesting Details"
+        },
+        "fields": {
+            "type": "Type",
+            "rate": "Application Rate",
+            "method": "Method",
+            "yield": "Yield",
+            "comments": "Comments",
+            "created": "Created",
+            "updated": "Updated"
+        },
+        "buttons": {
+            "start": "Start",
+            "complete": "Mark Completed",
+            "cancel": "Cancel",
+            "stop": "Stop",
+            "reopen": "Reopen",
+            "close": "Close"
+        },
+        "loading": "Updating status..."
     }
 }

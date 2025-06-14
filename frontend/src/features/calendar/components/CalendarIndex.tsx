@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertTriangle, Calendar as CalendarIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendarData } from '../hooks/useCalendarData';
 import CalendarHeader from './CalendarHeader';
@@ -15,6 +16,8 @@ import EventDetails from './EventDetails';
 type ViewType = 'month' | 'week' | 'list';
 
 const CalendarIndex: React.FC = () => {
+  const { t } = useTranslation();
+
   const {
     calendarEvents,
     stats,
@@ -126,11 +129,11 @@ const CalendarIndex: React.FC = () => {
       })}`;
     } else {
       const today = new Date();
-      if (isSameDay(selectedListDate, today)) return 'Astăzi';
+      if (isSameDay(selectedListDate, today)) return t('calendarIndex.today');
       const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
-      if (isSameDay(selectedListDate, yesterday)) return 'Ieri';
+      if (isSameDay(selectedListDate, yesterday)) return t('calendarIndex.yesterday');
       const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-      if (isSameDay(selectedListDate, tomorrow)) return 'Mâine';
+      if (isSameDay(selectedListDate, tomorrow)) return t('calendarIndex.tomorrow');
       return selectedListDate.toLocaleDateString('ro-RO', {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
       });
@@ -176,13 +179,13 @@ const CalendarIndex: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
         <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Eroare la încărcarea calendarului</h3>
-        <p className="text-gray-500 max-w-md mb-4">{error}</p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('calendarIndex.errorFallbackTitle')}</h3>
+        <p className="text-gray-500 max-w-md mb-4">{t('calendarIndex.errorFallbackDescription')}</p>
         <button
           onClick={() => window.location.reload()}
           className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded"
         >
-          Încearcă din nou
+          {t('calendarIndex.retry')}
         </button>
       </div>
     );
@@ -239,13 +242,12 @@ const CalendarIndex: React.FC = () => {
         </div>
       </div>
 
-      {/* Dialog pentru detalii acțiune */}
       <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
               <CalendarIcon className="w-5 h-5" />
-              <span>Detalii Acțiune</span>
+              <span>{t('calendarIndex.dialogActionDetails')}</span>
             </DialogTitle>
           </DialogHeader>
           {selectedEvent && (

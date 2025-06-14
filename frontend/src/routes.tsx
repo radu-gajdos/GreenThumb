@@ -4,7 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Login from './features/auth/pages/Login';
 import { Loader } from 'lucide-react';
 import LayoutAppRoutes from './features/layout/routes';
-import Register from './features/auth/components/register';
+import Register from './features/auth/pages/Register';
 
 const AppRoutes: React.FC = () => {
   return (
