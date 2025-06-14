@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import ModalDelete from "@/components/modals/ModalDelete";
 import FieldNoteApi, { UpdateFieldNoteDto } from "../api/fieldNote.api";
-import { FieldNoteFormType, fieldNoteFormSchema } from "../constants/fieldNoteFormSchema";
+import { FieldNoteFormType, fieldNoteFormSchema } from "../constants/formSchema";
 import { SelectedFieldNote } from "../interfaces/fieldNote";
 
 interface FieldNoteContentProps {

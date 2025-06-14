@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import PlotMap from './components/PlotMap';
+import PlotMap from './pages/PlotMap';
 
 const MapRoutes: React.FC = () => {
     return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import GeneralAIChat from './components/AiChat/Chat';
+import GeneralAIChat from './components/generalChat/Chat';
 
 const AiRoutes: React.FC = () => {
     return (

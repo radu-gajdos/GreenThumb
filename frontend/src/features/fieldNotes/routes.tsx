@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import FieldNotesViewer from './components/FieldNoteViewer';
+import FieldNotesViewer from './pages/FieldNoteViewer';
 
 const FieldNoteRoutes: React.FC = () => {
     return (

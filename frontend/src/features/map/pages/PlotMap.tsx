@@ -10,10 +10,10 @@ import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import { MapPin } from 'lucide-react';
 import { Plot } from '@/features/plots/interfaces/plot';
-import MapControls, { MapLayerType } from './MapControls';
-import MapLoadingState from './MapLoadingState';
-import MapErrorState from './MapErrorState';
-import PlotMarker from './PlotMarker';
+import MapControls, { MapLayerType } from '../components/MapControls';
+import MapLoadingState from '../components/MapLoadingState';
+import MapErrorState from '../components/MapErrorState';
+import PlotMarker from '../components/PlotMarker';
 import { useMapData } from '../hooks/useMapData';
 
 /** Default fallback center (central Romania) */

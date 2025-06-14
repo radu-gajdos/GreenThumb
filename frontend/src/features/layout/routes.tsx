@@ -10,7 +10,6 @@ import { Toaster } from "@/components/ui/toaster"
 import PlotRoutes from '../plots/routes';
 import MapRoutes from '../map/routes';
 import CalendarRoutes from '../calendar/routes';
-import FieldNotesViewer from '../fieldNotes/components/FieldNoteViewer';
 import YieldRoutes from '../yieldPredictor/routes';
 import AiRoutes from '../plots/aiRoutes';
 import FieldNoteRoutes from '../fieldNotes/routes';

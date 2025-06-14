@@ -32,7 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { BookMarked, Plus } from "lucide-react";
 import SearchSelect from "@/components/ui/searchSelect";
 import FieldNoteApi, { FieldNote } from "../api/fieldNote.api";
-import { FieldNoteFormType, fieldNoteFormSchema } from "../constants/fieldNoteFormSchema";
+import { FieldNoteFormType, fieldNoteFormSchema } from "../constants/formSchema";
 
 interface SaveMessageModalProps {
   /** Controls dialog visibility */

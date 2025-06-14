@@ -15,9 +15,9 @@ import {
   PlotWithFieldNotes,
   SelectedFieldNote,
 } from '../interfaces/fieldNote';
-import FieldNoteContent from './FieldNoteContent';
-import SaveMessageModal from './SaveMessageModal';
-import FieldNotesSidebar from './FieldNoteSidebar';
+import FieldNoteContent from '../components/FieldNoteContent';
+import SaveMessageModal from '../components/SaveMessageModal';
+import FieldNotesSidebar from '../components/FieldNoteSidebar';
 
 const FieldNotesViewer: React.FC = () => {
   const { t } = useTranslation();
