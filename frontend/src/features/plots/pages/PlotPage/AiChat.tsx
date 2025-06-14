@@ -16,6 +16,7 @@ import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal'
 import { ConversationApi } from '../../api/conversation.api';
 import { Message } from '../../interfaces/conversation';
 import ModalDelete from '@/components/modals/ModalDelete';
+import { ToastService } from '@/services/toast.service';
 
 interface AIChatProps {
   plot: Plot;
@@ -35,11 +36,6 @@ const ERROR_MESSAGES = {
   en: 'Sorry, I couldn\'t process your request. Please try again.',
 } as const;
 
-// Confirmation prompts for clearing chat history
-const CONFIRM_MESSAGES = {
-  ro: 'Ești sigur că dorești să ștergi istoricul conversației? Această acțiune nu poate fi anulată.',
-  en: 'Are you sure you want to clear the chat history? This action cannot be undone.',
-} as const;
 
 const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   const { t, i18n } = useTranslation();
@@ -51,8 +47,6 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   const [messageToSave, setMessageToSave] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
 
   // Memoized Conversation API client instance
   const conversationApi = useMemo(() => new ConversationApi(), []);
@@ -148,25 +142,15 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
    */
   useEffect(() => {
     const loadConversationHistory = async () => {
-      console.log(`[AICHAT] Loading conversation history for plot: ${plot.id}`);
       setInitialLoading(true);
 
       try {
-        // Load messages from backend database
         const backendMessages = await conversationApi.getConversationHistory(plot.id);
-
-        console.log(`[AICHAT] Loaded ${backendMessages.length} messages from backend`);
-
-        if (backendMessages.length > 0) {
-          setMessages(backendMessages);
-        } else {
-          // No messages in backend, check localStorage for migration
-          await migrateFromLocalStorage();
-        }
+        setMessages(backendMessages);
       } catch (error) {
-        console.error('[AICHAT] Error loading conversation history:', error);
-        // Fallback to localStorage if backend fails
-        await migrateFromLocalStorage();
+        ToastService.error(
+          t('plotPage.aiChat.errorLoadingHistory')
+        );
       } finally {
         setInitialLoading(false);
       }
@@ -174,41 +158,6 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
     loadConversationHistory();
   }, [plot.id, conversationApi]);
-
-  /**
-   * Migrate existing localStorage data to backend (one-time migration)
-   */
-  const migrateFromLocalStorage = async () => {
-    const storageKey = `chat_${plot.id}`;
-    const savedMessages = localStorage.getItem(storageKey);
-
-    if (savedMessages) {
-      try {
-        console.log('[AICHAT] Found localStorage data, attempting migration...');
-        const parsedMessages: Message[] = JSON.parse(savedMessages).map((msg: any) => ({
-          ...msg,
-          id: msg.id || `migrated-${Date.now()}-${Math.random()}`,
-          timestamp: new Date(msg.timestamp),
-          plotId: plot.id,
-        }));
-
-        // For now, just use the parsed messages
-        // In a full implementation, you'd send these to backend
-        setMessages(parsedMessages);
-
-        console.log(`[AICHAT] Migrated ${parsedMessages.length} messages from localStorage`);
-
-        // Clear localStorage after successful migration
-        localStorage.removeItem(storageKey);
-
-      } catch (error) {
-        console.error('[AICHAT] Error parsing saved messages:', error);
-        initializeChat();
-      }
-    } else {
-      initializeChat();
-    }
-  };
 
   /**
    * Initialize chat with a welcome message from the AI.
@@ -312,7 +261,6 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
    * Clear chat history in backend database after user confirmation
    */
   const handleDeleteConfirm = async () => {
-    setIsDeleting(true);
     try {
       await conversationApi.clearConversation(plot.id);
       setMessages([]);
@@ -322,7 +270,6 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
       setMessages([]);
       initializeChat();
     } finally {
-      setIsDeleting(false);
       setShowDeleteModal(false);
     }
   };

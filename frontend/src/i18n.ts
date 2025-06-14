@@ -4,23 +4,27 @@ import HttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18n
-  .use(HttpBackend)               // încarcă traducerile din public/locales
-  .use(LanguageDetector)          // detectează limba browser-ului
-  .use(initReactI18next)          // conectează la React
+  .use(HttpBackend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
-    fallbackLng: 'en',            // dacă nu există traducere, folosește engleza
+    fallbackLng: 'en',
     debug: process.env.NODE_ENV === 'development',
     interpolation: {
-      escapeValue: false,         // React scapă deja caracterele
+      escapeValue: false,
     },
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json'
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
     detection: {
-      // poți configura cum detectezi limba (localStorage, queryParam etc.)
       order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
-    }
+      caches: ['localStorage'],
+    },
   });
+
+/**
+ * Typed version of i18n.t for use outside of React components
+ */
+export const $t: (key: string, options?: any) => string = i18n.t.bind(i18n);
 
 export default i18n;

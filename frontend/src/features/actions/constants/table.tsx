@@ -2,6 +2,7 @@ import React from 'react';
 import { ColDefType } from '@/components/table/modules/interfaces/ColDefType';
 import { Action } from '../interfaces/action';
 import ActionsColumn from '@/components/table/modules/ActionsColumn';
+import { lazyT } from '@/lib/lazyT';
 
 export const pagination = true;
 export const paginationPageSize = 20;
@@ -20,7 +21,7 @@ export const getColumns = (
     sortable: true,
   },
   {
-    headerName: 'Tip Acțiune',
+    headerName: lazyT('actionTable.type')(),
     field: 'type',
     sortable: true,
     filter: 'agTextColumnFilter',
@@ -28,7 +29,7 @@ export const getColumns = (
     dataType: 'string',
   },
   {
-    headerName: 'Data',
+    headerName: lazyT('actionTable.date')(),
     field: 'createdAt',
     sortable: true,
     filter: 'agDateColumnFilter',
@@ -39,30 +40,30 @@ export const getColumns = (
       return new Date(params.value).toLocaleDateString();
     },
   },
-  // Dynamic columns based on action type
   {
-    headerName: 'Detalii',
+    headerName: lazyT('actionTable.details')(),
     colId: 'details',
     sortable: false,
     filter: false,
     minWidth: 200,
     valueGetter: (params: any) => params.data,
     valueFormatter: (params: any) => {
-      if (!params.data) return '';
-      
-      switch (params.data.type) {
+      const d = params.data;
+      if (!d) return '';
+
+      switch (d.type) {
         case 'planting':
-          return `${params.data.cropType || ''} ${params.data.variety || ''}`;
+          return `${d.cropType || ''} ${d.variety || ''}`;
         case 'harvesting':
-          return `Yield: ${params.data.cropYield || 0} kg`;
+          return `${lazyT('actionTable.yield')()}: ${d.cropYield || 0} ${lazyT('actionTable.kg')()}`;
         case 'fertilizing':
-          return `${params.data.fertilizerType || ''} (${params.data.applicationRate || 0})`;
+          return `${d.fertilizerType || ''} (${d.applicationRate || 0})`;
         case 'treatment':
-          return `${params.data.pesticideType || ''} - ${params.data.targetPest || ''}`;
+          return `${d.pesticideType || ''} - ${d.targetPest || ''}`;
         case 'watering':
-          return `${params.data.method || ''} - ${params.data.amount || 0} L`;
-        case 'soilReading':
-          return `pH: ${params.data.ph || 'N/A'}`;
+          return `${d.method || ''} - ${d.amount || 0} L`;
+        case 'soil_reading':
+          return `pH: ${d.ph ?? lazyT('actionTable.na')()}`;
         default:
           return '';
       }

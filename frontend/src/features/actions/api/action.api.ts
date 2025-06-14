@@ -2,6 +2,7 @@ import http from "@/api/http";
 import { ToastService } from "@/services/toast.service";
 import { Action } from "../interfaces/action";
 import { ActionFormValues } from "../constants/formSchema";
+import { $t } from "@/i18n";
 
 /**
  * @class ActionApi
@@ -18,18 +19,16 @@ export class ActionApi {
    */
   async create(formData: ActionFormValues, plotId: string): Promise<Action> {
     try {
-      // Transform form data to API format
       const actionData = {
         ...formData,
-        // Ensure date is in ISO string format
         date: formData.date instanceof Date ? formData.date.toISOString() : formData.date,
       };
 
       const response = await http.post(`/actions/${plotId}`, actionData);
-      ToastService.success("Acțiunea a fost creată.");
+      ToastService.success($t("actionApi.create.success"));
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Crearea acțiunii a eșuat.");
+      ToastService.error($t("actionApi.create.error"));
       throw error;
     }
   }
@@ -37,23 +36,20 @@ export class ActionApi {
   /**
    * Update an existing action.
    * @param formData - Action form data including ID
-   * @param plotId - Unique identifier of the plot (for consistency)
    * @returns Promise resolving to the updated Action object.
    */
   async update(formData: ActionFormValues & { id: string }): Promise<Action> {
     try {
-      // Transform form data to API format
       const actionData = {
         ...formData,
-        // Ensure date is in ISO string format
         date: formData.date instanceof Date ? formData.date.toISOString() : formData.date,
       };
 
       const response = await http.put(`/actions/${formData.id}`, actionData);
-      ToastService.success("Acțiunea a fost actualizată.");
+      ToastService.success($t("actionApi.update.success"));
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Actualizarea acțiunii a eșuat.");
+      ToastService.error($t("actionApi.update.error"));
       throw error;
     }
   }
@@ -67,10 +63,10 @@ export class ActionApi {
   async updateStatus(actionId: string, status: 'planned' | 'in_progress' | 'completed' | 'cancelled'): Promise<Action> {
     try {
       const response = await http.patch(`/actions/${actionId}/status`, { status });
-      ToastService.success("Statusul acțiunii a fost actualizat.");
+      ToastService.success($t("actionApi.updateStatus.success"));
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Actualizarea statusului a eșuat.");
+      ToastService.error($t("actionApi.updateStatus.error"));
       throw error;
     }
   }
@@ -85,7 +81,7 @@ export class ActionApi {
       const response = await http.get(`/actions/${actionId}`);
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Nu s-a putut încărca acțiunea.");
+      ToastService.error($t("actionApi.findOne.error"));
       throw error;
     }
   }
@@ -99,7 +95,7 @@ export class ActionApi {
       const response = await http.get("/actions");
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Nu s-au putut încărca acțiunile.");
+      ToastService.error($t("actionApi.findAll.error"));
       return [];
     }
   }
@@ -114,7 +110,7 @@ export class ActionApi {
       const response = await http.get(`/actions/plot/${plotId}`);
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Nu s-au putut încărca acțiunile pentru teren.");
+      ToastService.error($t("actionApi.findByPlot.error"));
       return [];
     }
   }
@@ -134,7 +130,7 @@ export class ActionApi {
       const response = await http.get("/actions", { params });
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Nu s-au putut încărca acțiunile pentru perioada selectată.");
+      ToastService.error($t("actionApi.getByDateRange.error"));
       return [];
     }
   }
@@ -148,7 +144,7 @@ export class ActionApi {
       const response = await http.get("/actions/overdue");
       return response.data.data || response.data;
     } catch (error) {
-      ToastService.error("Nu s-au putut încărca acțiunile întârziate.");
+      ToastService.error($t("actionApi.getOverdue.error"));
       return [];
     }
   }
@@ -161,9 +157,9 @@ export class ActionApi {
   async delete(actionId: string): Promise<void> {
     try {
       await http.delete(`/actions/${actionId}`);
-      ToastService.success("Acțiunea a fost ștearsă.");
+      ToastService.success($t("actionApi.delete.success"));
     } catch (error) {
-      ToastService.error("Ștergerea acțiunii a eșuat.");
+      ToastService.error($t("actionApi.delete.error"));
       throw error;
     }
   }

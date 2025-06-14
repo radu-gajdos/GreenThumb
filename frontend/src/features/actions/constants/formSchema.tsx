@@ -1,14 +1,9 @@
 import React from "react";
 import { z } from "zod";
-import { 
-  Sprout, 
-  Tractor, 
-  Wind, 
-  Droplets, 
-  FlaskConical, 
-  HelpCircle, 
-  PillBottle
+import {
+  Sprout, Tractor, Wind, Droplets, FlaskConical, HelpCircle, PillBottle,
 } from "lucide-react";
+import { lazyT } from "@/lib/lazyT";
 
 export type ActionType =
   | "planting"
@@ -20,84 +15,95 @@ export type ActionType =
 
 export const getActionIcon = (type: ActionType | string) => {
   switch (type) {
-    case "planting":
-      return <Sprout size={24} />;
-    case "harvesting":
-      return <Tractor size={24} />;
-    case "fertilizing":
-      return <Wind size={24} />;
-    case "treatment":
-      return <PillBottle size={24} />;
-    case "watering":
-      return <Droplets size={24} />;
-    case "soil_reading":
-      return <FlaskConical size={24} />;
-    default:
-      return <HelpCircle size={24} />;
+    case "planting": return <Sprout size={24} />;
+    case "harvesting": return <Tractor size={24} />;
+    case "fertilizing": return <Wind size={24} />;
+    case "treatment": return <PillBottle size={24} />;
+    case "watering": return <Droplets size={24} />;
+    case "soil_reading": return <FlaskConical size={24} />;
+    default: return <HelpCircle size={24} />;
   }
 };
 
 const commonFields = {
   type: z.enum([
-    "planting",
-    "harvesting",
-    "fertilizing",
-    "treatment",
-    "watering",
-    "soil_reading",
+    "planting", "harvesting", "fertilizing",
+    "treatment", "watering", "soil_reading",
   ]),
   date: z.date().default(() => new Date()),
-  status: z.enum(['planned', 'in_progress', 'completed', 'cancelled']).default('planned'),
+  status: z.enum(["planned", "in_progress", "completed", "cancelled"]).default("planned"),
   description: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
-  comments: z.string().optional(), // Keep for backward compatibility
+  comments: z.string().optional(),
 };
 
 export const actionFormSchema = z.discriminatedUnion("type", [
-  // Planting fields
   z.object({
     ...commonFields,
     type: z.literal("planting"),
-    cropType: z.string({ required_error: "Crop type is required" }).nonempty(),
+    cropType: z.lazy(() =>
+      z.string({
+        required_error: lazyT("actionForm.errors.cropTypeRequired")(),
+      }).nonempty(lazyT("actionForm.errors.cropTypeRequired")())
+    ),
     variety: z.string().optional().nullable(),
     seedingRate: z.string().optional().nullable(),
   }),
-  
-  // Harvesting fields
+
   z.object({
     ...commonFields,
     type: z.literal("harvesting"),
-    cropYield: z.number({ required_error: "Yield is required" }).min(0),
+    cropYield: z.lazy(() =>
+      z.number({
+        required_error: lazyT("actionForm.errors.cropYieldRequired")(),
+      }).min(0, lazyT("actionForm.errors.minZero")())
+    ),
   }),
-  
-  // Fertilizing fields
+
   z.object({
     ...commonFields,
     type: z.literal("fertilizing"),
-    fertilizerType: z.string({ required_error: "Fertilizer type is required" }).nonempty(),
-    applicationRate: z.number({ required_error: "Application rate is required" }).positive(),
+    fertilizerType: z.lazy(() =>
+      z.string({
+        required_error: lazyT("actionForm.errors.fertilizerTypeRequired")(),
+      }).nonempty(lazyT("actionForm.errors.fertilizerTypeRequired")())
+    ),
+    applicationRate: z.lazy(() =>
+      z.number({
+        required_error: lazyT("actionForm.errors.applicationRateRequired")(),
+      }).positive(lazyT("actionForm.errors.positiveNumber")())
+    ),
     method: z.string().optional().nullable(),
   }),
-  
-  // Treatment fields
+
   z.object({
     ...commonFields,
     type: z.literal("treatment"),
-    pesticideType: z.string({ required_error: "Pesticide type is required" }).nonempty(),
+    pesticideType: z.lazy(() =>
+      z.string({
+        required_error: lazyT("actionForm.errors.pesticideTypeRequired")(),
+      }).nonempty(lazyT("actionForm.errors.pesticideTypeRequired")())
+    ),
     targetPest: z.string().optional().nullable(),
-    dosage: z.number({ required_error: "Dosage is required" }).positive(),
+    dosage: z.lazy(() =>
+      z.number({
+        required_error: lazyT("actionForm.errors.dosageRequired")(),
+      }).positive(lazyT("actionForm.errors.positiveNumber")())
+    ),
     applicationMethod: z.string().optional().nullable(),
   }),
-  
-  // Watering fields
+
   z.object({
     ...commonFields,
     type: z.literal("watering"),
     waterSource: z.string().optional().nullable(),
-    amount: z.number({ required_error: "Amount is required" }).min(0),
+    amount: z.lazy(() =>
+      z.number({
+        required_error: lazyT("actionForm.errors.amountRequired")(),
+      }).min(0, lazyT("actionForm.errors.minZero")())
+    ),
   }),
-  
-  // Soil reading fields
+
   z.object({
     ...commonFields,
     type: z.literal("soil_reading"),

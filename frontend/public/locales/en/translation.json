@@ -71,5 +71,64 @@
             "title": "Plot Not Found",
             "message": "The requested plot information could not be found."
         }
+    },
+    "actionApi": {
+        "create": {
+            "success": "The action was successfully created.",
+            "error": "Failed to create the action."
+        },
+        "update": {
+            "success": "The action was successfully updated.",
+            "error": "Failed to update the action."
+        },
+        "updateStatus": {
+            "success": "The action status was successfully updated.",
+            "error": "Failed to update the action status."
+        },
+        "findOne": {
+            "error": "Could not load the action."
+        },
+        "findAll": {
+            "error": "Could not load the actions."
+        },
+        "findByPlot": {
+            "error": "Could not load the actions for this plot."
+        },
+        "getByDateRange": {
+            "error": "Could not load the actions for the selected period."
+        },
+        "getOverdueActions": {
+            "error": "Could not load overdue actions."
+        },
+        "delete": {
+            "success": "The action was successfully deleted.",
+            "error": "Failed to delete the action."
+        }
+    },
+    "actionForm": {
+        "errors": {
+            "cropTypeRequired": "Crop type is required.",
+            "cropYieldRequired": "Yield is required.",
+            "fertilizerTypeRequired": "Fertilizer type is required.",
+            "applicationRateRequired": "Application rate is required.",
+            "pesticideTypeRequired": "Pesticide type is required.",
+            "dosageRequired": "Dosage is required.",
+            "amountRequired": "Water amount is required.",
+            "positiveNumber": "Value must be positive.",
+            "minZero": "Value cannot be negative."
+        }
+    },
+    "actionTable": {
+        "type": "Tip asdasdada",
+        "date": "Data",
+        "details": "Detalii",
+        "yield": "asdasdadasdad",
+        "kg": "kg",
+        "na": "N/A"
+    },
+    "actionIndex": {
+        "title": "Actions",
+        "addAction": "Add action",
+        "confirmDelete": "Are you sure you want to delete this action?"
     }
 }
