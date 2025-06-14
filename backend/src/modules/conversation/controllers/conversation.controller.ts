@@ -114,12 +114,7 @@ export class ConversationController {
   @Delete(':plotId')
   @HttpCode(HttpStatus.OK)
   async clearConversation(@Param('plotId') plotId: string) {
-    console.log(`[CONTROLLER] Clearing conversation for plot: ${plotId}`);
-    
     await this.conversationService.clearConversation(plotId);
-    
-    console.log(`[CONTROLLER] Successfully cleared conversation for plot: ${plotId}`);
-    
     return {
       statusCode: 200,
       message: "Conversation cleared successfully",

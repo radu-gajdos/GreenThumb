@@ -44,7 +44,7 @@
       "organicMatter": "Materie organică"
     },
     "units": {
-      "tons": "tone",
+      "kg/ha": "kg/ha",
       "kgPerHa": "kg/ha",
       "lPerHa": "l/ha",
       "mm": "mm",

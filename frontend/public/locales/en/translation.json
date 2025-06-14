@@ -44,7 +44,7 @@
             "organicMatter": "Organic Matter"
         },
         "units": {
-            "tons": "tons",
+            "kg/ha": "kg/ha",
             "kgPerHa": "kg/ha",
             "lPerHa": "l/ha",
             "mm": "mm",

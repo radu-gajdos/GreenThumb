@@ -245,7 +245,11 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             <FormItem>
               <FormLabel>Descriere</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Descrierea acțiunii" />
+                <Textarea
+                  {...field}
+                  value={field.value || ''}
+                  placeholder="Descrierea acțiunii"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -259,7 +263,11 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             <FormItem>
               <FormLabel>Notițe</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Notițe suplimentare" />
+                <Textarea
+                  {...field}
+                  value={field.value || ''}
+                  placeholder="Notițe suplimentare"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -289,7 +297,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Varietate</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Dropia" />
+                    <Input {...field} value={field.value || ''} placeholder="ex: Dropia" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -302,7 +310,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Norma de Însămânțare</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="kg/ha" />
+                    <Input {...field} value={field.value || ''} placeholder="kg/ha" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -374,7 +382,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Metodă Aplicare</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Împrăștiat" />
+                    <Input {...field} value={field.value || ''} placeholder="ex: Împrăștiat" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -405,7 +413,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Dăunător Țintă</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Afide" />
+                    <Input {...field} value={field.value || ''} placeholder="ex: Afide" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -437,7 +445,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Metodă Aplicare</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Pulverizare" />
+                    <Input {...field} value={field.value || ''} placeholder="ex: Pulverizare" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -455,7 +463,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                 <FormItem>
                   <FormLabel>Sursa de Apă</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="ex: Fântână" />
+                    <Input {...field} value={field.value || ''} placeholder="ex: Fântână" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -575,7 +583,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
                   <FormLabel>Materie Organică (%)</FormLabel>
                   <FormControl>
                     <Input
-                      {...field}
+                      {...field} value={field.value || ''}
                       placeholder="ex: 3.5"
                     />
                   </FormControl>
@@ -593,9 +601,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               Anulează
             </Button>
           </DialogClose>
-          <Button 
-            type="submit" 
-            size="sm" 
+          <Button
+            type="submit"
+            size="sm"
             className={`${getButtonColor(type)} text-white`}
           >
             Salvează

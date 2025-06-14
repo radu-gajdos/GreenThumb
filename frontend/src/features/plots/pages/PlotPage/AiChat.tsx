@@ -15,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal';
 import { ConversationApi } from '../../api/conversation.api';
 import { Message } from '../../interfaces/conversation';
+import ModalDelete from '@/components/modals/ModalDelete';
 
 interface AIChatProps {
   plot: Plot;
@@ -49,6 +50,9 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [messageToSave, setMessageToSave] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
 
   // Memoized Conversation API client instance
   const conversationApi = useMemo(() => new ConversationApi(), []);
@@ -62,46 +66,46 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     p: ({ children }: any) => (
       <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>
     ),
-    
+
     // Bold text
     strong: ({ children }: any) => (
       <strong className="font-semibold text-gray-900">{children}</strong>
     ),
-    
+
     // Italic text
     em: ({ children }: any) => (
       <em className="italic text-gray-800">{children}</em>
     ),
-    
+
     // Inline code
     code: ({ children }: any) => (
       <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800 border">
         {children}
       </code>
     ),
-    
+
     // Code blocks
     pre: ({ children }: any) => (
       <pre className="bg-gray-100 p-3 rounded-md overflow-x-auto mb-3 border">
         {children}
       </pre>
     ),
-    
+
     // Ordered lists
     ol: ({ children }: any) => (
       <ol className="list-decimal list-outside ml-6 mb-3 space-y-1">{children}</ol>
     ),
-    
+
     // Unordered lists
     ul: ({ children }: any) => (
       <ul className="list-disc list-outside ml-6 mb-3 space-y-1">{children}</ul>
     ),
-    
+
     // List items
     li: ({ children }: any) => (
       <li className="leading-relaxed pl-1">{children}</li>
     ),
-    
+
     // Headings
     h1: ({ children }: any) => (
       <h1 className="text-xl font-bold mb-3 text-gray-900">{children}</h1>
@@ -112,25 +116,25 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     h3: ({ children }: any) => (
       <h3 className="text-base font-semibold mb-2 text-gray-900">{children}</h3>
     ),
-    
+
     // Blockquotes
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-gray-300 pl-4 py-2 mb-3 italic text-gray-700 bg-gray-50 rounded-r">
         {children}
       </blockquote>
     ),
-    
+
     // Horizontal rules
     hr: () => (
       <hr className="border-gray-300 my-4" />
     ),
-    
+
     // Links (if any)
     a: ({ href, children }: any) => (
-      <a 
-        href={href} 
-        className="text-blue-600 hover:text-blue-800 underline" 
-        target="_blank" 
+      <a
+        href={href}
+        className="text-blue-600 hover:text-blue-800 underline"
+        target="_blank"
         rel="noopener noreferrer"
       >
         {children}
@@ -150,7 +154,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
       try {
         // Load messages from backend database
         const backendMessages = await conversationApi.getConversationHistory(plot.id);
-        
+
         console.log(`[AICHAT] Loaded ${backendMessages.length} messages from backend`);
 
         if (backendMessages.length > 0) {
@@ -191,12 +195,12 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
         // For now, just use the parsed messages
         // In a full implementation, you'd send these to backend
         setMessages(parsedMessages);
-        
+
         console.log(`[AICHAT] Migrated ${parsedMessages.length} messages from localStorage`);
-        
+
         // Clear localStorage after successful migration
         localStorage.removeItem(storageKey);
-        
+
       } catch (error) {
         console.error('[AICHAT] Error parsing saved messages:', error);
         initializeChat();
@@ -261,7 +265,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     if (!trimmedInput) return;
 
     setLoading(true);
-    
+
     // Create and show user message immediately
     const userMessage = createMessage(trimmedInput, 'user');
     setMessages(prev => [...prev, userMessage]);
@@ -285,7 +289,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
     } catch (error) {
       console.error('[AICHAT] Error sending message:', error);
-      
+
       // Create fallback error message
       const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
       const errorMessage = createMessage(errorText, 'ai');
@@ -307,30 +311,19 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
   /**
    * Clear chat history in backend database after user confirmation
    */
-  const clearChat = async () => {
-    const confirmText =
-      CONFIRM_MESSAGES[currentLanguage] || CONFIRM_MESSAGES.en;
-
-    if (window.confirm(confirmText)) {
-      try {
-        console.log(`[AICHAT] Clearing conversation for plot: ${plot.id}`);
-        
-        // Clear conversation in backend database
-        await conversationApi.clearConversation(plot.id);
-        
-        // Reset local state
-        setMessages([]);
-        
-        // Reinitialize with welcome message
-        initializeChat();
-        
-        console.log('[AICHAT] Conversation cleared successfully');
-      } catch (error) {
-        console.error('[AICHAT] Error clearing conversation:', error);
-        // Fallback to local clear
-        setMessages([]);
-        initializeChat();
-      }
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await conversationApi.clearConversation(plot.id);
+      setMessages([]);
+      initializeChat();
+    } catch (error) {
+      console.error('[AICHAT] Error clearing conversation:', error);
+      setMessages([]);
+      initializeChat();
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -389,10 +382,10 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
             </p>
           </div>
         </div>
-        
+
         {/* Clear chat history button */}
         <button
-          onClick={clearChat}
+          onClick={() => setShowDeleteModal(true)}
           className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
           title={
             currentLanguage === 'ro'
@@ -415,18 +408,16 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${
-                  message.sender === 'user'
-                    ? 'justify-end'
-                    : 'justify-start'
-                }`}
+                className={`flex ${message.sender === 'user'
+                  ? 'justify-end'
+                  : 'justify-start'
+                  }`}
               >
                 <div
-                  className={`max-w-[85%] rounded-lg shadow-sm ${
-                    message.sender === 'user'
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-50 border border-gray-200'
-                  }`}
+                  className={`max-w-[85%] rounded-lg shadow-sm ${message.sender === 'user'
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-50 border border-gray-200'
+                    }`}
                 >
                   {/* Message content */}
                   <div className="px-4 py-3">
@@ -447,11 +438,10 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
 
                   {/* Message footer: time + optional Save button */}
                   <div
-                    className={`px-4 pb-2 flex items-center justify-between text-xs ${
-                      message.sender === 'user'
-                        ? 'text-primary-foreground/70'
-                        : 'text-gray-500'
-                    }`}
+                    className={`px-4 pb-2 flex items-center justify-between text-xs ${message.sender === 'user'
+                      ? 'text-primary-foreground/70'
+                      : 'text-gray-500'
+                      }`}
                   >
                     {/* Timestamp */}
                     <div className="flex-shrink-0">{formatTime(message.timestamp)}</div>
@@ -533,11 +523,10 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
         <button
           onClick={sendMessage}
           disabled={isSendDisabled}
-          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all duration-200 ${
-            isSendDisabled
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-sm'
-          }`}
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all duration-200 ${isSendDisabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-sm'
+            }`}
           aria-label="Send message"
         >
           {/* Paper plane icon */}
@@ -566,6 +555,14 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
         plotId={plot.id}
         onSave={handleFieldNoteSaved}
       />
+
+      <ModalDelete
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        confirmText={`Ești sigur că dorești să ștergi întreaga conversație pentru parcela "${plot.name}"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv.`}
+      />
+
     </div>
   );
 };

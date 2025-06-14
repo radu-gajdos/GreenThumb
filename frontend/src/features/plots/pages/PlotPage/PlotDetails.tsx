@@ -7,7 +7,7 @@
  *  - Activity log with counts and individual actions
  *  - "Add Action" button that opens a modal form
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PlotMap from './PlotMap';
 import { Plot } from '../../interfaces/plot';
@@ -15,6 +15,7 @@ import ActionsList from './ActionList';
 import { Button } from '@/components/ui/button';
 import ModalForm from '@/features/actions/pages/ModalForm';
 import ActionsIndex from '@/features/actions/pages/Index';
+import ModalDelete from '@/components/modals/ModalDelete';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Action } from '@/features/actions/interfaces/action';
+import { ActionApi } from '@/features/actions/api/action.api';
 import { MapPin, Layers, User, Map } from 'lucide-react';
 import { formatDateGeneral } from '@/lib/utils';
 
@@ -35,13 +37,20 @@ interface PlotDetailsProps {
 
 const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
   const { t } = useTranslation();
-  
+
   /** Local copy of plot.actions so we can append new actions client-side */
   const [actionsState, setActionsState] = useState<Action[]>(plot.actions);
   /** Controls visibility of the "Add Action" modal */
   const [showActionModal, setShowActionModal] = useState(false);
   /** Controls visibility of the "Actions Index" modal */
   const [showActionsIndex, setShowActionsIndex] = useState(false);
+  /** ID of the action currently being edited or deleted */
+  const [uidToEdit, setUidToEdit] = useState<string | null>(null);
+  /** Controls visibility of the delete confirmation modal */
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  /** Memoized API instance */
+  const actionApi = useMemo(() => new ActionApi(), []);
 
   /**
    * Sync local actionsState if parent plot.actions changes.
@@ -61,25 +70,74 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
   }, [actionsState, onActionsChange]);
 
   /**
-   * Compute counts of each action type for badges.
-   * useMemo ensures we only recalc when actionsState changes.
+   * Open edit modal for given action ID - same logic as in Index
    */
-  const actionGroups = useMemo(() => {
-    return actionsState.reduce<Record<string, number>>((groups, action) => {
-      groups[action.type] = (groups[action.type] || 0) + 1;
-      return groups;
-    }, {});
-  }, [actionsState]);
+  const onEdit = useCallback((uid: string) => {
+    setUidToEdit(uid);
+    setShowActionModal(true);
+  }, []);
 
   /**
-   * Handler invoked when ModalForm saves a new action.
-   * Appends to local state and closes the modal.
-   * @param newAction - The ActionFormType returned by the form
+   * Open delete confirmation for given action ID - same logic as in Index
    */
-  const handleAddAction = (newAction: Action) => {
-    setActionsState((prev) => [...prev, newAction]);
+  const onDelete = useCallback((uid: string) => {
+    setUidToEdit(uid);
+    setShowDeleteModal(true);
+  }, []);
+
+  /**
+   * Handle confirming deletion - same logic as in Index
+   */
+  const handleDelete = useCallback(async () => {
+    if (uidToEdit) {
+      try {
+        // Call API to delete
+        await actionApi.delete(uidToEdit);
+        
+        // Update local state immediately
+        setActionsState(prev => prev.filter(a => a.id !== uidToEdit));
+      } catch (error) {
+        console.error('Failed to delete action:', error);
+      }
+    }
+    
+    // Reset state
+    setShowDeleteModal(false);
+    setUidToEdit(null);
+  }, [uidToEdit, actionApi]);
+
+  /**
+   * Handler for adding new action (create mode)
+   */
+  const handleAddAction = useCallback((newAction: Action) => {
+    setActionsState((prev) => [newAction, ...prev]);
     setShowActionModal(false);
-  };
+    setUidToEdit(null); // Reset after create
+  }, []);
+
+  /**
+   * Handler for updating existing action (edit mode)
+   */
+  const handleUpdateAction = useCallback((updatedAction: Action) => {
+    setActionsState(prev => 
+      prev.map(a => a.id === updatedAction.id ? updatedAction : a)
+    );
+    setShowActionModal(false);
+    setUidToEdit(null); // Reset after update
+  }, []);
+
+  /**
+   * Combined handler for both create and update - passed to ModalForm
+   */
+  const handleSaveAction = useCallback((action: Action) => {
+    if (uidToEdit) {
+      // Edit mode
+      handleUpdateAction(action);
+    } else {
+      // Create mode
+      handleAddAction(action);
+    }
+  }, [uidToEdit, handleAddAction, handleUpdateAction]);
 
   /**
    * Handlers for the ActionsIndex component
@@ -90,12 +148,12 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
       if (prev.some(a => a.id === action.id)) {
         return prev;
       }
-      return [...prev, action];
+      return [action, ...prev];
     });
   };
 
   const handleActionUpdated = (action: Action) => {
-    setActionsState(prev => 
+    setActionsState(prev =>
       prev.map(a => a.id === action.id ? action : a)
     );
   };
@@ -131,7 +189,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
             {plot.soilType || t('plotDetails.notSpecified')}
           </p>
         </div>
-        
+
         <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-xl border border-emerald-200 transition-all hover:shadow-md">
           <div className="flex items-center space-x-3 mb-2">
             <div className="p-2 bg-emerald-200 rounded-lg">
@@ -143,7 +201,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
             {plot.topography || t('plotDetails.notSpecified')}
           </p>
         </div>
-        
+
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 transition-all hover:shadow-md">
           <div className="flex items-center space-x-3 mb-2">
             <div className="p-2 bg-blue-200 rounded-lg">
@@ -163,13 +221,16 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
           <h2 className="text-xl font-semibold">{t('plotDetails.activityLog')}</h2>
           <div className="flex items-center space-x-2">
             {/* "Add Action" opens the modal form */}
-            <Button size="sm" onClick={() => setShowActionModal(true)}>
+            <Button size="sm" onClick={() => {
+              setUidToEdit(null); // Clear edit ID for create mode
+              setShowActionModal(true);
+            }}>
               {t('plotDetails.addAction')}
             </Button>
             {/* "View All Actions" opens the Actions Index */}
-            <Button 
-              size="sm" 
-              variant="outline" 
+            <Button
+              size="sm"
+              variant="outline"
               onClick={() => setShowActionsIndex(true)}
             >
               {t('plotDetails.viewAllActions')}
@@ -177,18 +238,31 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
           </div>
         </div>
 
-        {/* List of individual actions */}
-        <ActionsList actions={actionsState} />
+        {/* List of individual actions with edit/delete functionality */}
+        <ActionsList
+          actions={actionsState}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       </div>
 
-      {/* Modal for creating a new action */}
+      {/* Modal for creating/editing actions */}
       <ModalForm
         showModal={showActionModal}
         setShowModal={setShowActionModal}
-        onSave={handleAddAction}
+        onSave={handleSaveAction}
         plotId={plot.id}
+        uid={uidToEdit} // Pass uidToEdit for edit mode
       />
-      
+
+      {/* Delete confirmation modal */}
+      <ModalDelete
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        confirmText="Sigur doriți să ștergeți această acțiune?"
+      />
+
       {/* Modal for browsing all actions */}
       <Dialog open={showActionsIndex} onOpenChange={setShowActionsIndex} modal>
         <DialogContent className="max-w-5xl">
@@ -196,8 +270,8 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
             <DialogTitle>{t('plotDetails.allActions')} - {plot.name}</DialogTitle>
           </DialogHeader>
           <div className="h-[70vh] overflow-auto">
-            <ActionsIndex 
-              plotId={plot.id} 
+            <ActionsIndex
+              plotId={plot.id}
               actions={actionsState}
               onActionAdded={handleActionAdded}
               onActionUpdated={handleActionUpdated}

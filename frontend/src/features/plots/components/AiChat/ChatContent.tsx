@@ -1,15 +1,17 @@
 /**
- * ChatContent.tsx - Final Version with React Markdown
+ * ChatContent.tsx - Final Version with React Markdown and ModalDelete
  * 
  * Main chat interface using hybrid API with proper Markdown formatting
+ * and modal delete confirmation
  */
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BookMarked, MapPin, Trash2 } from 'lucide-react';
+import { BookMarked, BotMessageSquare, MapPin, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
 import SaveMessageModal from '@/features/fieldNotes/components/SaveMessageModal';
+import ModalDelete from '@/components/modals/ModalDelete';
 import { ConversationApi } from '../../api/conversation.api';
 import { PlotConversation, Message } from '../../interfaces/conversation';
 
@@ -32,11 +34,6 @@ const ERROR_MESSAGES = {
   en: 'Sorry, I couldn\'t process your request. Please try again.',
 } as const;
 
-const CONFIRM_MESSAGES = {
-  ro: 'Ești sigur că dorești să ștergi istoricul conversației? Această acțiune nu poate fi anulată.',
-  en: 'Are you sure you want to clear the chat history? This action cannot be undone.',
-} as const;
-
 const ChatContent: React.FC<ChatContentProps> = ({
   conversation,
   loading,
@@ -49,6 +46,8 @@ const ChatContent: React.FC<ChatContentProps> = ({
   const [sendingMessage, setSendingMessage] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [messageToSave, setMessageToSave] = useState<Message | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const conversationApi = useMemo(() => new ConversationApi(), []);
@@ -110,19 +109,40 @@ const ChatContent: React.FC<ChatContentProps> = ({
     }
   };
 
-  const clearConversation = async () => {
+  /**
+   * Deschide modalul de confirmare pentru ștergerea conversației
+   */
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  /**
+   * Confirmă ștergerea conversației - apelează API-ul și notifică părinte
+   */
+  const handleDeleteConfirm = useCallback(async () => {
     if (!conversation) return;
 
-    const confirmText = CONFIRM_MESSAGES[currentLanguage] || CONFIRM_MESSAGES.en;
-
-    if (window.confirm(confirmText)) {
-      try {
-        await onConversationCleared(conversation.plotId);
-      } catch (error) {
-        console.error('Error clearing conversation:', error);
-      }
+    setIsDeleting(true);
+    
+    try {
+      // Apelează API-ul pentru a șterge conversația
+      await conversationApi.clearConversation(conversation.plotId);
+      
+      // Notifică componenta părinte că conversația a fost ștearsă
+      onConversationCleared(conversation.plotId);
+      
+      console.log('Conversation cleared successfully');
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
+      
+      // Opțional: afișează un toast de eroare
+      const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
+      alert(`Eroare la ștergerea conversației: ${error instanceof Error ? error.message : errorText}`);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
-  };
+  }, [conversation, conversationApi, onConversationCleared, currentLanguage]);
 
   const handleSaveMessage = (message: Message) => {
     setMessageToSave(message);
@@ -257,9 +277,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shadow-sm">
-              AI
-            </div>
+            <BotMessageSquare className='h-10 w-10'/>
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-gray-900">
                 {conversation.plotName}
@@ -273,11 +291,12 @@ const ChatContent: React.FC<ChatContentProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={clearConversation}
+            onClick={openDeleteModal}
+            disabled={isDeleting}
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
             <Trash2 className="w-4 h-4 mr-1" />
-            Șterge conversația
+            {isDeleting ? 'Se șterge...' : 'Șterge conversația'}
           </Button>
         </div>
       </div>
@@ -424,12 +443,21 @@ const ChatContent: React.FC<ChatContentProps> = ({
         </div>
       </div>
 
+      {/* Save Message Modal */}
       <SaveMessageModal
         showModal={showSaveModal}
         setShowModal={setShowSaveModal}
         messageText={messageToSave?.text || ''}
         plotId={conversation.plotId}
         onSave={handleFieldNoteSaved}
+      />
+
+      {/* Delete Conversation Modal */}
+      <ModalDelete
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        confirmText={`Ești sigur că dorești să ștergi întreaga conversație pentru parcela "${conversation.plotName}"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv.`}
       />
     </div>
   );

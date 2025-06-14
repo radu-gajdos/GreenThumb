@@ -48,8 +48,8 @@ const commonFields = {
   ]),
   date: z.date().default(() => new Date()),
   status: z.enum(['planned', 'in_progress', 'completed', 'cancelled']).default('planned'),
-  description: z.string().optional(),
-  notes: z.string().optional(),
+  description: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
   comments: z.string().optional(), // Keep for backward compatibility
 };
 
@@ -59,8 +59,8 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     ...commonFields,
     type: z.literal("planting"),
     cropType: z.string({ required_error: "Crop type is required" }).nonempty(),
-    variety: z.string().optional(),
-    seedingRate: z.string().optional(),
+    variety: z.string().optional().nullable(),
+    seedingRate: z.string().optional().nullable(),
   }),
   
   // Harvesting fields
@@ -76,7 +76,7 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     type: z.literal("fertilizing"),
     fertilizerType: z.string({ required_error: "Fertilizer type is required" }).nonempty(),
     applicationRate: z.number({ required_error: "Application rate is required" }).positive(),
-    method: z.string().optional(),
+    method: z.string().optional().nullable(),
   }),
   
   // Treatment fields
@@ -84,16 +84,16 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     ...commonFields,
     type: z.literal("treatment"),
     pesticideType: z.string({ required_error: "Pesticide type is required" }).nonempty(),
-    targetPest: z.string().optional(),
+    targetPest: z.string().optional().nullable(),
     dosage: z.number({ required_error: "Dosage is required" }).positive(),
-    applicationMethod: z.string().optional(),
+    applicationMethod: z.string().optional().nullable(),
   }),
   
   // Watering fields
   z.object({
     ...commonFields,
     type: z.literal("watering"),
-    waterSource: z.string().optional(),
+    waterSource: z.string().optional().nullable(),
     amount: z.number({ required_error: "Amount is required" }).min(0),
   }),
   
@@ -105,7 +105,7 @@ export const actionFormSchema = z.discriminatedUnion("type", [
     nitrogen: z.number().min(0).optional(),
     phosphorus: z.number().min(0).optional(),
     potassium: z.number().min(0).optional(),
-    organicMatter: z.string().optional(),
+    organicMatter: z.string().optional().nullable(),
   }),
 ]);
 

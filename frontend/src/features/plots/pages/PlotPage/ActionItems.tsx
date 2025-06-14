@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash2 } from 'lucide-react';
 import { castAction } from '../../api/plot.api';
 import {
   IAction,
@@ -23,18 +25,19 @@ import {
 interface ActionItemProps {
   /** The generic action object to render; will be narrowed via `castAction`. */
   action: IAction;
+  /** Callback for editing the action - same as table onEdit */
+  onEdit: (actionId: string) => void;
+  /** Callback for deleting the action - same as table onDelete */
+  onDelete: (actionId: string) => void;
 }
 
 /**
  * ActionItem
  *
- * Renders a styled "card" for an agricultural action (planting, harvesting, etc.).
- * It:
- * 1. Casts the generic `IAction` to its specific subtype.
- * 2. Chooses an icon, title, and color based on `action.type`.
- * 3. Displays the relevant fields for that action.
+ * Renders a styled "card" for an agricultural action with integrated Edit/Delete buttons.
+ * Same functionality as the AG Grid table actions.
  */
-const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
+const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => {
   const { t, i18n } = useTranslation();
 
   // Narrow the generic action into its specific interface
@@ -42,7 +45,6 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
 
   /**
    * Formats a Date or date-string into localized format.
-   * @param date - A Date object or date-string
    */
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString(i18n.language, {
@@ -89,7 +91,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
           <div>
             <p>
               <span className="font-medium">{t('actionItem.labels.yield')}</span> {harvesting.cropYield}{' '}
-              {t('actionItem.units.tons')}
+              {t('actionItem.units.kg/ha')}
             </p>
             <p>
               <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.date)}
@@ -221,7 +223,6 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
       }
 
       default:
-        // Fallback if a new type is added but not handled
         return <p>{t('actionItem.unknownType')}</p>;
     }
   };
@@ -278,12 +279,37 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
   };
 
   return (
-    <div className={`border rounded-lg p-4 mb-4 ${getActionColor()}`}>
-      <div className="flex items-center mb-3">
-        {/* Icon representing the action */}
-        <div className="mr-2">{getActionIcon()}</div>
-        {/* Title, e.g. "Planting" */}
-        <h3 className="text-lg font-semibold">{getActionTitle()}</h3>
+    <div className={`border rounded-lg p-4 mb-4 ${getActionColor()} relative`}>
+      {/* Header with title and action buttons */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center">
+          {/* Icon representing the action */}
+          <div className="mr-2">{getActionIcon()}</div>
+          {/* Title, e.g. "Planting" */}
+          <h3 className="text-lg font-semibold">{getActionTitle()}</h3>
+        </div>
+
+        {/* Action buttons - same as table functionality */}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onEdit(action.id)}
+            className="h-8 w-8 p-0 hover:bg-blue-100"
+            title="Editează acțiunea"
+          >
+            <Edit className="h-4 w-4 text-blue-600" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(action.id)}
+            className="h-8 w-8 p-0 hover:bg-red-100"
+            title="Șterge acțiunea"
+          >
+            <Trash2 className="h-4 w-4 text-red-600" />
+          </Button>
+        </div>
       </div>
 
       {/* Details section, indented with a left border */}

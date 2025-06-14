@@ -39,7 +39,7 @@ export class ConversationService {
     @InjectRepository(Plot)
     private readonly plotRepository: Repository<Plot>,
     private readonly aiService: AiService,
-  ) {}
+  ) { }
 
   /**
    * Send a message and get AI response WITH conversation context
@@ -150,15 +150,15 @@ export class ConversationService {
 
     // Build where clause based on query filters
     const where: any = {};
-    
+
     if (query?.plotId) {
       where.plotId = query.plotId;
     }
-    
+
     if (query?.isActive !== undefined) {
       where.isActive = query.isActive;
     }
-    
+
     if (query?.language) {
       where.language = query.language;
     }
@@ -207,9 +207,10 @@ export class ConversationService {
     if (!conversation) {
       throw new NotFoundException(`No active conversation found for plot ${plotId}`);
     }
-
-    // Delete all messages
-    await this.messageRepository.delete({ conversationId: conversation.id });
+    
+    for (const message of conversation.messages) {
+      await this.messageRepository.softRemove(message);
+    }
 
     // Reset conversation metadata
     conversation.messageCount = 0;

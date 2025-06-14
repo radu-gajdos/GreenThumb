@@ -11,7 +11,7 @@ export class FieldNoteService {
   constructor(
     @InjectRepository(FieldNote)
     private readonly fieldNoteRepo: Repository<FieldNote>,
-  ) {}
+  ) { }
 
   async create(dto: CreateFieldNoteDto, user: AuthUserDto): Promise<FieldNote> {
     const note = this.fieldNoteRepo.create(dto);
@@ -24,14 +24,11 @@ export class FieldNoteService {
 
   async findAll(user: AuthUserDto): Promise<FieldNote[]> {
     return this.fieldNoteRepo.find({
-        where: { 
-            // Add your user filtering logic here
-            // This depends on your entity relationships
-        },
-        relations: ['plot'], // If you have relations
-        order: { createdAt: 'DESC' }
+      where: { plot: { ownerId: user.id } }, // Find notes where the plot belongs to the user
+      relations: ['plot'], // Load the plot relation
+      order: { createdAt: 'DESC' }
     });
-}
+  }
 
   async findOne(id: string): Promise<FieldNote> {
     const note = await this.fieldNoteRepo.findOne({ where: { id } });
@@ -47,6 +44,7 @@ export class FieldNoteService {
 
   async remove(id: string): Promise<boolean> {
     const note = await this.findOne(id);
+    if (!note) throw new NotFoundException('FieldNote not found');
     await this.fieldNoteRepo.remove(note);
     return true;
   }
