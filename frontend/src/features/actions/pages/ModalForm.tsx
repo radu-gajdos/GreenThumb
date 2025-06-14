@@ -209,7 +209,7 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
   const handleSubmit = async (formData: ActionFormValues) => {
     try {
       const response = uid
-        ? await actionApi.update({ ...formData, id: uid }, plotId)
+        ? await actionApi.update({ ...formData, id: uid })
         : await actionApi.create(formData, plotId);
 
       // Call onSave to update parent component state

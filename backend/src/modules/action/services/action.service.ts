@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Action } from '../entities/action.entity';
 import { CreateActionDto } from '../dto/create-action.dto';
 import { Plot } from 'src/modules/plot/entities/plot.entity';
+import { UpdateActionDto } from '../dto/update-action.dto';
 
 @Injectable()
 export class ActionService {
@@ -72,8 +73,8 @@ export class ActionService {
         });
     }
 
-    async update(id: string, input: CreateActionDto): Promise<Action> {
-        const action = await this.findOne(id);
+    async update(input: UpdateActionDto): Promise<Action> {
+        const action = await this.findOne(input.id);
 
         const validActionTypes = [
             'fertilizing', 

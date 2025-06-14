@@ -208,14 +208,14 @@ const FieldNoteContent: React.FC<FieldNoteContentProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white">
       {/* Header: Title (or editable input) + Metadata + Action buttons */}
       <div className="border-b border-gray-200 p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             {isEditing ? (
               // Editing title: render input field
-              <div className="space-y-4">
+              <div className="border-b border-gray-200 p-6 flex-shrink-0">
                 <Form {...form}>
                   <FormField
                     control={form.control}
@@ -335,8 +335,8 @@ const FieldNoteContent: React.FC<FieldNoteContentProps> = ({
 
       {/* Main Content: Message body (editable textarea or read-only) */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto">
+      <div className="p-6">
+        <div className="max-w-4xl mx-auto">
             {isEditing ? (
               // Editing message: render textarea
               <div className="space-y-4">

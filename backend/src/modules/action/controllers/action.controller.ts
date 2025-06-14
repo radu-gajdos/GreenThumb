@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete, UseInterceptors, ClassSerializerInterceptor, Put, Query, Patch } from '@nestjs/common';
 import { ActionService } from '../services/action.service';
 import { CreateActionDto } from '../dto/create-action.dto';
+import { UpdateActionDto } from '../dto/update-action.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('actions')
@@ -39,8 +40,8 @@ export class ActionController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateActionDto: CreateActionDto) {
-        return this.actionService.update(id, updateActionDto);
+    update(@Body() updateActionDto: UpdateActionDto) {
+        return this.actionService.update(updateActionDto);
     }
 
     @Patch(':id/status')

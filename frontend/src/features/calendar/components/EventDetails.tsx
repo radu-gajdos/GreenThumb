@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  MapPin, 
-  Calendar, 
-  Clock, 
+import {
+  MapPin,
+  Calendar,
+  Clock,
   AlertTriangle,
   CheckCircle,
   Activity,
@@ -25,7 +25,7 @@ interface EventDetailsProps {
 const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpdate }) => {
   const { action, plotName } = event;
   const [isUpdating, setIsUpdating] = useState(false);
-  
+
   const getStatusInfo = (status: string) => {
     switch (status) {
       case 'planned':
@@ -78,16 +78,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
     });
   };
 
+
   const handleStatusUpdate = async (newStatus: 'completed' | 'cancelled' | 'in_progress' | 'planned') => {
     if (!onStatusUpdate) return;
-    
     try {
       setIsUpdating(true);
       await onStatusUpdate(action.id, newStatus);
-      // Close modal after successful update
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+      // Închide direct modalul după actualizare
+      onClose();
     } catch (error) {
       console.error('Error updating status:', error);
     } finally {
@@ -134,7 +132,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start space-x-4">
-        <div 
+        <div
           className="p-3 rounded-lg"
           style={{ backgroundColor: event.color + '20', color: event.color }}
         >
@@ -143,7 +141,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
             className: "text-current"
           })}
         </div>
-        
+
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-800 capitalize">
             {action.type.replace('_', ' ')}
@@ -153,7 +151,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
             {plotName}
           </p>
         </div>
-        
+
         <div className={`px-3 py-1 rounded border text-sm font-medium ${statusInfo.color} flex items-center`}>
           <StatusIcon className="w-4 h-4 mr-1" />
           {statusInfo.label}
@@ -270,12 +268,12 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
         <Button variant="outline" onClick={onClose}>
           Închide
         </Button>
-        
+
         <div className="flex items-center space-x-2">
           {availableActions.map((statusAction) => {
             const IconComponent = statusAction.icon;
             return (
-              <Button 
+              <Button
                 key={statusAction.status}
                 className={statusAction.color}
                 onClick={() => handleStatusUpdate(statusAction.status as any)}

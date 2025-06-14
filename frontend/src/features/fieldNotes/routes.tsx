@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import CalendarIndex from './components/CalendarIndex';
+import FieldNotesViewer from './components/FieldNoteViewer';
 
-const CalendarRoutes: React.FC = () => {
+const FieldNoteRoutes: React.FC = () => {
     return (
         <Routes>
             {/* Remove the leading slash - this is critical */}
-            <Route path="index" element={<CalendarIndex />} />
+            <Route path="index" element={<FieldNotesViewer />} />
             
             {/* Use the index prop for the root path */}
             <Route index element={<Navigate to="index" />} />
@@ -17,4 +17,4 @@ const CalendarRoutes: React.FC = () => {
     );
 };
 
-export default CalendarRoutes;
+export default FieldNoteRoutes;

@@ -33,6 +33,7 @@ import {
   ActionType,
 } from "../constants/formSchema";
 import DatePicker from "@/components/ui/date-picker";
+import DateTimePicker from "@/components/ui/dateTime-picker";
 
 interface ActionFormContentProps {
   /** Determines which extra fields are rendered */
@@ -205,7 +206,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
             <FormItem className="flex flex-col">
               <FormLabel>Data Planificată</FormLabel>
               <FormControl>
-                <DatePicker
+                <DateTimePicker
                   value={field.value}
                   onValueChange={field.onChange}
                 />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, MousePointerClick } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
@@ -12,6 +12,7 @@ interface StatsCardProps {
   };
   color?: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'indigo';
   onClick?: () => void;
+  actionIndicator?: boolean;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -22,6 +23,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   trend,
   color = 'blue',
   onClick,
+  actionIndicator,
 }) => {
   const colorClasses = {
     blue: {
@@ -76,32 +78,30 @@ const StatsCard: React.FC<StatsCardProps> = ({
         ${classes.background} ${classes.border} border rounded-xl p-6 
         transition-all duration-200 hover:shadow-md
         ${onClick ? 'cursor-pointer hover:scale-105' : ''}
+        relative
       `}
       onClick={onClick}
     >
+      {actionIndicator && (
+        <MousePointerClick className="w-4 h-4 absolute top-3 right-3 text-gray-400" />
+      )}
+
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-3">
             <div className={`p-2 rounded-lg ${classes.icon}`}>
               <Icon className="w-5 h-5" />
             </div>
-            <h3 className={`text-sm font-medium ${classes.text}`}>
-              {title}
-            </h3>
+            <h3 className={`text-sm font-medium ${classes.text}`}>{title}</h3>
           </div>
-          
+
           <div className="space-y-1">
             <p className={`text-2xl font-bold ${classes.text}`}>
-              {typeof value === 'number' && value % 1 !== 0 
-                ? value.toFixed(2) 
-                : value
-              }
+              {typeof value === 'number' && value % 1 !== 0 ? value.toFixed(2) : value}
             </p>
-            
+
             {description && (
-              <p className={`text-sm opacity-75 ${classes.text}`}>
-                {description}
-              </p>
+              <p className={`text-sm opacity-75 ${classes.text}`}>{description}</p>
             )}
           </div>
         </div>
@@ -109,10 +109,13 @@ const StatsCard: React.FC<StatsCardProps> = ({
         {trend && (
           <div className={`text-right ${classes.trend}`}>
             <div className="flex items-center space-x-1">
-              <span className={`text-sm font-medium ${
-                trend.isPositive ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {trend.isPositive ? '+' : ''}{trend.value}%
+              <span
+                className={`text-sm font-medium ${
+                  trend.isPositive ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
+                {trend.isPositive ? '+' : ''}
+                {trend.value}%
               </span>
               <svg
                 className={`w-4 h-4 ${

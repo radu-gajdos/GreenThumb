@@ -40,12 +40,11 @@ export class ActionApi {
    * @param plotId - Unique identifier of the plot (for consistency)
    * @returns Promise resolving to the updated Action object.
    */
-  async update(formData: ActionFormValues & { id: string }, plotId: string): Promise<Action> {
+  async update(formData: ActionFormValues & { id: string }): Promise<Action> {
     try {
       // Transform form data to API format
       const actionData = {
         ...formData,
-        plotId,
         // Ensure date is in ISO string format
         date: formData.date instanceof Date ? formData.date.toISOString() : formData.date,
       };

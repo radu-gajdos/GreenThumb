@@ -18,7 +18,7 @@ import ModalDelete from '@/components/modals/ModalDelete';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { PlotApi } from '../api/plot.api';
-import PlotViewModal from './PlotPage/PlotViewPage';
+import PlotViewModal from './PlotPage/PlotViewModal';
 
 /**
  * @component Index

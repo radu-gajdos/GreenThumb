@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { PlotApi } from '@/features/plots/api/plot.api';
 import { DashboardData, DashboardStats, RecentActivityItem, PlotSummary, ActionsSummary } from '../types/dashboard';
 import { Plot } from '@/features/plots/interfaces/plot';
+import { transformActionToCalendarEvent } from '@/features/calendar/utils/transform';
 
 export const useDashboardData = () => {
   const [data, setData] = useState<DashboardData>({
@@ -20,6 +21,7 @@ export const useDashboardData = () => {
       upcomingThisWeek: 0,
       overdueCount: 0,
     },
+    todayEvents: [],
     loading: true,
     error: null,
   });
@@ -31,30 +33,36 @@ export const useDashboardData = () => {
       try {
         setData(prev => ({ ...prev, loading: true, error: null }));
 
-        // Load plots with their actions
         const plots: Plot[] = await plotApi.findAll();
 
-        // Calculate stats
         const stats = calculateStats(plots);
-        
-        // Generate recent activity
         const recentActivity = generateRecentActivity(plots);
-        
-        // Create plots summary
         const plotsSummary = createPlotsSummary(plots);
-        
-        // Calculate actions summary
         const actionsSummary = calculateActionsSummary(plots);
+
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date(todayStart);
+        todayEnd.setDate(todayEnd.getDate() + 1);
+
+        const todayEvents = plots.flatMap(plot => {
+          return (plot.actions || [])
+            .filter(action => {
+              const date = new Date(action.date);
+              return date >= todayStart && date < todayEnd;
+            })
+            .map(action => transformActionToCalendarEvent(action, plot));
+        });
 
         setData({
           stats,
           recentActivity,
           plotsSummary,
           actionsSummary,
+          todayEvents,
           loading: false,
           error: null,
         });
-
       } catch (error) {
         console.error('Error loading dashboard data:', error);
         setData(prev => ({
@@ -71,10 +79,9 @@ export const useDashboardData = () => {
   return data;
 };
 
-// Helper functions
 const calculateStats = (plots: Plot[]): DashboardStats => {
   const totalArea = plots.reduce((sum, plot) => sum + plot.size, 0);
-  
+
   let activeActions = 0;
   let completedActions = 0;
   let upcomingActions = 0;
@@ -93,7 +100,6 @@ const calculateStats = (plots: Plot[]): DashboardStats => {
     }
   });
 
-  // Find top performing plot (by number of completed actions)
   const topPerformingPlot = plots
     .map(plot => ({
       name: plot.name,
@@ -114,7 +120,6 @@ const calculateStats = (plots: Plot[]): DashboardStats => {
 const generateRecentActivity = (plots: Plot[]): RecentActivityItem[] => {
   const activities: RecentActivityItem[] = [];
 
-  // Add plot creation activities
   plots.forEach(plot => {
     activities.push({
       id: `plot-${plot.id}`,
@@ -127,12 +132,11 @@ const generateRecentActivity = (plots: Plot[]): RecentActivityItem[] => {
     });
   });
 
-  // Add recent actions
   plots.forEach(plot => {
     if (plot.actions) {
       plot.actions
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 3) // Take only the 3 most recent actions per plot
+        .slice(0, 3)
         .forEach(action => {
           activities.push({
             id: `action-${action.id}`,
@@ -148,7 +152,6 @@ const generateRecentActivity = (plots: Plot[]): RecentActivityItem[] => {
     }
   });
 
-  // Sort by timestamp and return the most recent 10
   return activities
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
     .slice(0, 10);
@@ -159,17 +162,16 @@ const createPlotsSummary = (plots: Plot[]): PlotSummary[] => {
     const actions = plot.actions || [];
     const activeActionsCount = actions.filter(a => a.status === 'in_progress').length;
     const completedActionsCount = actions.filter(a => a.status === 'completed').length;
-    
-    const lastActivity = actions.length > 0 
+
+    const lastActivity = actions.length > 0
       ? new Date(Math.max(...actions.map(a => new Date(a.createdAt).getTime())))
       : new Date(plot.createdAt);
 
-    // Determine status based on recent activity and actions
     let status: 'active' | 'planning' | 'harvested' | 'fallow' = 'planning';
     if (activeActionsCount > 0) {
       status = 'active';
     } else if (completedActionsCount > 0) {
-      const recentHarvestAction = actions.find(a => 
+      const recentHarvestAction = actions.find(a =>
         a.type.toLowerCase().includes('harvest') && a.status === 'completed'
       );
       status = recentHarvestAction ? 'harvested' : 'active';
@@ -201,20 +203,15 @@ const calculateActionsSummary = (plots: Plot[]): ActionsSummary => {
   plots.forEach(plot => {
     if (plot.actions) {
       plot.actions.forEach(action => {
-        // Count by type
         byType[action.type] = (byType[action.type] || 0) + 1;
-        
-        // Count by status
         byStatus[action.status] = (byStatus[action.status] || 0) + 1;
-        
-        // Count upcoming this week
+
         if (action.date) {
           const scheduledDate = new Date(action.date);
           if (scheduledDate >= now && scheduledDate <= oneWeekFromNow) {
             upcomingThisWeek++;
           }
-          
-          // Count overdue
+
           if (scheduledDate < now && action.status !== 'completed') {
             overdueCount++;
           }

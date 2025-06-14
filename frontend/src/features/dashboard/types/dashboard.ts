@@ -2,6 +2,8 @@
  * Dashboard types and interfaces
  */
 
+import { CalendarEvent } from "@/features/calendar/types/calendar";
+
 export interface DashboardStats {
   totalPlots: number;
   totalArea: number;
@@ -55,6 +57,7 @@ export interface ActionsSummary {
 export interface DashboardData {
   stats: DashboardStats;
   recentActivity: RecentActivityItem[];
+  todayEvents?: CalendarEvent[];
   plotsSummary: PlotSummary[];
   actionsSummary: ActionsSummary;
   weather?: WeatherData;

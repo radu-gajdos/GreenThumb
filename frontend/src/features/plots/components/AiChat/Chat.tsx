@@ -298,7 +298,6 @@ const GeneralAIChat: React.FC = () => {
         loading={false}
         onSelectPlot={handleSelectPlot}
         onSearchChange={setSearchTerm}
-        onStartNewConversation={handleStartNewConversation}
       />
 
       <ChatContent

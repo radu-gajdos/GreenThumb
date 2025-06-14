@@ -90,9 +90,9 @@ const FieldNotesSidebar: React.FC<FieldNotesSidebarProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      {/* Create New Field Note Button */}
-      <div className="p-2 border-b border-gray-200">
+    <div className="h-full flex flex-col">
+      {/* Create New Field Note Button - Fixed */}
+      <div className="p-2 border-b border-gray-200 flex-shrink-0">
         <Button
           variant="default"
           className="flex items-left gap-2 pl-3 pr-3 w-full"
@@ -103,71 +103,70 @@ const FieldNotesSidebar: React.FC<FieldNotesSidebarProps> = ({
         </Button>
       </div>
 
-      {/* List of plots and their notes */}
-      <div className="space-y-1 p-2">
-        {plotsWithNotes.map((plot) => (
-          <div key={plot.plotId} className="space-y-1">
-            {/* Plot Header: toggles expand/collapse */}
-            <button
-              onClick={() => onTogglePlot(plot.plotId)}
-              className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {plot.isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-gray-500" />
-              )}
-              <MapPin className="w-4 h-4 text-green-600" />
-              <span className="flex-1 truncate">{plot.plotName}</span>
-              <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
-                {plot.fieldNotes.length}
-              </span>
-            </button>
+      {/* List of plots and their notes - Scrollable */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="space-y-1 p-2">
+          {plotsWithNotes.map((plot) => (
+            <div key={plot.plotId} className="space-y-1">
+              {/* Plot Header: toggles expand/collapse */}
+              <button
+                onClick={() => onTogglePlot(plot.plotId)}
+                className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {plot.isExpanded ? (
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-gray-500" />
+                )}
+                <MapPin className="w-4 h-4 text-green-600" />
+                <span className="flex-1 truncate">{plot.plotName}</span>
+                <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
+                  {plot.fieldNotes.length}
+                </span>
+              </button>
 
-            {/* Field Notes List for expanded plot */}
-            {plot.isExpanded && (
-              <div className="ml-6 space-y-1">
-                {plot.fieldNotes.map((fieldNote) => {
-                  const isSelected =
-                    selectedNote?.fieldNote.id === fieldNote.id;
+              {/* Field Notes List for expanded plot */}
+              {plot.isExpanded && (
+                <div className="ml-6 space-y-1">
+                  {plot.fieldNotes.map((fieldNote) => {
+                    const isSelected =
+                      selectedNote?.fieldNote.id === fieldNote.id;
 
-                  return (
-                    <button
-                      key={fieldNote.id}
-                      onClick={() => onSelectNote(fieldNote, plot.plotName)}
-                      className={`w-full flex items-start gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${
-                        isSelected
-                          ? 'bg-blue-50 border border-blue-200'
-                          : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      {/* Note icon changes color if selected */}
-                      <MessageSquare
-                        className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                          isSelected ? 'text-blue-600' : 'text-gray-400'
-                        }`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        {/* Truncated title */}
-                        <div
-                          className={`text-sm font-medium truncate ${
-                            isSelected ? 'text-blue-900' : 'text-gray-900'
+                    return (
+                      <button
+                        key={fieldNote.id}
+                        onClick={() => onSelectNote(fieldNote, plot.plotName)}
+                        className={`w-full flex items-start gap-3 px-3 py-2.5 text-left rounded-lg transition-colors ${isSelected
+                            ? 'bg-blue-50 border border-blue-200'
+                            : 'hover:bg-gray-50'
                           }`}
-                        >
-                          {formatNoteTitle(fieldNote)}
+                      >
+                        {/* Note icon changes color if selected */}
+                        <MessageSquare
+                          className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isSelected ? 'text-blue-600' : 'text-gray-400'
+                            }`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          {/* Truncated title */}
+                          <div
+                            className={`text-sm font-medium truncate ${isSelected ? 'text-blue-900' : 'text-gray-900'
+                              }`}
+                          >
+                            {formatNoteTitle(fieldNote)}
+                          </div>
+                          {/* Relative or short date */}
+                          <div className="text-xs text-gray-500 mt-1">
+                            {formatDate(fieldNote.createdAt)}
+                          </div>
                         </div>
-                        {/* Relative or short date */}
-                        <div className="text-xs text-gray-500 mt-1">
-                          {formatDate(fieldNote.createdAt)}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ))}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

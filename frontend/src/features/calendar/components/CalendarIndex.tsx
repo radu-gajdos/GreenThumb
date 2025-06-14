@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
+import {
+  ChevronLeft,
+  ChevronRight,
   Calendar as CalendarIcon,
   Grid3X3,
   List,
@@ -39,6 +39,7 @@ const CalendarIndex: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedListDate, setSelectedListDate] = useState(new Date());
 
   // Helper functions for date manipulation
   const startOfMonth = (date: Date) => {
@@ -70,8 +71,8 @@ const CalendarIndex: React.FC = () => {
 
   const isSameDay = (date1: Date, date2: Date) => {
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
   };
 
   // Navigation functions
@@ -80,6 +81,10 @@ const CalendarIndex: React.FC = () => {
       setCurrentDate(addMonths(currentDate, -1));
     } else if (view === 'week') {
       setCurrentDate(addWeeks(currentDate, -1));
+    } else if (view === 'list') {
+      const previousDay = new Date(selectedListDate);
+      previousDay.setDate(selectedListDate.getDate() - 1);
+      setSelectedListDate(previousDay);
     }
   };
 
@@ -88,11 +93,19 @@ const CalendarIndex: React.FC = () => {
       setCurrentDate(addMonths(currentDate, 1));
     } else if (view === 'week') {
       setCurrentDate(addWeeks(currentDate, 1));
+    } else if (view === 'list') {
+      const nextDay = new Date(selectedListDate);
+      nextDay.setDate(selectedListDate.getDate() + 1);
+      setSelectedListDate(nextDay);
     }
   };
 
   const navigateToday = () => {
-    setCurrentDate(new Date());
+    if (view === 'list') {
+      setSelectedListDate(new Date());
+    } else {
+      setCurrentDate(new Date());
+    }
   };
 
   // Get events for a specific date
@@ -130,28 +143,52 @@ const CalendarIndex: React.FC = () => {
   const generateWeekGrid = () => {
     const { start } = getVisibleRange();
     const days = [];
-    
+
     for (let i = 0; i < 7; i++) {
       const day = new Date(start);
       day.setDate(start.getDate() + i);
       days.push(day);
     }
-    
+
     return days;
   };
 
   const formatDateTitle = () => {
     if (view === 'month') {
-      return currentDate.toLocaleDateString('ro-RO', { 
-        month: 'long', 
-        year: 'numeric' 
+      return currentDate.toLocaleDateString('ro-RO', {
+        month: 'long',
+        year: 'numeric'
       });
     } else if (view === 'week') {
       const { start, end } = getVisibleRange();
-      return `${start.getDate()} - ${end.getDate()} ${start.toLocaleDateString('ro-RO', { 
-        month: 'long', 
-        year: 'numeric' 
+      return `${start.getDate()} - ${end.getDate()} ${start.toLocaleDateString('ro-RO', {
+        month: 'long',
+        year: 'numeric'
       })}`;
+    } else if (view === 'list') {
+      const today = new Date();
+      if (isSameDay(selectedListDate, today)) {
+        return 'Astăzi';
+      }
+
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      if (isSameDay(selectedListDate, yesterday)) {
+        return 'Ieri';
+      }
+
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      if (isSameDay(selectedListDate, tomorrow)) {
+        return 'Mâine';
+      }
+
+      return selectedListDate.toLocaleDateString('ro-RO', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
     }
     return '';
   };
@@ -164,8 +201,9 @@ const CalendarIndex: React.FC = () => {
   const handleStatusUpdate = async (actionId: string, status: 'completed' | 'cancelled' | 'in_progress' | 'planned') => {
     try {
       await updateActionStatus(actionId, status);
-      // Refresh the calendar data after status update
       await refreshData();
+      // Închide dialogul imediat după actualizare cu succes
+      setIsEventDialogOpen(false);
     } catch (error) {
       console.error('Failed to update action status:', error);
     }
@@ -226,32 +264,32 @@ const CalendarIndex: React.FC = () => {
           <div className="flex items-center justify-between">
             {/* Navigation */}
             <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={navigatePrevious}
                 className="p-2"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
+
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={navigateToday}
               >
                 Astăzi
               </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
+
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={navigateNext}
                 className="p-2"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
-              
+
               <h2 className="text-lg font-semibold text-gray-800 capitalize ml-4">
                 {formatDateTitle()}
               </h2>
@@ -279,7 +317,7 @@ const CalendarIndex: React.FC = () => {
                 <Grid3X3 className="w-4 h-4" />
                 <span className="hidden sm:inline">Lună</span>
               </Button>
-              
+
               <Button
                 variant={view === 'week' ? 'default' : 'outline'}
                 size="sm"
@@ -289,7 +327,7 @@ const CalendarIndex: React.FC = () => {
                 <CalendarIcon className="w-4 h-4" />
                 <span className="hidden sm:inline">Săptămână</span>
               </Button>
-              
+
               <Button
                 variant={view === 'list' ? 'default' : 'outline'}
                 size="sm"
@@ -306,25 +344,27 @@ const CalendarIndex: React.FC = () => {
         {/* Calendar Content */}
         <div className="p-4">
           {view === 'month' && (
-            <MonthView 
+            <MonthView
               days={generateMonthGrid()}
               currentDate={currentDate}
               getEventsForDate={getEventsForDate}
               onEventClick={handleEventClick}
             />
           )}
-          
+
           {view === 'week' && (
-            <WeekView 
+            <WeekView
               days={generateWeekGrid()}
               getEventsForDate={getEventsForDate}
               onEventClick={handleEventClick}
             />
           )}
-          
+
           {view === 'list' && (
-            <ListView 
+            <ListView
               events={calendarEvents}
+              selectedDate={selectedListDate}
+              onDateChange={setSelectedListDate}
               onEventClick={handleEventClick}
             />
           )}
@@ -341,7 +381,7 @@ const CalendarIndex: React.FC = () => {
             </DialogTitle>
           </DialogHeader>
           {selectedEvent && (
-            <EventDetails 
+            <EventDetails
               event={selectedEvent}
               onClose={() => setIsEventDialogOpen(false)}
               onStatusUpdate={handleStatusUpdate}
@@ -361,7 +401,7 @@ const MonthView: React.FC<{
   onEventClick: (event: CalendarEvent) => void;
 }> = ({ days, currentDate, getEventsForDate, onEventClick }) => {
   const weekDays = ['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'];
-  
+
   return (
     <div className="space-y-4">
       {/* Week Headers */}
@@ -379,7 +419,7 @@ const MonthView: React.FC<{
           const events = getEventsForDate(day);
           const isCurrentMonth = day.getMonth() === currentDate.getMonth();
           const isToday = day.toDateString() === new Date().toDateString();
-          
+
           return (
             <div
               key={index}
@@ -397,12 +437,12 @@ const MonthView: React.FC<{
               `}>
                 {day.getDate()}
               </div>
-              
+
               <div className="space-y-1">
                 {events.slice(0, 2).map(event => (
-                  <EventCard 
-                    key={event.id} 
-                    event={event} 
+                  <EventCard
+                    key={event.id}
+                    event={event}
                     onClick={() => onEventClick(event)}
                     compact
                   />
@@ -428,13 +468,13 @@ const WeekView: React.FC<{
   onEventClick: (event: CalendarEvent) => void;
 }> = ({ days, getEventsForDate, onEventClick }) => {
   const weekDays = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
-  
+
   return (
     <div className="grid grid-cols-7 gap-4">
       {days.map((day, index) => {
         const events = getEventsForDate(day);
         const isToday = day.toDateString() === new Date().toDateString();
-        
+
         return (
           <div key={index} className="space-y-3">
             {/* Day Header */}
@@ -446,13 +486,13 @@ const WeekView: React.FC<{
                 {day.getDate()}
               </div>
             </div>
-            
+
             {/* Events */}
             <div className="space-y-2 min-h-32">
               {events.map(event => (
-                <EventCard 
-                  key={event.id} 
-                  event={event} 
+                <EventCard
+                  key={event.id}
+                  event={event}
                   onClick={() => onEventClick(event)}
                 />
               ))}
@@ -465,52 +505,112 @@ const WeekView: React.FC<{
 };
 
 // List View Component
+// List View Component
+// List View Component
 const ListView: React.FC<{
   events: CalendarEvent[];
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
   onEventClick: (event: CalendarEvent) => void;
-}> = ({ events, onEventClick }) => {
-  const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
-  
-  if (sortedEvents.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <CalendarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-500">Nu există evenimente programate</p>
-      </div>
-    );
-  }
+}> = ({ events, selectedDate, onDateChange, onEventClick }) => {
+
+  const isSameDay = (date1: Date, date2: Date) => {
+    return date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
+  };
+
+  // Filtrează evenimentele pentru ziua selectată
+  const eventsForSelectedDate = events.filter(event =>
+    isSameDay(event.start, selectedDate)
+  );
+
+  // Sortează evenimentele după oră
+  const sortedEvents = [...eventsForSelectedDate].sort((a, b) =>
+    a.start.getTime() - b.start.getTime()
+  );
 
   return (
-    <div className="space-y-3 max-h-96 overflow-y-auto">
-      {sortedEvents.map(event => (
-        <div
-          key={event.id}
-          onClick={() => onEventClick(event)}
-          className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
-        >
-          <div 
-            className="w-4 h-4 rounded-full flex-shrink-0"
-            style={{ backgroundColor: event.color }}
-          />
-          
-          <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-gray-900 truncate">
-              {event.action.type.replace('_', ' ')}
-            </h4>
-            <p className="text-sm text-gray-600 flex items-center">
-              <MapPin className="w-3 h-3 mr-1" />
-              {event.plotName}
+    <div className="space-y-4">
+      {/* Subtitle cu data completă sub header-ul principal */}
+      <div className="text-center pb-4 border-b border-gray-100">
+        <p className="text-sm text-gray-600">
+          {selectedDate.toLocaleDateString('ro-RO', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })}
+        </p>
+      </div>
+
+      {/* Events List for Selected Date */}
+      <div className="space-y-3 max-h-96 overflow-y-auto">
+        {sortedEvents.length === 0 ? (
+          <div className="text-center py-12">
+            <CalendarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500">
+              Nu există acțiuni programate pentru această zi
             </p>
           </div>
-          
-          <div className="text-right text-sm text-gray-500">
-            <p>{event.start.toLocaleDateString('ro-RO')}</p>
-            <p className="text-xs">
-              {event.start.toLocaleDateString('ro-RO', { weekday: 'short' })}
-            </p>
-          </div>
-        </div>
-      ))}
+        ) : (
+          sortedEvents.map(event => (
+            <div
+              key={event.id}
+              onClick={() => onEventClick(event)}
+              className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+            >
+              <div
+                className="w-4 h-4 rounded-full flex-shrink-0"
+                style={{ backgroundColor: event.color }}
+              />
+
+              {/* Time Column */}
+              <div className="text-center min-w-[60px]">
+                <div className="text-lg font-bold text-gray-900">
+                  {event.start.toLocaleTimeString('ro-RO', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {event.start.toLocaleDateString('ro-RO', { weekday: 'short' })}
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-gray-900 truncate capitalize">
+                  {event.action.type.replace('_', ' ')}
+                </h4>
+                <p className="text-sm text-gray-600 flex items-center">
+                  <MapPin className="w-3 h-3 mr-1" />
+                  {event.plotName}
+                </p>
+                {event.action.description && (
+                  <p className="text-xs text-gray-500 mt-1 truncate">
+                    {event.action.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Badge */}
+              <div className="text-right">
+                <span className={`
+                  inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                  ${event.action.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
+                  ${event.action.status === 'in_progress' ? 'bg-blue-100 text-blue-800' : ''}
+                  ${event.action.status === 'planned' ? 'bg-gray-100 text-gray-800' : ''}
+                  ${event.action.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
+                `}>
+                  {event.action.status === 'completed' && 'Completat'}
+                  {event.action.status === 'in_progress' && 'În progres'}
+                  {event.action.status === 'planned' && 'Planificat'}
+                  {event.action.status === 'cancelled' && 'Anulat'}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
@@ -523,7 +623,7 @@ const EventCard: React.FC<{
 }> = ({ event, onClick, compact = false }) => {
   const isOverdue = event.start < new Date() && event.action.status !== 'completed';
   const ActionIcon = getActionIcon(event.action.type as ActionType);
-  
+
   return (
     <div
       onClick={onClick}
@@ -532,7 +632,7 @@ const EventCard: React.FC<{
         ${compact ? 'text-xs' : 'text-sm'}
         ${isOverdue ? 'animate-pulse' : ''}
       `}
-      style={{ 
+      style={{
         backgroundColor: event.color,
         color: 'white'
       }}

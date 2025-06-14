@@ -105,7 +105,7 @@ const PlotViewModal: React.FC<PlotViewModalProps> = ({
   return (
     <div className="w-full h-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between pt-2 pb-3 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <button
             onClick={onClose}

@@ -45,11 +45,12 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
    * @param date - A Date object or date-string
    */
   const formatDate = (date: Date | string) => {
-    console.log(date)
     return new Date(date).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 

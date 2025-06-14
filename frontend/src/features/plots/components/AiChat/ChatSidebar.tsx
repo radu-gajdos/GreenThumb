@@ -23,7 +23,6 @@ interface ChatSidebarProps {
   loading: boolean;
   onSelectPlot: (plotId: string) => void;
   onSearchChange: (term: string) => void;
-  onStartNewConversation: () => void;
 }
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -33,7 +32,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   loading,
   onSelectPlot,
   onSearchChange,
-  onStartNewConversation,
 }) => {
   /**
    * Format the last message timestamp for display
@@ -151,16 +149,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             className="pl-10"
           />
         </div>
-
-        {/* Start New Conversation Button */}
-        <Button
-          variant="default"
-          className="w-full flex items-center gap-2"
-          onClick={onStartNewConversation}
-        >
-          <Plus className="w-4 h-4" />
-          Conversație nouă
-        </Button>
       </div>
 
       {/* Conversations List */}

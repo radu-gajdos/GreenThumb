@@ -30,7 +30,7 @@ const FieldNotesViewer: React.FC = () => {
    * Each entry includes:
    *  - plotId, plotName
    *  - fieldNotes: sorted list of FieldNote
-   *  - isExpanded: whether the plot’s notes are visible in the sidebar
+   *  - isExpanded: whether the plot's notes are visible in the sidebar
    */
   const [plotsWithNotes, setPlotsWithNotes] = useState<PlotWithFieldNotes[]>([]);
 
@@ -40,7 +40,7 @@ const FieldNotesViewer: React.FC = () => {
   /** All plots fetched from the backend—needed to look up plotName when creating notes */
   const [plots, setPlots] = useState<Plot[]>([]);
 
-  /** Controls visibility of the “create new field note” modal */
+  /** Controls visibility of the "create new field note" modal */
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   /** Memoized API clients to avoid re-instantiation */
@@ -121,7 +121,7 @@ const FieldNotesViewer: React.FC = () => {
   }, [fieldNoteApi, plotApi]);
 
   /**
-   * Toggle whether a given plot’s notes are expanded in the sidebar.
+   * Toggle whether a given plot's notes are expanded in the sidebar.
    * @param plotId - The plot to expand/collapse
    */
   const togglePlotExpansion = (plotId: string) => {
@@ -160,7 +160,7 @@ const FieldNotesViewer: React.FC = () => {
       );
 
       if (existingIndex >= 0) {
-        // Insert new note at top of existing plot’s notes
+        // Insert new note at top of existing plot's notes
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
@@ -254,7 +254,7 @@ const FieldNotesViewer: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-[calc(100vh-180px)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
       </div>
     );
@@ -263,7 +263,7 @@ const FieldNotesViewer: React.FC = () => {
   // If no notes exist at all, show empty state
   if (plotsWithNotes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-center">
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-180px)] text-center">
         <div className="mb-4">
           <svg
             className="w-16 h-16 text-gray-400 mx-auto"
@@ -293,10 +293,10 @@ const FieldNotesViewer: React.FC = () => {
 
   // Main UI with sidebar and content area
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-[calc(100vh-180px)] bg-gray-50">
       {/* Left Sidebar - list of plots and notes */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-lg font-semibold text-gray-900">
             Notițele mele
           </h1>
@@ -310,16 +310,18 @@ const FieldNotesViewer: React.FC = () => {
           </p>
         </div>
 
-        <FieldNotesSidebar
-          key={`sidebar-${plotsWithNotes.length}-${
-            selectedNote?.fieldNote.id || 'none'
-          }`}
-          plotsWithNotes={plotsWithNotes}
-          selectedNote={selectedNote}
-          onTogglePlot={togglePlotExpansion}
-          onSelectNote={selectFieldNote}
-          onCreateNew={() => setShowCreateModal(true)}
-        />
+        <div className="flex-1 overflow-hidden">
+          <FieldNotesSidebar
+            key={`sidebar-${plotsWithNotes.length}-${
+              selectedNote?.fieldNote.id || 'none'
+            }`}
+            plotsWithNotes={plotsWithNotes}
+            selectedNote={selectedNote}
+            onTogglePlot={togglePlotExpansion}
+            onSelectNote={selectFieldNote}
+            onCreateNew={() => setShowCreateModal(true)}
+          />
+        </div>
       </div>
 
       {/* Right Content Area - either show the selected note or a placeholder */}

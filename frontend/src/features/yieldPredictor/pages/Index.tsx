@@ -245,15 +245,6 @@ const EnhancedAnalyticsPage: React.FC = () => {
         </Tabs>
       </div>
 
-      {/* Footer */}
-      <div className="bg-gray-100 border-t border-gray-200 mt-12">
-        <div className="container mx-auto py-6 px-6 text-center text-sm text-gray-600">
-          <p>
-            Powered by AI • Date FAOSTAT • Model RandomForest Enhanced v2.0 • 
-            Predicții generate pe baza a 245 țări și 180+ culturi agricole
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
