@@ -29,10 +29,10 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ stats }) => {
       value: stats.overdueEvents,
       description: 'acțiuni overdue',
       icon: AlertTriangle,
-      color: stats.overdueEvents > 0 
+      color: stats.overdueEvents > 0
         ? 'bg-gradient-to-br from-red-50 to-red-100 border-red-200 text-red-900'
         : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200 text-gray-900',
-      iconColor: stats.overdueEvents > 0 
+      iconColor: stats.overdueEvents > 0
         ? 'bg-red-200 text-red-700'
         : 'bg-gray-200 text-gray-700',
     },
@@ -49,13 +49,13 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ stats }) => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      
+
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat) => {
           const IconComponent = stat.icon;
-          
+
           return (
             <div
               key={stat.title}
@@ -69,7 +69,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ stats }) => {
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                 )}
               </div>
-              
+
               <div>
                 <p className="text-2xl font-bold mb-1">
                   {stat.value}

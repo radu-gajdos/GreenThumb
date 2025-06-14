@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Filter, X, MapPin, Activity, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CalendarFilters, PlotOption, ActionTypeOption } from '../types/calendar';
+import { CalendarFilters, PlotOption, ActionTypeOption } from '../../types/calendar';
 
 interface CalendarFiltersProps {
   filters: CalendarFilters;

@@ -2,14 +2,13 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { PlotApi } from '@/features/plots/api/plot.api';
 import { ActionApi } from '@/features/actions/api/action.api';
 import { Plot } from '@/features/plots/interfaces/plot';
-import { Action } from '@/features/actions/interfaces/action';
 import { CalendarEvent, CalendarFilters, CalendarStats, PlotOption, ActionTypeOption } from '../types/calendar';
 
 export const useCalendarData = () => {
   const [plots, setPlots] = useState<Plot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<CalendarFilters>({
     actionTypes: [],
     plotIds: [],
@@ -26,7 +25,7 @@ export const useCalendarData = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const fetchedPlots = await plotApi.findAll();
         setPlots(fetchedPlots);
       } catch (err) {
@@ -60,35 +59,35 @@ export const useCalendarData = () => {
   // Process calendar events
   const calendarEvents = useMemo<CalendarEvent[]>(() => {
     const events: CalendarEvent[] = [];
-    
+
     plots.forEach(plot => {
       if (!plot.actions) return;
-      
+
       plot.actions.forEach(action => {
         // Apply filters
         if (filters.actionTypes.length > 0 && !filters.actionTypes.includes(action.type)) {
           return;
         }
-        
+
         if (filters.plotIds.length > 0 && !filters.plotIds.includes(plot.id)) {
           return;
         }
-        
+
         if (filters.statusTypes.length > 0 && !filters.statusTypes.includes(action.status)) {
           return;
         }
-        
+
         // Check if action has a date
         const actionDate = action.date;
         if (!actionDate) return;
-        
+
         const isOverdue = new Date(actionDate) < new Date() && action.status !== 'completed';
         if (!filters.showOverdue && isOverdue) {
           return;
         }
-        
+
         const color = getActionTypeColor(action.type);
-        
+
         events.push({
           id: action.id,
           title: `${action.type.replace('_', ' ')} - ${plot.name}`,
@@ -103,7 +102,7 @@ export const useCalendarData = () => {
         });
       });
     });
-    
+
     return events.sort((a, b) => a.start.getTime() - b.start.getTime());
   }, [plots, filters]);
 
@@ -114,10 +113,10 @@ export const useCalendarData = () => {
     startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    
+
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    
+
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayEnd = new Date(todayStart);
     todayEnd.setDate(todayStart.getDate() + 1);
@@ -129,25 +128,25 @@ export const useCalendarData = () => {
 
     calendarEvents.forEach(event => {
       const eventDate = event.start;
-      
+
       // Today events
       if (eventDate >= todayStart && eventDate < todayEnd) {
         todayEvents++;
       }
-      
+
       // This week events
       if (eventDate >= startOfWeek && eventDate <= endOfWeek) {
         thisWeekEvents++;
       }
-      
+
       // Overdue events
       if (eventDate < now && event.action.status !== 'completed') {
         overdueEvents++;
       }
-      
+
       // Completed this month
-      if (event.action.status === 'completed' && 
-          eventDate >= startOfMonth && eventDate <= endOfMonth) {
+      if (event.action.status === 'completed' &&
+        eventDate >= startOfMonth && eventDate <= endOfMonth) {
         completedThisMonth++;
       }
     });
@@ -173,7 +172,7 @@ export const useCalendarData = () => {
   // Get action type options for filters
   const actionTypeOptions = useMemo<ActionTypeOption[]>(() => {
     const typeCount: Record<string, number> = {};
-    
+
     plots.forEach(plot => {
       plot.actions?.forEach(action => {
         typeCount[action.type] = (typeCount[action.type] || 0) + 1;
@@ -193,17 +192,17 @@ export const useCalendarData = () => {
     try {
       // Update via API
       await actionApi.updateStatus(actionId, status);
-      
+
       // Update local state immediately for optimistic UI
-      setPlots(prevPlots => 
+      setPlots(prevPlots =>
         prevPlots.map(plot => ({
           ...plot,
-          actions: plot.actions?.map(action => 
+          actions: plot.actions?.map(action =>
             action.id === actionId ? { ...action, status } : action
           ) || []
         }))
       );
-      
+
     } catch (err) {
       console.error('Error updating action status:', err);
       // Revert optimistic update on error by refetching
