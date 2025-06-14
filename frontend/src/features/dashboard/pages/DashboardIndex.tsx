@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Calendar,
   AlertTriangle,
-  BarChart3
 } from 'lucide-react';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { CalendarEvent } from '@/features/calendar/types/calendar';
@@ -44,16 +43,16 @@ const DashboardIndex: React.FC = () => {
           <AlertTriangle className="w-16 h-16 text-red-400 mx-auto" />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Eroare la încărcarea dashboard-ului
+          {t('dashboardIndex.errorTitle', 'Eroare la încărcarea dashboard-ului')}
         </h3>
         <p className="text-gray-500 max-w-md mb-4">
           {dashboardData.error}
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="bg-primart hover:bg-primary/80 text-white font-bold py-2 px-4 rounded"
+          className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded"
         >
-          Încearcă din nou
+          {t('dashboardIndex.retryButton', 'Încearcă din nou')}
         </button>
       </div>
     );
@@ -73,7 +72,6 @@ const DashboardIndex: React.FC = () => {
           plotId={selectedPlotId}
         />
 
-        {/* Keep other modals available even in plot view mode */}
         <ActiveActionsModal
           isOpen={showActiveActionsModal}
           onClose={() => setShowActiveActionsModal(false)}
@@ -87,9 +85,7 @@ const DashboardIndex: React.FC = () => {
     );
   } else return (
     <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden space-y-6">
-      {/* First Row: TodayActions + Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow-0">
-        {/* Left column: TodayActions */}
         <div className="lg:col-span-1 overflow-hidden">
           <TodayActions
             events={todayEvents || []}
@@ -97,13 +93,12 @@ const DashboardIndex: React.FC = () => {
           />
         </div>
 
-        {/* Right column: Stats grouped */}
         <div className="lg:col-span-2 space-y-6 overflow-hidden px-4 py-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatsCard
-              title="Acțiuni Active"
+              title={t('dashboardIndex.stats.activeActions', 'Acțiuni Active')}
               value={stats.activeActions}
-              description="Acțiuni în ne-finalizate"
+              description={t('dashboardIndex.stats.activeActionsDescription', 'Acțiuni ne-finalizate')}
               icon={Activity}
               color="blue"
               onClick={() => setShowActiveActionsModal(true)}
@@ -111,17 +106,17 @@ const DashboardIndex: React.FC = () => {
             />
 
             <StatsCard
-              title="Următoarele 7 zile"
+              title={t('dashboardIndex.stats.upcomingWeek', 'Următoarele 7 zile')}
               value={actionsSummary.upcomingThisWeek}
-              description="Acțiuni programate"
+              description={t('dashboardIndex.stats.scheduledActions', 'Acțiuni programate')}
               icon={Calendar}
               color="purple"
             />
 
             <StatsCard
-              title="Acțiuni Întârziate"
+              title={t('dashboardIndex.stats.overdueActions', 'Acțiuni Întârziate')}
               value={actionsSummary.overdueCount}
-              description="Depășite și nefinalizate"
+              description={t('dashboardIndex.stats.overdueDescription', 'Depășite și nefinalizate')}
               icon={AlertTriangle}
               color="red"
               onClick={() => setShowOverdueActionsModal(true)}
@@ -131,9 +126,9 @@ const DashboardIndex: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <StatsCard
-              title="Total Terenuri"
+              title={t('dashboardIndex.stats.totalPlots', 'Total Terenuri')}
               value={stats.totalPlots}
-              description={`${stats.totalArea.toFixed(2)} hectare în total`}
+              description={t('dashboardIndex.stats.totalArea', '{{area}} hectare în total', { area: stats.totalArea.toFixed(2) })}
               icon={MapPin}
               color="green"
               onClick={() => navigate('/app/plots')}
@@ -141,9 +136,9 @@ const DashboardIndex: React.FC = () => {
             />
 
             <StatsCard
-              title="Suprafață Medie"
+              title={t('dashboardIndex.stats.avgSize', 'Suprafață Medie')}
               value={stats.totalPlots > 0 ? (stats.totalArea / stats.totalPlots).toFixed(2) : 0}
-              description="hectare per teren"
+              description={t('dashboardIndex.stats.avgArea', 'hectare per teren')}
               icon={TrendingUp}
               color="indigo"
             />
@@ -151,7 +146,6 @@ const DashboardIndex: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow overflow-hidden">
         <div className="lg:col-span-2 overflow-hidden">
           <RecentActivity
@@ -161,8 +155,7 @@ const DashboardIndex: React.FC = () => {
             onActivityClick={(plotId) => {
               setSelectedPlotId(plotId);
               setShowPlotViewModal(true);
-            }
-            }
+            }}
           />
         </div>
 
@@ -177,7 +170,6 @@ const DashboardIndex: React.FC = () => {
           />
         </div>
       </div>
-
 
       <ActiveActionsModal
         isOpen={showActiveActionsModal}

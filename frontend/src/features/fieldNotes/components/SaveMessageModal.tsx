@@ -1,14 +1,7 @@
-/**
- * SaveMessageModal.tsx
- *
- * A dialog component for saving AI chat messages as permanent field notes,
- * or manually creating a new field note.  
- * Think of it as turning temporary AI advice into your permanent agricultural wisdom book.
- */
-
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,29 +28,15 @@ import FieldNoteApi, { FieldNote } from "../api/fieldNote.api";
 import { FieldNoteFormType, fieldNoteFormSchema } from "../constants/formSchema";
 
 interface SaveMessageModalProps {
-  /** Controls dialog visibility */
   showModal: boolean;
-  /** Setter to toggle dialog */
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  /** The AI message text to be saved (optional for manual creation) */
   messageText?: string;
-  /** The plot ID where this message belongs (optional, can be selected in modal) */
   plotId?: string;
-  /** Available plots for selection when creating manually */
   availablePlots?: Array<{ id: string; name: string }>;
-  /** Optional callback when a field note is successfully saved */
   onSave?: (fieldNote: FieldNote) => void;
-  /** Mode: 'save' for saving from chat, 'create' for manual creation */
   mode?: 'save' | 'create';
 }
 
-/**
- * SaveMessageModal
- *
- * Presents a form inside a modal to save a field note:
- * - In 'save' mode, pre-fills the message from AI and only title is editable.
- * - In 'create' mode, allows choosing a plot and writing both title and message.
- */
 const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
   showModal,
   setShowModal,
@@ -67,12 +46,10 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
   onSave,
   mode = 'save',
 }) => {
-  /** Whether a save request is in progress */
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
-  /** API client for CRUD operations on field notes */
   const fieldNoteApi = useMemo(() => new FieldNoteApi(), []);
 
-  // Initialize form with Zod schema validation
   const form = useForm<FieldNoteFormType>({
     resolver: zodResolver(fieldNoteFormSchema),
     defaultValues: {
@@ -82,7 +59,6 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
     },
   });
 
-  // Reset form fields whenever the modal opens or input props change
   useEffect(() => {
     if (showModal) {
       form.reset({
@@ -93,51 +69,28 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
     }
   }, [showModal, messageText, plotId, form]);
 
-  /** Determine if we are in manual-create mode */
   const isCreateMode = mode === 'create';
-  /** Title text for the modal header */
-  const modalTitle = isCreateMode
-    ? "Creează o notiță nouă"
-    : "Salvează mesajul ca notiță";
-  /** Description text for the modal header */
-  const modalDescription = isCreateMode
-    ? "Creează o notiță din capul tău pentru una dintre parcelele tale."
-    : "Transformă acest sfat al AI-ului într-o notiță permanentă pentru parcela ta.";
-  /** Icon to display in the header */
+  const modalTitle = isCreateMode ? t("saveMessageModal.createTitle") : t("saveMessageModal.saveTitle");
+  const modalDescription = isCreateMode ? t("saveMessageModal.createDescription") : t("saveMessageModal.saveDescription");
   const modalIcon = isCreateMode ? <Plus className="w-4" /> : <BookMarked className="w-4" />;
 
-  /**
-   * Handle form submission: create a new field note via API,
-   * notify parent with onSave callback, and close the modal.
-   */
   const onSubmit = async (data: FieldNoteFormType) => {
     setSaving(true);
-
     try {
       const savedFieldNote = await fieldNoteApi.create({
         title: data.title,
         message: data.message,
         plotId: data.plotId,
       });
-
-      // Notify parent component if callback provided
       onSave?.(savedFieldNote);
-
-      // Close modal on success
       setShowModal(false);
     } catch (error) {
       console.error("Error saving field note:", error);
-      // Toast error is already handled in the API service
     } finally {
       setSaving(false);
     }
   };
 
-  /**
-   * Generate a suggested title:
-   * - In create mode, use current date/time.
-   * - In save mode, truncate the message content.
-   */
   const generateSuggestedTitle = () => {
     if (isCreateMode) {
       const now = new Date();
@@ -149,25 +102,19 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
         hour: '2-digit',
         minute: '2-digit',
       });
-
-      form.setValue("title", `Notiță - ${dateStr} ${timeStr}`, {
+      form.setValue("title", `${t("saveMessageModal.generatedTitlePrefix")} - ${dateStr} ${timeStr}`, {
         shouldDirty: true,
         shouldValidate: true,
       });
       return;
     }
 
-    // In save mode, derive from message content
     const maxLength = 50;
     let suggested = messageText.trim();
-
     if (suggested.length > maxLength) {
       suggested = suggested.substring(0, maxLength).trim() + "...";
     }
-
-    // Collapse whitespace
     suggested = suggested.replace(/\s+/g, " ");
-
     form.setValue("title", suggested, {
       shouldDirty: true,
       shouldValidate: true,
@@ -177,7 +124,6 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
   return (
     <Dialog open={showModal} onOpenChange={setShowModal} modal>
       <DialogContent className="sm:max-w-2xl dialog-animation">
-        {/* Header with icon, title, and description */}
         <DialogHeader className="flex flex-row items-start space-y-0 pb-2">
           <div className="flex items-start gap-3 flex-col">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg border bg-background">
@@ -194,28 +140,26 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
           </div>
         </DialogHeader>
 
-        {/* Form */}
         <Form {...form}>
           <form
             id="fieldNoteForm"
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6 py-2"
           >
-            {/* Plot selection only in create mode */}
             {isCreateMode && (
               <FormField
                 control={form.control}
                 name="plotId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Parcela</FormLabel>
+                    <FormLabel>{t("saveMessageModal.plot")}</FormLabel>
                     <FormControl>
                       <SearchSelect
                         options={availablePlots.map((plot) => ({
                           label: plot.name,
                           value: plot.id,
                         }))}
-                        placeholder="Selectează parcela"
+                        placeholder={t("saveMessageModal.selectPlot")}
                         value={field.value}
                         onValueChange={field.onChange}
                         modal={true}
@@ -227,14 +171,13 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
               />
             )}
 
-            {/* Title input with suggestion helper */}
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel>Titlu</FormLabel>
+                    <FormLabel>{t("saveMessageModal.title")}</FormLabel>
                     <Button
                       type="button"
                       variant="ghost"
@@ -242,13 +185,13 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
                       onClick={generateSuggestedTitle}
                       className="text-xs h-auto p-1"
                     >
-                      {isCreateMode ? "Generează cu data" : "Generează titlu"}
+                      {isCreateMode ? t("saveMessageModal.generateFromDate") : t("saveMessageModal.generateFromMessage")}
                     </Button>
                   </div>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Introduceți un titlu pentru această notiță"
+                      placeholder={t("saveMessageModal.titlePlaceholder")}
                       maxLength={100}
                     />
                   </FormControl>
@@ -257,26 +200,23 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
               )}
             />
 
-            {/* Message content - editable only in create mode */}
             <FormField
               control={form.control}
               name="message"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {isCreateMode ? "Conținut notiță" : "Conținut mesaj"}
+                    {isCreateMode ? t("saveMessageModal.noteContent") : t("saveMessageModal.messageContent")}
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
                       readOnly={!isCreateMode}
-                      className={`min-h-[200px] resize-none ${
-                        !isCreateMode ? "bg-gray-50" : ""
-                      }`}
+                      className={`min-h-[200px] resize-none ${!isCreateMode ? "bg-gray-50" : ""}`}
                       placeholder={
                         isCreateMode
-                          ? "Scrie conținutul notiței..."
-                          : "Conținutul mesajului..."
+                          ? t("saveMessageModal.noteContentPlaceholder")
+                          : t("saveMessageModal.messageContentPlaceholder")
                       }
                     />
                   </FormControl>
@@ -287,7 +227,6 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
           </form>
         </Form>
 
-        {/* Footer with Cancel and Save buttons */}
         <DialogFooter className="grid grid-cols-2 gap-2 pt-0 pb-2">
           <DialogClose asChild>
             <Button
@@ -296,7 +235,7 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
               className="text-sm h-9"
               disabled={saving}
             >
-              Anulează
+              {t("saveMessageModal.cancel")}
             </Button>
           </DialogClose>
           <Button
@@ -308,11 +247,11 @@ const SaveMessageModal: React.FC<SaveMessageModalProps> = ({
           >
             {saving
               ? isCreateMode
-                ? "Se creează..."
-                : "Se salvează..."
+                ? t("saveMessageModal.creating")
+                : t("saveMessageModal.saving")
               : isCreateMode
-              ? "Creează notița"
-              : "Salvează notița"}
+              ? t("saveMessageModal.create")
+              : t("saveMessageModal.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

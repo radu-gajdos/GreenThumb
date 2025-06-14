@@ -9,19 +9,15 @@ import { ActiveActionsFilter, Action } from '../../types/active-actions';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SearchSelect from '@/components/ui/searchSelect';
+import { useTranslation } from 'react-i18next';
 
 interface ActiveActionsContentProps {
   initialFilter?: ActiveActionsFilter;
 }
 
-const statusOptions = [
-  { label: 'Toate', value: '' },
-  { label: 'Planificate', value: 'planned' },
-  { label: 'În Progres', value: 'in_progress' },
-  { label: 'Anulate', value: 'cancelled' },
-];
-
 const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilter }) => {
+  const { t } = useTranslation();
+
   const [filter, setFilter] = useState<ActiveActionsFilter>(initialFilter || {});
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -46,13 +42,7 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
   };
 
   const getStatusLabel = (status: Action['status']) => {
-    switch (status) {
-      case 'in_progress': return 'În progres';
-      case 'planned': return 'Planificat';
-      case 'cancelled': return 'Anulat';
-      case 'completed': return 'Completat';
-      default: return status;
-    }
+    return t(`activeActions.status.${status}`);
   };
 
   const formatDate = (date: Date) => {
@@ -61,12 +51,12 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
     const d2 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const diff = Math.floor((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diff === 0) return 'Astăzi';
-    if (diff === 1) return 'Mâine';
-    if (diff === -1) return 'Ieri';
-    if (diff < -1) return `${Math.abs(diff)} zile întârziere`;
-    if (diff > 1) return `În ${diff} zile`;
-    return date.toLocaleDateString('ro-RO');
+    if (diff === 0) return t('activeActions.summary.today');
+    if (diff === 1) return t('calendarIndex.tomorrow');
+    if (diff === -1) return t('calendarIndex.yesterday');
+    if (diff < -1) return `${Math.abs(diff)} ${t('calendarIndex.daysLate')}`;
+    if (diff > 1) return `${t('calendarIndex.in')} ${diff} ${t('calendarIndex.days')}`;
+    return date.toLocaleDateString('en-GB');
   };
 
   const isOverdue = (date: Date, status: Action['status']) => {
@@ -102,10 +92,10 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'În Progres', count: summary.byStatus.in_progress , icon: <Play className="text-blue-400" />, color: 'bg-blue-50' },
-          { label: 'Planificate', count: summary.byStatus.planned, icon: <Calendar className="text-purple-400" />, color: 'bg-purple-50' },
-          { label: 'Întârziate', count: summary.overdueCount, icon: <AlertCircle className="text-red-400" />, color: 'bg-red-50' },
-          { label: 'Astăzi', count: summary.todayCount, icon: <Clock className="text-green-400" />, color: 'bg-green-50' },
+          { label: t('activeActions.summary.in_progress'), count: summary.byStatus.in_progress, icon: <Play className="text-blue-400" />, color: 'bg-blue-50' },
+          { label: t('activeActions.summary.planned'), count: summary.byStatus.planned, icon: <Calendar className="text-purple-400" />, color: 'bg-purple-50' },
+          { label: t('activeActions.summary.overdue'), count: summary.overdueCount, icon: <AlertCircle className="text-red-400" />, color: 'bg-red-50' },
+          { label: t('activeActions.summary.today'), count: summary.todayCount, icon: <Clock className="text-green-400" />, color: 'bg-green-50' },
         ].map(({ label, count, icon, color }) => (
           <div key={label} className={`${color} p-4 rounded-lg border`}>
             <div className="flex justify-between items-center">
@@ -125,7 +115,7 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Caută activități..."
+              placeholder={t('activeActions.filters.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -144,8 +134,12 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
           <div className="p-4 bg-gray-50 border rounded-lg space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SearchSelect
-                options={statusOptions}
-                placeholder="Status"
+                options={[
+                  { label: t('activeActions.status.planned'), value: 'planned' },
+                  { label: t('activeActions.status.in_progress'), value: 'in_progress' },
+                  { label: t('activeActions.status.cancelled'), value: 'cancelled' }
+                ]}
+                placeholder={t('activeActions.filters.statusPlaceholder')}
                 value={filter.status?.[0] ?? ''}
                 onValueChange={(value) =>
                   setFilter(prev => ({
@@ -156,13 +150,13 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
               />
               <SearchSelect
                 options={[
-                  { label: 'Toate', value: '' },
+                  { label: t('activeActions.filters.typePlaceholder'), value: '' },
                   ...Object.keys(summary.byType).map(type => ({
                     label: type.replace('_', ' '),
                     value: type
                   }))
                 ]}
-                placeholder="Tip activitate"
+                placeholder={t('activeActions.filters.typePlaceholder')}
                 value={filter.type?.[0] ?? ''}
                 onValueChange={(value) =>
                   setFilter(prev => ({
@@ -173,11 +167,11 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
               />
               <Button
                 variant="outline"
-                className='h-10'
+                className="h-10"
                 size="sm"
                 onClick={() => setFilter({})}
               >
-                Resetează filtrele
+                {t('activeActions.filters.reset')}
               </Button>
             </div>
           </div>
@@ -189,7 +183,7 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
         {filteredActions.length === 0 ? (
           <div className="text-center py-8">
             <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Nu există activități active</p>
+            <p className="text-gray-600">{t('activeActions.empty.title')}</p>
           </div>
         ) : (
           filteredActions.map((action) => (
@@ -197,7 +191,6 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
               key={action.id}
               className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition"
             >
-              {/* Header */}
               <div className="flex justify-between mb-3">
                 <div>
                   <div className="flex items-center space-x-2 mb-1">
@@ -207,14 +200,14 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
                     </span>
                     {isOverdue(action.date, action.status) && (
                       <span className="px-2 py-1 text-xs font-medium rounded-full text-red-600 bg-red-100">
-                        Întârziat
+                        {t('activeActions.status.overdue')}
                       </span>
                     )}
                   </div>
                   <div className="text-sm text-gray-600 flex gap-4">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      {action.plot?.name || 'Necunoscut'}
+                      {action.plot?.name || t('activeActions.labels.unknown')}
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -252,13 +245,13 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
               {selectedAction === action.id && (
                 <div className="pt-4 mt-4 border-t text-sm space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div><strong>Creat:</strong> {action.createdAt.toLocaleDateString('ro-RO')}</div>
-                    <div><strong>Actualizat:</strong> {action.updatedAt.toLocaleDateString('ro-RO')}</div>
-                    <div><strong>Programat:</strong> {action.date.toLocaleDateString('ro-RO')}</div>
+                    <div><strong>{t('activeActions.labels.created')}:</strong> {action.createdAt.toLocaleDateString('en-GB')}</div>
+                    <div><strong>{t('activeActions.labels.updated')}:</strong> {action.updatedAt.toLocaleDateString('en-GB')}</div>
+                    <div><strong>{t('activeActions.labels.scheduled')}:</strong> {action.date.toLocaleDateString('en-GB')}</div>
                   </div>
                   {action.notes && (
                     <div>
-                      <strong>Note:</strong>
+                      <strong>{t('activeActions.labels.notes')}:</strong>
                       <p className="mt-1 text-gray-600">{action.notes}</p>
                     </div>
                   )}
@@ -269,7 +262,7 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
                       className="bg-green-100 text-green-700 hover:bg-green-200"
                     >
                       <CheckCircle2 className="w-4 h-4 mr-1" />
-                      Finalizează
+                      {t('activeActions.buttons.finish')}
                     </Button>
                     <Button
                       variant="outline"
@@ -278,7 +271,7 @@ const ActiveActionsContent: React.FC<ActiveActionsContentProps> = ({ initialFilt
                       onClick={() => handleStatusChange(action.id, 'cancelled')}
                     >
                       <X className="w-4 h-4 mr-1" />
-                      Anulează
+                      {t('activeActions.buttons.cancel')}
                     </Button>
                   </div>
                 </div>

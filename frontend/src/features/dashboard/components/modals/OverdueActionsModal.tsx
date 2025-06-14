@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 import OverdueActionsContent from './OverdueActionsContent';
 
 const OverdueActionsModal: React.FC<ActiveActionsModalProps> = ({ 
@@ -16,6 +16,8 @@ const OverdueActionsModal: React.FC<ActiveActionsModalProps> = ({
   onClose, 
   initialFilter 
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>
       <DialogContent className="sm:max-w-6xl dialog-animation max-h-[90vh] flex flex-col">
@@ -26,10 +28,10 @@ const OverdueActionsModal: React.FC<ActiveActionsModalProps> = ({
             </div>
             <div>
               <DialogTitle className="text-lg font-semibold text-red-900">
-                Activități Întârziate
+                {t('overdueActionsModal.title')}
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Acțiuni care au depășit data programată și necesită atenție imediată.
+                {t('overdueActionsModal.description')}
               </DialogDescription>
             </div>
           </div>
@@ -38,7 +40,6 @@ const OverdueActionsModal: React.FC<ActiveActionsModalProps> = ({
         <div className="overflow-y-auto max-h-[70vh]">
           <OverdueActionsContent initialFilter={initialFilter} />
         </div>
-
       </DialogContent>
     </Dialog>
   );

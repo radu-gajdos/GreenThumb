@@ -326,6 +326,8 @@
         }
     },
     "calendarIndex": {
+        "in": "in",
+        "days": "days",
         "today": "Today",
         "yesterday": "Yesterday",
         "tomorrow": "Tomorrow",
@@ -372,5 +374,195 @@
             "close": "Close"
         },
         "loading": "Updating status..."
+    },
+    "activeActions": {
+        "status": {
+            "planned": "Planned",
+            "in_progress": "In Progress",
+            "cancelled": "Cancelled",
+            "completed": "Completed",
+            "overdue": "Overdue"
+        },
+        "summary": {
+            "in_progress": "In Progress",
+            "planned": "Planned",
+            "overdue": "Overdue",
+            "today": "Today"
+        },
+        "filters": {
+            "searchPlaceholder": "Search activities...",
+            "statusPlaceholder": "Status",
+            "typePlaceholder": "Action type",
+            "reset": "Reset filters"
+        },
+        "empty": {
+            "title": "No active activities"
+        },
+        "labels": {
+            "created": "Created",
+            "updated": "Updated",
+            "scheduled": "Scheduled",
+            "notes": "Notes",
+            "unknown": "Unknown"
+        },
+        "buttons": {
+            "finish": "Complete",
+            "cancel": "Cancel"
+        }
+    },
+    "activeActionsModal": {
+        "title": "Active Activities",
+        "description": "Manage ongoing and planned activities for your plots."
+    },
+    "overdueActions": {
+        "stats": {
+            "total": "Total Overdue",
+            "lastWeek": "1–7 Days",
+            "lastMonth": "8–30 Days",
+            "critical": "Over 30 Days"
+        },
+        "status": {
+            "in_progress": "In Progress",
+            "planned": "Planned",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "search": "Search overdue activities...",
+        "type": "Activity Type",
+        "all": "All",
+        "reset": "Reset Filters",
+        "noOverdue": "Congratulations! There are no overdue activities.",
+        "noResults": "No overdue activities match the selected filters.",
+        "daysOverdue": "{{count}} day overdue",
+        "daysOverdue_plural": "{{count}} days overdue",
+        "created": "Created",
+        "updated": "Updated",
+        "scheduled": "Scheduled",
+        "notes": "Notes",
+        "completeNow": "Mark as Completed",
+        "startNow": "Start Now",
+        "cancel": "Cancel",
+        "unknown": "Unknown"
+    },
+    "overdueActionsModal": {
+        "title": "Overdue Activities",
+        "description": "Actions that are past their scheduled date and require immediate attention."
+    },
+    "plotsOverview": {
+        "title": "My Plots",
+        "emptyTitle": "My Plots",
+        "emptyMessage": "You don't have any plots created",
+        "createFirst": "Create your first plot",
+        "viewAll": "View all →",
+        "viewAllWithCount": "View all plots ({{count}})",
+        "sizeUnit": "{{size}} ha",
+        "activeActions": "{{count}} active",
+        "completedActions": "{{count}} complete",
+        "days": "{{count}} days",
+        "weeks": "{{count}} weeks",
+        "status": {
+            "active": "Active",
+            "planning": "Planning",
+            "harvested": "Harvested",
+            "fallow": "Fallow",
+            "unknown": "Unknown"
+        }
+    },
+    "recentActivity": {
+        "title": "Recent Activity",
+        "emptyMessage": "No recent activity found",
+        "createFirstPlot": "Start by creating a plot →",
+        "viewAll": "View all →",
+        "time": {
+            "now": "just now",
+            "minutes": "{{count}} min",
+            "hours": "{{count}} h",
+            "days": "{{count}} d"
+        }
+    },
+    "todayActions": {
+        "title": "Today's Actions",
+        "noEvents": "No actions scheduled for today",
+        "now": "NOW",
+        "currentCount": "{{count}} now",
+        "inMinutes": "in {{count}} min",
+        "inHours": "in {{hours}}h {{minutes}}min",
+        "minutesAgo": "{{count}} min ago",
+        "hoursAgo": "{{hours}}h {{minutes}}min ago"
+    },
+    "dashboardIndex": {
+        "errorTitle": "Error loading dashboard",
+        "retryButton": "Try again",
+        "stats": {
+            "activeActions": "Active Actions",
+            "activeActionsDescription": "Unfinished actions",
+            "upcomingWeek": "Next 7 Days",
+            "scheduledActions": "Scheduled actions",
+            "overdueActions": "Overdue Actions",
+            "overdueDescription": "Overdue and unfinished",
+            "totalPlots": "Total Plots",
+            "totalArea": "{{area}} hectares total",
+            "avgSize": "Average Size",
+            "avgArea": "hectares per plot"
+        }
+    },
+    "fieldNoteContent": {
+        "editTitlePlaceholder": "Field note title...",
+        "noteContentLabel": "Note content",
+        "noteContentPlaceholder": "Write the content of the note...",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "modifiedBadge": "Modified",
+        "lastModified": "Last modified:",
+        "at": "at",
+        "deleteConfirm": "Are you sure you want to delete the note \"{{title}}\"? This action cannot be undone."
+    },
+    "fieldNotesSidebar": {
+        "createNew": "Create New Note",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "daysAgo": "{{count}} days ago"
+    },
+    "saveMessageModal": {
+        "createTitle": "Create a new note",
+        "saveTitle": "Save message as note",
+        "createDescription": "Write a note manually for one of your plots.",
+        "saveDescription": "Turn this AI advice into a permanent note for your plot.",
+        "plot": "Plot",
+        "selectPlot": "Select a plot",
+        "title": "Title",
+        "generateFromDate": "Generate from date",
+        "generateFromMessage": "Generate title",
+        "titlePlaceholder": "Enter a title for this note",
+        "noteContent": "Note content",
+        "messageContent": "Message content",
+        "noteContentPlaceholder": "Write your note content...",
+        "messageContentPlaceholder": "Message content...",
+        "cancel": "Cancel",
+        "create": "Create note",
+        "save": "Save note",
+        "creating": "Creating...",
+        "saving": "Saving...",
+        "generatedTitlePrefix": "Note"
+    },
+    "fieldNotes": {
+        "unknownPlot": "Unknown Plot",
+        "empty": {
+            "title": "No saved notes",
+            "description": "You don't have any saved notes from AI conversations yet. Start saving helpful advice from the AI chat to see it here."
+        },
+        "sidebar": {
+            "title": "My Notes",
+            "notesCount": "{{count}} saved notes"
+        },
+        "content": {
+            "selectNote": {
+                "title": "Select a note to view",
+                "description": "Choose a note from the sidebar to see the full content."
+            }
+        }
     }
 }

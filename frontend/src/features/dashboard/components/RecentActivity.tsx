@@ -8,6 +8,7 @@ import {
   Clock,
   Activity,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { RecentActivityItem } from '../types/dashboard';
 
 interface RecentActivityProps {
@@ -17,7 +18,14 @@ interface RecentActivityProps {
   onActivityClick?: (plotId: string) => void;
 }
 
-const RecentActivity: React.FC<RecentActivityProps> = ({ activities, onNavigate, onViewAllActivities, onActivityClick}) => {
+const RecentActivity: React.FC<RecentActivityProps> = ({
+  activities,
+  onNavigate,
+  onViewAllActivities,
+  onActivityClick,
+}) => {
+  const { t } = useTranslation();
+
   const getActivityIcon = (type: RecentActivityItem['type']) => {
     switch (type) {
       case 'action_created':
@@ -39,15 +47,12 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities, onNavigate,
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) return 'acum';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ore`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} zile`;
+    if (diffInSeconds < 60) return t('recentActivity.time.now');
+    if (diffInSeconds < 3600) return t('recentActivity.time.minutes', { count: Math.floor(diffInSeconds / 60) });
+    if (diffInSeconds < 86400) return t('recentActivity.time.hours', { count: Math.floor(diffInSeconds / 3600) });
+    if (diffInSeconds < 604800) return t('recentActivity.time.days', { count: Math.floor(diffInSeconds / 86400) });
 
-    return date.toLocaleDateString('ro-RO', {
-      month: 'short',
-      day: 'numeric'
-    });
+    return date.toLocaleDateString('ro-RO', { month: 'short', day: 'numeric' });
   };
 
   if (activities.length === 0) {
@@ -55,19 +60,19 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities, onNavigate,
       <div className="bg-white rounded-xl border border-gray-200 p-6 h-full flex flex-col justify-center">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
           <Clock className="w-5 h-5 mr-2 text-gray-600" />
-          Activitate Recentă
+          {t('recentActivity.title')}
         </h3>
 
         <div className="text-center py-8">
           <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity className="w-6 h-6 text-gray-400" />
           </div>
-          <p className="text-gray-500 mb-4">Nu există activitate recentă</p>
+          <p className="text-gray-500 mb-4">{t('recentActivity.emptyMessage')}</p>
           <button
             onClick={() => onNavigate('/app/plots')}
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
-            Începe prin a crea un teren →
+            {t('recentActivity.createFirstPlot')}
           </button>
         </div>
       </div>
@@ -79,13 +84,13 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities, onNavigate,
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800 flex items-center">
           <Clock className="w-5 h-5 mr-2 text-gray-600" />
-          Activitate Recentă
+          {t('recentActivity.title')}
         </h3>
         <button
           onClick={() => onViewAllActivities ? onViewAllActivities() : onNavigate('/app/plots')}
           className="text-blue-600 hover:text-blue-800 text-sm font-medium"
         >
-          Vezi toate →
+          {t('recentActivity.viewAll')}
         </button>
       </div>
 

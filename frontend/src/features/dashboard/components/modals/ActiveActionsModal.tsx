@@ -3,14 +3,12 @@ import { Activity } from 'lucide-react';
 import { ActiveActionsModalProps } from '../../types/active-actions';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 import ActiveActionsContent from './ActiveActionsComponent';
 
 const ActiveActionsModal: React.FC<ActiveActionsModalProps> = ({ 
@@ -18,6 +16,8 @@ const ActiveActionsModal: React.FC<ActiveActionsModalProps> = ({
   onClose, 
   initialFilter 
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>
       <DialogContent className="sm:max-w-6xl dialog-animation max-h-[90vh] flex flex-col">
@@ -28,10 +28,10 @@ const ActiveActionsModal: React.FC<ActiveActionsModalProps> = ({
             </div>
             <div>
               <DialogTitle className="text-lg font-semibold">
-                Activități Active
+                {t('activeActionsModal.title')}
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Gestionează activitățile în curs și planificate pentru terenurile tale.
+                {t('activeActionsModal.description')}
               </DialogDescription>
             </div>
           </div>

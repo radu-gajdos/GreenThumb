@@ -152,7 +152,7 @@ const FieldNotesViewer: React.FC = () => {
   const handleFieldNoteCreated = async (newFieldNote: FieldNote) => {
     // Find plotName from all plots state
     const plot = plots.find((p) => p.id === newFieldNote.plotId);
-    const plotName = plot?.name || 'Unknown Plot';
+    const plotName = plot?.name || t('fieldNotes.unknownPlot');
 
     setPlotsWithNotes((prev) => {
       const existingIndex = prev.findIndex(
@@ -280,12 +280,10 @@ const FieldNotesViewer: React.FC = () => {
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Nicio notiță salvată
+          {t('fieldNotes.empty.title')}
         </h3>
         <p className="text-gray-500 max-w-md">
-          Nu aveți încă notițe salvate din conversațiile cu AI-ul.
-          Începeți să salvați sfaturile utile din chat-ul AI pentru a le
-          vedea aici.
+          {t('fieldNotes.empty.description')}
         </p>
       </div>
     );
@@ -298,15 +296,16 @@ const FieldNotesViewer: React.FC = () => {
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
         <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-lg font-semibold text-gray-900">
-            Notițele mele
+            {t('fieldNotes.sidebar.title')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {/* Total count of all field notes */}
-            {plotsWithNotes.reduce(
-              (total, plot) => total + plot.fieldNotes.length,
-              0
-            )}{' '}
-            notițe salvate
+            {t('fieldNotes.sidebar.notesCount', {
+              count: plotsWithNotes.reduce(
+                (total, plot) => total + plot.fieldNotes.length,
+                0
+              )
+            })}
           </p>
         </div>
 
@@ -348,10 +347,10 @@ const FieldNotesViewer: React.FC = () => {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Selectați o notiță pentru a o vizualiza
+                {t('fieldNotes.content.selectNote.title')}
               </h3>
               <p className="text-gray-500">
-                Alegeți o notiță din sidebar pentru a vedea conținutul complet.
+                {t('fieldNotes.content.selectNote.description')}
               </p>
             </div>
           </div>
