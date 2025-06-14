@@ -53,6 +53,11 @@ const data = {
       url: "yield",
       icon: BarChart,
     },
+    {
+      name: "Map",
+      url: "map",
+      icon: Map,
+    }
 
   ]
 

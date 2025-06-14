@@ -29,7 +29,7 @@ const LayoutAppRoutes: React.FC = () => {
                                 <Route path="dashboard/*" element={<DashboardRoutes />} />
                                 <Route path="plots/*" element={<PlotRoutes />} />
                                 <Route path="calendar/*" element={<CalendarRoutes />} />
-                                <Route path="maps/*" element={<MapRoutes />} />
+                                <Route path="map/*" element={<MapRoutes />} />
                                 <Route path="two-step" element={<TwoStepConfigure />} />
                                 <Route path="field-notes/*" element={<FieldNoteRoutes />} />
                                 <Route path="yield/*" element={<YieldRoutes />} />

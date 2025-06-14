@@ -123,7 +123,7 @@ const FormContent: React.FC<FormContentProps> = ({
             <form
                 id={formId}
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 px-1"
             >
                 {/* Plot name input */}
                 <FormField
@@ -168,7 +168,7 @@ const FormContent: React.FC<FormContentProps> = ({
                         <FormItem className="col-span-1">
                             <FormLabel>Topografie</FormLabel>
                             <FormControl>
-                                <Textarea
+                                <Input
                                     {...field}
                                     value={field.value || ""}
                                     placeholder="Ex: Deal, Vale, Panta..."
@@ -187,7 +187,7 @@ const FormContent: React.FC<FormContentProps> = ({
                         <FormItem className="col-span-1">
                             <FormLabel>Tip sol</FormLabel>
                             <FormControl>
-                                <Textarea
+                                <Input
                                     {...field}
                                     value={field.value || ""}
                                     placeholder="Ex: Argilos, Lutosol, Cernoziom..."

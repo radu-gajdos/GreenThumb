@@ -1,37 +1,35 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MapContainer,
   TileLayer,
-  Polygon,
-  Tooltip,
   useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LatLngExpression, latLngBounds } from 'leaflet';
+import { LatLngExpression } from 'leaflet';
 import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
-import { PlotApi } from '@/features/plots/api/plot.api';
+import { MapPin } from 'lucide-react';
 import { Plot } from '@/features/plots/interfaces/plot';
+import MapControls, { MapLayerType } from './MapControls';
+import MapLoadingState from './MapLoadingState';
+import MapErrorState from './MapErrorState';
+import PlotMarker from './PlotMarker';
+import { useMapData } from '../hooks/useMapData';
 
 /** Default fallback center (central Romania) */
 const DEFAULT_CENTER: LatLngExpression = [45.0, 25.0];
 
-interface PlotMapProps {}
-
-/** FitBounds: when `bounds` change, fit the map to those bounds. */
-function FitToBounds({ bounds }: { bounds: LatLngExpression[] }) {
-  const map = useMap();
-  useEffect(() => {
-    if (bounds.length > 0) {
-      map.fitBounds(latLngBounds(bounds), { padding: [20, 20] });
-    }
-  }, [map, bounds]);
-  return null;
+interface PlotMapProps {
+  onPlotSelect?: (plot: Plot) => void;
+  selectedPlotId?: string | null;
+  showControls?: boolean;
+  className?: string;
 }
 
-/** Adds the search control once to the map. */
+/** Adaugă bara de căutare pe hartă */
 function SearchBar() {
   const map = useMap();
+  
   useEffect(() => {
     const provider = new OpenStreetMapProvider();
     const control = GeoSearchControl({
@@ -44,78 +42,206 @@ function SearchBar() {
       animateZoom: true,
       keepResult: true,
     });
+    
     map.addControl(control);
     return () => {
       map.removeControl(control);
     };
   }, [map]);
+  
   return null;
 }
 
-const PlotMap: React.FC<PlotMapProps> = () => {
-  const [plots, setPlots] = useState<Plot[]>([]);
-  const [loading, setLoading] = useState(true);
-  const plotApi = useMemo(() => new PlotApi(), []);
-
-  // 1) Fetch all user plots on mount
+/** Setează centrul hărții după montare */
+function SetMapCenter({ center }: { center: LatLngExpression }) {
+  const map = useMap();
+  
   useEffect(() => {
-    plotApi
-      .findAll()
-      .then((data) => setPlots(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [plotApi]);
+    if (center) {
+      map.setView(center, 17);
+    }
+  }, [map, center]);
+  
+  return null;
+}
 
-  // 2) Compute a flat array of all polygon vertices in Leaflet’s [lat, lng]
-  const allCorners: LatLngExpression[] = plots.flatMap((p) => {
-    const ring = p.boundary.coordinates?.[0] || [];
-    return ring.map(([lng, lat]) => [lat, lng] as LatLngExpression);
-  });
+const PlotMap: React.FC<PlotMapProps> = ({ 
+  onPlotSelect, 
+  selectedPlotId,
+  showControls = true,
+  className = ""
+}) => {
+  // Use custom hook for map data
+  const {
+    plots,
+    mapCenter,
+    loading,
+    error,
+    loadPlots,
+    setMapCenter,
+    calculateCenterFromPlots,
+    totalArea,
+    plotsCount,
+    hasPlots,
+  } = useMapData();
+
+  // Local state
+  const [currentLayer, setCurrentLayer] = useState<MapLayerType>('satellite');
+  const [showPlots, setShowPlots] = useState(true);
+  const [hoveredPlot, setHoveredPlot] = useState<Plot | null>(null);
+
+  const handleResetView = () => {
+    const center = calculateCenterFromPlots();
+    if (center) {
+      setMapCenter(center);
+    }
+  };
+
+  const handlePlotClick = (plot: Plot) => {
+    if (onPlotSelect) {
+      onPlotSelect(plot);
+    }
+  };
+
+  const handlePlotHover = (plot: Plot | null) => {
+    setHoveredPlot(plot);
+  };
+
+  const handleExportMap = () => {
+    // Implementează funcționalitatea de export
+    console.log('Export map functionality');
+  };
+
+  const getTileLayerConfig = () => {
+    switch (currentLayer) {
+      case 'satellite':
+        return {
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          attribution: "Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
+        };
+      case 'street':
+        return {
+          url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          attribution: "© OpenStreetMap contributors"
+        };
+      case 'terrain':
+        return {
+          url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+          attribution: "© OpenTopoMap contributors"
+        };
+      default:
+        return {
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          attribution: "Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
+        };
+    }
+  };
+
+  const tileConfig = getTileLayerConfig();
 
   return (
-    <div className="w-full h-[500px] border rounded overflow-hidden relative">
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-          Loading plots…
+    <div className={`bg-white rounded-xl border border-gray-200 overflow-hidden relative ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-green-100 rounded-lg">
+            <MapPin className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Harta Terenurilor</h3>
+            <p className="text-sm text-gray-500">
+              {hasPlots ? `${plotsCount} terenuri găsite` : 'Căutare terenuri...'}
+            </p>
+          </div>
+        </div>
+        
+        {showControls && (
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setShowPlots(!showPlots)}
+              className={`px-3 py-1 text-sm font-medium rounded-lg transition-colors ${
+                showPlots 
+                  ? 'bg-green-100 text-green-700 border border-green-200' 
+                  : 'bg-gray-100 text-gray-700 border border-gray-200'
+              }`}
+            >
+              {showPlots ? 'Vizibile' : 'Ascunse'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Map Container */}
+      <div className="relative h-[500px]">
+        {loading && <MapLoadingState />}
+        {error && (
+          <MapErrorState 
+            error={error} 
+            onRetry={loadPlots}
+            errorType={error.includes('network') ? 'network' : 'data'}
+          />
+        )}
+        
+        <MapContainer
+          center={DEFAULT_CENTER}
+          zoom={17}
+          className="w-full h-full"
+          zoomControl={false}
+        >
+          <TileLayer
+            url={tileConfig.url}
+            attribution={tileConfig.attribution}
+          />
+          
+          <SearchBar />
+          <SetMapCenter center={mapCenter} />
+          
+          {showPlots && plots.map((plot) => (
+            <PlotMarker
+              key={plot.id}
+              plot={plot}
+              isSelected={selectedPlotId === plot.id}
+              isHighlighted={hoveredPlot?.id === plot.id}
+              onPlotClick={handlePlotClick}
+              onPlotHover={handlePlotHover}
+              showTooltip={true}
+              showPopup={false}
+            />
+          ))}
+        </MapContainer>
+
+        {showControls && (
+          <MapControls
+            currentLayer={currentLayer}
+            onLayerChange={setCurrentLayer}
+            showPlots={showPlots}
+            onTogglePlots={() => setShowPlots(!showPlots)}
+            onResetView={handleResetView}
+            plotsCount={plotsCount}
+          />
+        )}
+      </div>
+
+      {/* Footer Stats */}
+      {hasPlots && (
+        <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center space-x-4 text-gray-600">
+              <span>
+                <strong>{plotsCount}</strong> terenuri
+              </span>
+              <span>
+                <strong>{totalArea.toFixed(2)}</strong> hectare total
+              </span>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-gray-600">Terenuri active</span>
+            </div>
+          </div>
         </div>
       )}
-      <MapContainer
-        center={DEFAULT_CENTER}
-        zoom={12}
-        className="w-full h-full"
-      >
-        {/* Satellite imagery */}
-        <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution="Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
-        />
-
-        {/* Search bar */}
-        <SearchBar />
-
-        {/* Auto-fit to all your plots (if any) */}
-        {allCorners.length > 0 && <FitToBounds bounds={allCorners} />}
-
-        {/* Draw each plot boundary with tooltip */}
-        {plots.map((plot) => {
-          const ring = plot.boundary.coordinates?.[0] || [];
-          const positions = ring.map(
-            ([lng, lat]) => [lat, lng] as LatLngExpression
-          );
-
-          return (
-            <Polygon
-              key={plot.id}
-              pathOptions={{ color: 'green', weight: 2 }}
-              positions={positions}
-            >
-              <Tooltip direction="top" offset={[0, -10]} opacity={0.9} sticky>
-                {plot.name}
-              </Tooltip>
-            </Polygon>
-          );
-        })}
-      </MapContainer>
     </div>
   );
 };
