@@ -1,5 +1,5 @@
 import React from "react";
-import { date, z } from "zod";
+import { z } from "zod";
 import { 
   Sprout, 
   Tractor, 
@@ -18,7 +18,7 @@ export type ActionType =
   | "watering"
   | "soil_reading";
 
-export const getActionIcon = (type: ActionType) => {
+export const getActionIcon = (type: ActionType | string) => {
   switch (type) {
     case "planting":
       return <Sprout size={24} />;
@@ -47,7 +47,10 @@ const commonFields = {
     "soil_reading",
   ]),
   date: z.date().default(() => new Date()),
-  comments: z.string().optional(),
+  status: z.enum(['planned', 'in_progress', 'completed', 'cancelled']).default('planned'),
+  description: z.string().optional(),
+  notes: z.string().optional(),
+  comments: z.string().optional(), // Keep for backward compatibility
 };
 
 export const actionFormSchema = z.discriminatedUnion("type", [

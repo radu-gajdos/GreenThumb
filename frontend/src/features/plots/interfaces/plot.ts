@@ -36,12 +36,10 @@ export interface IPlanting extends IAction {
   cropType: string;
   variety?: string;
   seedingRate?: string;
-  plantingDate: Date;
 }
 
 export interface IHarvesting extends IAction {
   cropYield: number;
-  harvestDate: Date;
   comments?: string;
 }
 

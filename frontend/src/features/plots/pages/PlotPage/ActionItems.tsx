@@ -10,13 +10,13 @@ import {
   IWatering,
   ISoilReading,
 } from '../../interfaces/plot';
-import { 
-  Sprout, 
-  Tractor, 
-  Wind, 
-  Droplets, 
-  FlaskConical, 
-  FileText, 
+import {
+  Sprout,
+  Tractor,
+  Wind,
+  Droplets,
+  FlaskConical,
+  FileText,
   PillBottle
 } from 'lucide-react';
 
@@ -44,12 +44,14 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
    * Formats a Date or date-string into localized format.
    * @param date - A Date object or date-string
    */
-  const formatDate = (date: Date | string) =>
-    new Date(date).toLocaleDateString(i18n.language, {
+  const formatDate = (date: Date | string) => {
+    console.log(date)
+    return new Date(date).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
+  }
 
   /**
    * Returns the JSX for the action-specific details.
@@ -74,7 +76,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(planting.plantingDate)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(planting.date)}
             </p>
           </div>
         );
@@ -89,7 +91,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
               {t('actionItem.units.tons')}
             </p>
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.harvestDate)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.date)}
             </p>
             {harvesting.comments && (
               <p>
@@ -116,6 +118,9 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
                 <span className="font-medium">{t('actionItem.labels.method')}</span> {fert.method}
               </p>
             )}
+            <p>
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(fert.date)}
+            </p>
           </div>
         );
       }
@@ -141,6 +146,9 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
                 <span className="font-medium">{t('actionItem.labels.method')}</span> {treat.applicationMethod}
               </p>
             )}
+            <p>
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(treat.date)}
+            </p>
           </div>
         );
       }
@@ -165,6 +173,9 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
                 <span className="font-medium">{t('actionItem.labels.source')}</span> {water.waterSource}
               </p>
             )}
+            <p>
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(water.date)}
+            </p>
           </div>
         );
       }
@@ -201,6 +212,9 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
                 <span className="font-medium">{t('actionItem.labels.organicMatter')}</span> {soil.organicMatter}
               </p>
             )}
+            <p>
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(soil.date)}
+            </p>
           </div>
         );
       }

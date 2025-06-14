@@ -1,6 +1,7 @@
 import http from "@/api/http";
 import { ToastService } from "@/services/toast.service";
 import { Action } from "../interfaces/action";
+import { ActionFormValues } from "../constants/formSchema";
 
 /**
  * @class ActionApi
@@ -9,6 +10,55 @@ import { Action } from "../interfaces/action";
  * Uses a shared HTTP client and displays toast notifications on errors/success.
  */
 export class ActionApi {
+  /**
+   * Create a new action for a plot.
+   * @param formData - Action form data
+   * @param plotId - Unique identifier of the plot
+   * @returns Promise resolving to the newly created Action object.
+   */
+  async create(formData: ActionFormValues, plotId: string): Promise<Action> {
+    try {
+      // Transform form data to API format
+      const actionData = {
+        ...formData,
+        // Ensure date is in ISO string format
+        date: formData.date instanceof Date ? formData.date.toISOString() : formData.date,
+      };
+
+      const response = await http.post(`/actions/${plotId}`, actionData);
+      ToastService.success("Acțiunea a fost creată.");
+      return response.data.data || response.data;
+    } catch (error) {
+      ToastService.error("Crearea acțiunii a eșuat.");
+      throw error;
+    }
+  }
+
+  /**
+   * Update an existing action.
+   * @param formData - Action form data including ID
+   * @param plotId - Unique identifier of the plot (for consistency)
+   * @returns Promise resolving to the updated Action object.
+   */
+  async update(formData: ActionFormValues & { id: string }, plotId: string): Promise<Action> {
+    try {
+      // Transform form data to API format
+      const actionData = {
+        ...formData,
+        plotId,
+        // Ensure date is in ISO string format
+        date: formData.date instanceof Date ? formData.date.toISOString() : formData.date,
+      };
+
+      const response = await http.put(`/actions/${formData.id}`, actionData);
+      ToastService.success("Acțiunea a fost actualizată.");
+      return response.data.data || response.data;
+    } catch (error) {
+      ToastService.error("Actualizarea acțiunii a eșuat.");
+      throw error;
+    }
+  }
+
   /**
    * Update action status.
    * @param actionId - Unique identifier of the action
@@ -19,7 +69,7 @@ export class ActionApi {
     try {
       const response = await http.patch(`/actions/${actionId}/status`, { status });
       ToastService.success("Statusul acțiunii a fost actualizat.");
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Actualizarea statusului a eșuat.");
       throw error;
@@ -34,7 +84,7 @@ export class ActionApi {
   async findOne(actionId: string): Promise<Action> {
     try {
       const response = await http.get(`/actions/${actionId}`);
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Nu s-a putut încărca acțiunea.");
       throw error;
@@ -48,7 +98,7 @@ export class ActionApi {
   async findAll(): Promise<Action[]> {
     try {
       const response = await http.get("/actions");
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Nu s-au putut încărca acțiunile.");
       return [];
@@ -63,7 +113,7 @@ export class ActionApi {
   async findByPlot(plotId: string): Promise<Action[]> {
     try {
       const response = await http.get(`/actions/plot/${plotId}`);
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Nu s-au putut încărca acțiunile pentru teren.");
       return [];
@@ -83,7 +133,7 @@ export class ActionApi {
         endDate: endDate.toISOString(),
       };
       const response = await http.get("/actions", { params });
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Nu s-au putut încărca acțiunile pentru perioada selectată.");
       return [];
@@ -97,45 +147,10 @@ export class ActionApi {
   async getOverdueActions(): Promise<Action[]> {
     try {
       const response = await http.get("/actions/overdue");
-      return response.data.data;
+      return response.data.data || response.data;
     } catch (error) {
       ToastService.error("Nu s-au putut încărca acțiunile întârziate.");
       return [];
-    }
-  }
-
-  /**
-   * Create a new action for a plot.
-   * @param plotId - Unique identifier of the plot
-   * @param actionData - Partial action data
-   * @returns Promise resolving to the newly created Action object.
-   */
-  async create(plotId: string, actionData: Partial<Action>): Promise<Action> {
-    try {
-      delete actionData.id; // Ensure no ID is sent for creation
-      const response = await http.post(`/actions/${plotId}`, actionData);
-      ToastService.success("Acțiunea a fost creată.");
-      return response.data.data;
-    } catch (error) {
-      ToastService.error("Crearea acțiunii a eșuat.");
-      throw error;
-    }
-  }
-
-  /**
-   * Update an existing action.
-   * @param actionId - Unique identifier of the action
-   * @param actionData - Partial action data to update
-   * @returns Promise resolving to the updated Action object.
-   */
-  async update(actionId: string, actionData: Partial<Action>): Promise<Action> {
-    try {
-      const response = await http.put(`/actions/${actionId}`, actionData);
-      ToastService.success("Acțiunea a fost actualizată.");
-      return response.data.data;
-    } catch (error) {
-      ToastService.error("Actualizarea acțiunii a eșuat.");
-      throw error;
     }
   }
 

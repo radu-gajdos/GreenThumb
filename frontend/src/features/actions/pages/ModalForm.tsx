@@ -1,11 +1,12 @@
 /**
  * ActionModalForm.tsx
  *
- * Renders a modal dialog for creating or editing an Action:
+ * Updated modal for creating or editing Actions with calendar integration:
  * 1. If `uid` is null, first prompts for action type selection.
  * 2. If editing (`uid` provided), loads initial data and skips type selection.
  * 3. Renders the form (`ActionFormContent`) once a type is known.
  * 4. Handles create/update via ActionApi, shows toasts, and invokes `onSave`.
+ * 5. Now supports all new action types and integrates with calendar.
  */
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -44,7 +45,7 @@ interface ActionModalFormProps {
   actionType?: string | null;
   /** Setter for action type (only needed for controlled components) */
   setActionType?: React.Dispatch<React.SetStateAction<string | null>>;
-  /** Available action types (only needed for controlled components) */
+  /** Available action types - only the original 6 types */
   actionTypes?: string[];
 }
 
@@ -56,7 +57,14 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
   plotId,
   actionType = null,
   setActionType: externalSetActionType,
-  actionTypes = ["planting", "harvesting", "fertilizing", "treatment", "watering", "soil_reading"],
+  actionTypes = [
+    "planting", 
+    "harvesting", 
+    "fertilizing", 
+    "treatment", 
+    "watering", 
+    "soil_reading"
+  ],
 }) => {
   /** Selected action type (e.g. 'planting'); determines which form to show */
   const [internalSelectedType, setInternalSelectedType] = useState<ActionType | null>(null);
@@ -89,6 +97,14 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
         return 'bg-blue-50 border-blue-200 hover:bg-blue-100 text-blue-700';
       case 'soil_reading':
         return 'bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700';
+      case 'maintenance':
+        return 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700';
+      case 'pest_control':
+        return 'bg-red-50 border-red-300 hover:bg-red-100 text-red-800';
+      case 'pruning':
+        return 'bg-green-50 border-green-300 hover:bg-green-100 text-green-800';
+      case 'weeding':
+        return 'bg-green-50 border-green-200 hover:bg-green-100 text-green-600';
       default:
         return 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700';
     }
@@ -111,8 +127,46 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
         return 'text-blue-600';
       case 'soil_reading':
         return 'text-purple-600';
+      case 'maintenance':
+        return 'text-gray-600';
+      case 'pest_control':
+        return 'text-red-700';
+      case 'pruning':
+        return 'text-green-700';
+      case 'weeding':
+        return 'text-green-500';
       default:
         return 'text-gray-600';
+    }
+  };
+
+  /**
+   * Returns human-readable labels for action types.
+   */
+  const getActionLabel = (type: string) => {
+    switch (type) {
+      case 'planting':
+        return 'Plantare';
+      case 'harvesting':
+        return 'Recoltare';
+      case 'fertilizing':
+        return 'Fertilizare';
+      case 'treatment':
+        return 'Tratament';
+      case 'watering':
+        return 'Udare';
+      case 'soil_reading':
+        return 'Analiză Sol';
+      case 'maintenance':
+        return 'Mentenanță';
+      case 'pest_control':
+        return 'Control Dăunători';
+      case 'pruning':
+        return 'Tăiere';
+      case 'weeding':
+        return 'Prășit';
+      default:
+        return type.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase());
     }
   };
 
@@ -126,8 +180,14 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
       actionApi
         .findOne(uid)
         .then((data) => {
+          // Convert date string to Date object if needed
+          const processedData = {
+            ...data,
+            date: typeof data.date === 'string' ? new Date(data.date) : data.date,
+          };
+          
           // Pre-fill form and skip type-selection step
-          setInitialData(data as ActionFormValues);
+          setInitialData(processedData as ActionFormValues);
           setSelectedType(data.type as ActionType);
         })
         .catch((e) => {
@@ -148,51 +208,69 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
    */
   const handleSubmit = async (formData: ActionFormValues) => {
     try {
-      // const response = uid
-      //   ? await actionApi.update(formData, plotId)
-      //   : await actionApi.create(formData, plotId);
+      const response = uid
+        ? await actionApi.update({ ...formData, id: uid }, plotId)
+        : await actionApi.create(formData, plotId);
 
-      ToastService.success(
-        uid ? "Acțiunea a fost actualizată." : "Acțiunea a fost creată."
-      );
-      // onSave(response);
+      // Call onSave to update parent component state
+      onSave(response);
       setShowModal(false);
     } catch (err) {
       console.error("Save action error:", err);
-      ToastService.error("Eroare la salvarea acțiunii.");
+      // Error toast is already shown in the API
     }
   };
 
+  if (loading) {
+    return (
+      <Dialog open={showModal} onOpenChange={setShowModal} modal>
+        <DialogContent className="sm:max-w-lg z-[500]">
+          <div className="flex justify-center items-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={showModal} onOpenChange={setShowModal} modal>
-      <DialogContent className="sm:max-w-lg z-[1000]">
+      <DialogContent className="sm:max-w-lg z-[1000] max-h-[90vh] overflow-y-auto"
+        onPointerDownOutside={(e) => {
+          // Prevent closing when clicking on popover content
+          const target = e.target as Element;
+          if (target.closest('[data-radix-popper-content-wrapper]')) {
+            e.preventDefault();
+          }
+        }}
+      >
         {/* Step 1: Type selection (only if no type yet) */}
         {!selectedType ? (
           <>
             <DialogHeader>
               <DialogTitle>Selectează tipul de acțiune</DialogTitle>
               <DialogDescription>
-                Alege tipul de acțiune pentru a continua.
+                Alege tipul de acțiune pentru a continua cu formularul.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-3 gap-4 p-4">
-              {(actionTypes as ActionType[]).map(
-                (type) => (
-                  <button
-                    key={type}
-                    className={`flex flex-col items-center justify-center p-4 border rounded ${getActionColor(type)} transition-colors duration-200`}
-                    onClick={() => setSelectedType(type as ActionType)}
-                  >
-                    <div className={`mb-2 ${getIconColor(type)}`}>
-                      {React.cloneElement(getActionIcon(type as ActionType) as React.ReactElement, { size: 28 })}
-                    </div>
-                    <span className="mt-1 capitalize text-sm font-medium">
-                      {type.replace("_", " ")}
-                    </span>
-                  </button>
-                )
-              )}
+            
+            <div className="grid grid-cols-3 gap-3 p-4">
+              {(actionTypes as ActionType[]).map((type) => (
+                <button
+                  key={type}
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg ${getActionColor(type)} transition-all duration-200 hover:shadow-md`}
+                  onClick={() => setSelectedType(type as ActionType)}
+                >
+                  <div className={`mb-2 ${getIconColor(type)}`}>
+                    {React.cloneElement(getActionIcon(type as ActionType) as React.ReactElement, { size: 28 })}
+                  </div>
+                  <span className="text-center text-sm font-medium">
+                    {getActionLabel(type)}
+                  </span>
+                </button>
+              ))}
             </div>
+            
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" size="sm">
@@ -206,7 +284,7 @@ const ActionModalForm: React.FC<ActionModalFormProps> = ({
           <ActionFormContent
             type={selectedType}
             initialData={initialData || undefined}
-            onBack={() => setSelectedType(null)}
+            onBack={() => uid ? setShowModal(false) : setSelectedType(null)}
             onSubmit={handleSubmit}
           />
         )}

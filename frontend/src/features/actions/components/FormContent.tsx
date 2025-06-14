@@ -6,6 +6,7 @@
  * - Initializes default values based on `type` or `initialData`
  * - Conditionally shows fields relevant to the chosen action type
  * - Provides Back, Cancel, and Save controls
+ * - Only supports the original 6 action types
  */
 
 import React from "react";
@@ -23,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import SearchSelect from "@/components/ui/searchSelect";
 import { ArrowLeft } from "lucide-react";
 import {
   actionFormSchema,
@@ -55,6 +57,14 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
   onBack,
   initialData = null,
 }) => {
+  // Status options for SearchSelect
+  const statusOptions = [
+    { label: 'Planificat', value: 'planned' },
+    { label: 'În progres', value: 'in_progress' },
+    { label: 'Completat', value: 'completed' },
+    { label: 'Anulat', value: 'cancelled' },
+  ];
+
   // Initialize form, seeding defaultValues from `initialData` if editing,
   // otherwise setting sensible defaults per action type.
   const form = useForm<ActionFormValues>({
@@ -62,38 +72,35 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
     defaultValues:
       initialData || ({
         type,
+        status: 'planned',
+        description: "",
+        notes: "",
         comments: "",
-        // Planting defaults
+        date: new Date(),
+        // Type-specific defaults
         ...(type === "planting" && {
           cropType: "",
           variety: "",
           seedingRate: "",
-          plantingDate: "",
         }),
-        // Harvesting defaults
         ...(type === "harvesting" && {
           cropYield: 0,
-          harvestDate: "",
         }),
-        // Fertilizing defaults
         ...(type === "fertilizing" && {
           fertilizerType: "",
           applicationRate: 0,
           method: "",
         }),
-        // Treatment defaults
         ...(type === "treatment" && {
           pesticideType: "",
           targetPest: "",
           dosage: 0,
           applicationMethod: "",
         }),
-        // Watering defaults
         ...(type === "watering" && {
           waterSource: "",
           amount: 0,
         }),
-        // Soil reading defaults
         ...(type === "soil_reading" && {
           ph: 7,
           nitrogen: 0,
@@ -148,6 +155,28 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
     }
   };
 
+  /**
+   * Returns human-readable labels for action types.
+   */
+  const getActionLabel = (type: ActionType) => {
+    switch (type) {
+      case 'planting':
+        return 'Plantare';
+      case 'harvesting':
+        return 'Recoltare';
+      case 'fertilizing':
+        return 'Fertilizare';
+      case 'treatment':
+        return 'Tratament';
+      case 'watering':
+        return 'Udare';
+      case 'soil_reading':
+        return 'Analiză Sol';
+      default:
+        return (type as string).replace("_", " ").replace(/^\w/, (c: any) => c.toUpperCase());
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -161,33 +190,20 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               <span className={getIconColor()}>
                 {React.cloneElement(getActionIcon(type) as React.ReactElement, { size: 22 })}
               </span>
-              {type.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
+              {getActionLabel(type)}
             </h3>
           </div>
           {/* Empty div to balance the back button */}
           <div className="w-10" />
         </div>
 
-        {/* Common field: comments */}
-        <FormField
-          control={form.control}
-          name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Comments</FormLabel>
-              <FormControl>
-                <Textarea {...field} placeholder="Optional comments" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Common fields */}
         <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Data Contract</FormLabel>
+              <FormLabel>Data Planificată</FormLabel>
               <FormControl>
                 <DatePicker
                   value={field.value}
@@ -199,7 +215,57 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           )}
         />
 
-        {/* --- Planting fields --- */}
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <div className="relative z-50">
+                  <SearchSelect
+                    options={statusOptions}
+                    placeholder="Selectează statusul"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    modal={true}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Descriere</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Descrierea acțiunii" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notițe</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Notițe suplimentare" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Type-specific fields */}
         {type === "planting" && (
           <>
             <FormField
@@ -207,9 +273,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="cropType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Crop Type</FormLabel>
+                  <FormLabel>Tip Cultură</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Wheat" />
+                    <Input {...field} placeholder="ex: Grâu" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,9 +286,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="variety"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Variety</FormLabel>
+                  <FormLabel>Varietate</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Durum" />
+                    <Input {...field} placeholder="ex: Dropia" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,7 +299,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="seedingRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Seeding Rate</FormLabel>
+                  <FormLabel>Norma de Însămânțare</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="kg/ha" />
                   </FormControl>
@@ -244,32 +310,28 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
-        {/* --- Harvesting fields --- */}
         {type === "harvesting" && (
-          <>
-            <FormField
-              control={form.control}
-              name="cropYield"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Yield (kg)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
+          <FormField
+            control={form.control}
+            name="cropYield"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Randament (kg/ha)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(parseFloat(e.target.value))
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
 
-        {/* --- Fertilizing fields --- */}
         {type === "fertilizing" && (
           <>
             <FormField
@@ -277,9 +339,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="fertilizerType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fertilizer Type</FormLabel>
+                  <FormLabel>Tip Îngrășământ</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Urea" />
+                    <Input {...field} placeholder="ex: Uree" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -290,7 +352,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="applicationRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Application Rate (kg/ha)</FormLabel>
+                  <FormLabel>Doză Aplicare (kg/ha)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -309,9 +371,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="method"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Application Method</FormLabel>
+                  <FormLabel>Metodă Aplicare</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Broadcast" />
+                    <Input {...field} placeholder="ex: Împrăștiat" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -320,7 +382,6 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
-        {/* --- Treatment fields --- */}
         {type === "treatment" && (
           <>
             <FormField
@@ -328,9 +389,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="pesticideType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pesticide Type</FormLabel>
+                  <FormLabel>Tip Pesticid</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Glyphosate" />
+                    <Input {...field} placeholder="ex: Glifosat" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -341,9 +402,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="targetPest"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Target Pest</FormLabel>
+                  <FormLabel>Dăunător Țintă</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Aphids" />
+                    <Input {...field} placeholder="ex: Afide" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -354,7 +415,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="dosage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dosage (l/ha)</FormLabel>
+                  <FormLabel>Doză (l/ha)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -373,9 +434,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="applicationMethod"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Application Method</FormLabel>
+                  <FormLabel>Metodă Aplicare</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Sprayer" />
+                    <Input {...field} placeholder="ex: Pulverizare" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -384,7 +445,6 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
-        {/* --- Watering fields --- */}
         {type === "watering" && (
           <>
             <FormField
@@ -392,9 +452,9 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="waterSource"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Water Source</FormLabel>
+                  <FormLabel>Sursa de Apă</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g. Well" />
+                    <Input {...field} placeholder="ex: Fântână" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -405,7 +465,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount (m³)</FormLabel>
+                  <FormLabel>Cantitate (m³/ha)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -422,7 +482,6 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
           </>
         )}
 
-        {/* --- Soil Reading fields --- */}
         {type === "soil_reading" && (
           <>
             <FormField
@@ -430,7 +489,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="ph"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>pH Level (0–14)</FormLabel>
+                  <FormLabel>Nivel pH (0–14)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -452,7 +511,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="nitrogen"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nitrogen (mg/kg)</FormLabel>
+                  <FormLabel>Azot (mg/kg)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -472,7 +531,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="phosphorus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phosphorus (mg/kg)</FormLabel>
+                  <FormLabel>Fosfor (mg/kg)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -492,7 +551,7 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="potassium"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Potassium (mg/kg)</FormLabel>
+                  <FormLabel>Potasiu (mg/kg)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -512,11 +571,11 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
               name="organicMatter"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Organic Matter (%)</FormLabel>
+                  <FormLabel>Materie Organică (%)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g. 3.5"
+                      placeholder="ex: 3.5"
                     />
                   </FormControl>
                   <FormMessage />
@@ -527,19 +586,43 @@ const ActionFormContent: React.FC<ActionFormContentProps> = ({
         )}
 
         {/* Form actions */}
-        <DialogFooter className="flex justify-end space-x-2">
+        <DialogFooter className="flex justify-end space-x-2 pt-4">
           <DialogClose asChild>
             <Button variant="outline" size="sm">
-              Cancel
+              Anulează
             </Button>
           </DialogClose>
-          <Button type="submit" size="sm" className={type ? `bg-${type === 'planting' ? 'green' : type === 'harvesting' ? 'yellow' : type === 'fertilizing' ? 'amber' : type === 'treatment' ? 'red' : type === 'watering' ? 'blue' : type === 'soil_reading' ? 'purple' : 'primary'}-600 hover:bg-${type === 'planting' ? 'green' : type === 'harvesting' ? 'yellow' : type === 'fertilizing' ? 'amber' : type === 'treatment' ? 'red' : type === 'watering' ? 'blue' : type === 'soil_reading' ? 'purple' : 'primary'}-700` : ''}>
-            Save
+          <Button 
+            type="submit" 
+            size="sm" 
+            className={`${getButtonColor(type)} text-white`}
+          >
+            Salvează
           </Button>
         </DialogFooter>
       </form>
     </Form>
   );
+};
+
+// Helper function for button colors
+const getButtonColor = (type: ActionType) => {
+  switch (type) {
+    case 'planting':
+      return 'bg-green-600 hover:bg-green-700';
+    case 'harvesting':
+      return 'bg-yellow-600 hover:bg-yellow-700';
+    case 'fertilizing':
+      return 'bg-amber-600 hover:bg-amber-700';
+    case 'treatment':
+      return 'bg-red-600 hover:bg-red-700';
+    case 'watering':
+      return 'bg-blue-600 hover:bg-blue-700';
+    case 'soil_reading':
+      return 'bg-purple-600 hover:bg-purple-700';
+    default:
+      return 'bg-primary hover:bg-primary/90';
+  }
 };
 
 export default ActionFormContent;
