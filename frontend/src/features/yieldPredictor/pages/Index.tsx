@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -25,6 +26,7 @@ import FutureScenarioAnalyzer from '../components/FutureScenarioAnalyzer';
  * - Scenario analysis (multiple comparisons)
  */
 const EnhancedAnalyticsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('evolution');
 
   return (
@@ -34,11 +36,10 @@ const EnhancedAnalyticsPage: React.FC = () => {
         <div className="container mx-auto">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              Centrul de Analize Agricole AI
+              {t('analytics.header.title')}
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Platformă completă pentru analiză și predicții agricole bazate pe inteligență artificială.
-              Explorează evoluția istorică, previzionează randamentele viitoare și compară scenarii multiple.
+              {t('analytics.header.description')}
             </p>
           </div>
           
@@ -47,9 +48,11 @@ const EnhancedAnalyticsPage: React.FC = () => {
             <Card className="text-center border-blue-200 bg-blue-50">
               <CardContent className="p-6">
                 <BarChart3 className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-blue-900 mb-2">Analiza Istorică</h3>
+                <h3 className="font-semibold text-blue-900 mb-2">
+                  {t('analytics.features.historical.title')}
+                </h3>
                 <p className="text-sm text-blue-800">
-                  Evoluția randamentelor 2000-2024 pentru orice țară și cultură
+                  {t('analytics.features.historical.description')}
                 </p>
               </CardContent>
             </Card>
@@ -57,9 +60,11 @@ const EnhancedAnalyticsPage: React.FC = () => {
             <Card className="text-center border-green-200 bg-green-50">
               <CardContent className="p-6">
                 <Sparkles className="w-8 h-8 text-green-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-green-900 mb-2">Predicții Viitoare</h3>
+                <h3 className="font-semibold text-green-900 mb-2">
+                  {t('analytics.features.future.title')}
+                </h3>
                 <p className="text-sm text-green-800">
-                  Previziuni rapide pentru anii 2025-2050 cu nivele de încredere
+                  {t('analytics.features.future.description')}
                 </p>
               </CardContent>
             </Card>
@@ -67,9 +72,11 @@ const EnhancedAnalyticsPage: React.FC = () => {
             <Card className="text-center border-purple-200 bg-purple-50">
               <CardContent className="p-6">
                 <Brain className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-purple-900 mb-2">Scenarii Multiple</h3>
+                <h3 className="font-semibold text-purple-900 mb-2">
+                  {t('analytics.features.scenarios.title')}
+                </h3>
                 <p className="text-sm text-purple-800">
-                  Compară și analizează multiple opțiuni pentru planificare strategică
+                  {t('analytics.features.scenarios.description')}
                 </p>
               </CardContent>
             </Card>
@@ -88,8 +95,8 @@ const EnhancedAnalyticsPage: React.FC = () => {
             >
               <TrendingUp className="w-4 h-4" />
               <div className="text-center">
-                <div className="font-medium">Evoluție Istorică</div>
-                <div className="text-xs text-muted-foreground">2000-2024</div>
+                <div className="font-medium">{t('analytics.tabs.evolution.title')}</div>
+                <div className="text-xs text-muted-foreground">{t('analytics.tabs.evolution.subtitle')}</div>
               </div>
             </TabsTrigger>
             
@@ -99,8 +106,8 @@ const EnhancedAnalyticsPage: React.FC = () => {
             >
               <Sparkles className="w-4 h-4" />
               <div className="text-center">
-                <div className="font-medium">Predicții Viitoare</div>
-                <div className="text-xs text-muted-foreground">2025-2050</div>
+                <div className="font-medium">{t('analytics.tabs.future.title')}</div>
+                <div className="text-xs text-muted-foreground">{t('analytics.tabs.future.subtitle')}</div>
               </div>
             </TabsTrigger>
             
@@ -110,8 +117,8 @@ const EnhancedAnalyticsPage: React.FC = () => {
             >
               <BarChart3 className="w-4 h-4" />
               <div className="text-center">
-                <div className="font-medium">Analiză Scenarii</div>
-                <div className="text-xs text-muted-foreground">Comparare multiplă</div>
+                <div className="font-medium">{t('analytics.tabs.scenarios.title')}</div>
+                <div className="text-xs text-muted-foreground">{t('analytics.tabs.scenarios.subtitle')}</div>
               </div>
             </TabsTrigger>
           </TabsList>
@@ -122,31 +129,29 @@ const EnhancedAnalyticsPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-primary" />
-                  Analiză Istoric Detaliată
+                  {t('analytics.evolutionTab.header.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Explorează evoluția randamentelor agricole în ultimii 25 de ani. Această analiză 
-                  îți oferă o perspectivă completă asupra tendințelor istorice, variațiilor climatice 
-                  și progresului tehnologic în agricultură.
+                  {t('analytics.evolutionTab.header.description')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span>25 ani de date FAOSTAT</span>
+                    <span>{t('analytics.evolutionTab.features.data')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span>245+ țări disponibile</span>
+                    <span>{t('analytics.evolutionTab.features.countries')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                    <span>180+ culturi agricole</span>
+                    <span>{t('analytics.evolutionTab.features.crops')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span>Analiză trend avansată</span>
+                    <span>{t('analytics.evolutionTab.features.analysis')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -166,34 +171,32 @@ const EnhancedAnalyticsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-amber-900">
                     <Lightbulb className="w-5 h-5" />
-                    Despre Predicțiile Viitoare
+                    {t('analytics.futureTab.info.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-amber-800">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold mb-2">Nivele de Încredere</h4>
+                      <h4 className="font-semibold mb-2">{t('analytics.futureTab.confidence.title')}</h4>
                       <ul className="space-y-1 text-sm">
-                        <li><strong>Înaltă:</strong> Predicții foarte fiabile bazate pe date consistente</li>
-                        <li><strong>Medie:</strong> Predicții cu fiabilitate moderată (1-5 ani în viitor)</li>
-                        <li><strong>Scăzută:</strong> Predicții cu incertitudine crescută (5-15 ani)</li>
-                        <li><strong>F. Scăzută:</strong> Predicții explorative (15+ ani în viitor)</li>
+                        <li><strong>{t('analytics.futureTab.confidence.high.label')}:</strong> {t('analytics.futureTab.confidence.high.description')}</li>
+                        <li><strong>{t('analytics.futureTab.confidence.medium.label')}:</strong> {t('analytics.futureTab.confidence.medium.description')}</li>
+                        <li><strong>{t('analytics.futureTab.confidence.low.label')}:</strong> {t('analytics.futureTab.confidence.low.description')}</li>
+                        <li><strong>{t('analytics.futureTab.confidence.veryLow.label')}:</strong> {t('analytics.futureTab.confidence.veryLow.description')}</li>
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-2">Metode de Predicție</h4>
+                      <h4 className="font-semibold mb-2">{t('analytics.futureTab.methods.title')}</h4>
                       <ul className="space-y-1 text-sm">
-                        <li><strong>Interpolare:</strong> Bazată pe date istorice existente</li>
-                        <li><strong>Extrapolarea:</strong> Continuarea tendințelor actuale</li>
-                        <li><strong>Proiecție:</strong> Modelare avansată pentru termen lung</li>
+                        <li><strong>{t('analytics.futureTab.methods.interpolation.label')}:</strong> {t('analytics.futureTab.methods.interpolation.description')}</li>
+                        <li><strong>{t('analytics.futureTab.methods.extrapolation.label')}:</strong> {t('analytics.futureTab.methods.extrapolation.description')}</li>
+                        <li><strong>{t('analytics.futureTab.methods.projection.label')}:</strong> {t('analytics.futureTab.methods.projection.description')}</li>
                       </ul>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-amber-100 rounded-lg">
                     <p className="text-xs">
-                      <strong>Notă:</strong> Predicțiile sunt generate de un model AI antrenat pe date globale FAOSTAT 
-                      și reflectă tendințele actuale. Factori precum schimbările climatice, politicile agricole 
-                      și inovațiile tehnologice pot influența rezultatele reale.
+                      <strong>{t('analytics.futureTab.disclaimer.title')}:</strong> {t('analytics.futureTab.disclaimer.content')}
                     </p>
                   </div>
                 </CardContent>
@@ -209,30 +212,28 @@ const EnhancedAnalyticsPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-purple-900">
                     <Brain className="w-5 h-5" />
-                    Analiză Strategică de Scenarii
+                    {t('analytics.scenariosTab.header.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-purple-800">
                   <p className="mb-4">
-                    Compară multiple scenarii pentru a lua decizii informate în planificarea agricolă. 
-                    Această funcționalitate îți permite să analizezi diferite opțiuni și să identifici 
-                    cele mai promițătoare oportunități.
+                    {t('analytics.scenariosTab.header.description')}
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="text-center">
                       <Globe className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                      <strong>Comparare Țări</strong>
-                      <p>Compară potențialul agricol între diferite regiuni</p>
+                      <strong>{t('analytics.scenariosTab.features.countries.title')}</strong>
+                      <p>{t('analytics.scenariosTab.features.countries.description')}</p>
                     </div>
                     <div className="text-center">
                       <BarChart3 className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                      <strong>Comparare Culturi</strong>
-                      <p>Evaluează care culturi sunt mai profitabile</p>
+                      <strong>{t('analytics.scenariosTab.features.crops.title')}</strong>
+                      <p>{t('analytics.scenariosTab.features.crops.description')}</p>
                     </div>
                     <div className="text-center">
                       <Clock className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                      <strong>Analiza Temporală</strong>
-                      <p>Planifică pe termen scurt vs. lung</p>
+                      <strong>{t('analytics.scenariosTab.features.temporal.title')}</strong>
+                      <p>{t('analytics.scenariosTab.features.temporal.description')}</p>
                     </div>
                   </div>
                 </CardContent>

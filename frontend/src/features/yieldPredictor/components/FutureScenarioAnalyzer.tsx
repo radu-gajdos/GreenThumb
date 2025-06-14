@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +32,8 @@ import {
 import SearchSelect from '@/components/ui/searchSelect';
 import { YieldPredictorApi } from '../api/yieldPredictor.api';
 import { ConfidenceLevel } from '../interfaces/analitics';
-// Same lists as before
+
+// Same lists as before - kept as is per your instruction
 const COUNTRIES = ['Afghanistan', 'Africa', 'Albania', 'Algeria', 'Americas', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Asia', 'Australia', 'Australia and New Zealand', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belgium-Luxembourg', 'Belize', 'Benin', 'Bhutan', 'Bolivia (Plurinational State of)', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Caribbean', 'Central African Republic', 'Central America', 'Central Asia', 'Chad', 'Chile', 'China', 'China, Hong Kong SAR', 'China, Macao SAR', 'China, Taiwan Province of', 'China, mainland', 'Colombia', 'Comoros', 'Congo', 'Cook Islands', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czechia', 'Czechoslovakia', "Côte d'Ivoire", "Democratic People's Republic of Korea", 'Democratic Republic of the Congo', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Eastern Africa', 'Eastern Asia', 'Eastern Europe', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Ethiopia PDR', 'Europe', 'European Union (27)', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Guiana', 'French Polynesia', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guadeloupe', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran (Islamic Republic of)', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Land Locked Developing Countries', "Lao People's Democratic Republic", 'Latvia', 'Least Developed Countries', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Lithuania', 'Low Income Food Deficit Countries', 'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Martinique', 'Mauritania', 'Mauritius', 'Melanesia', 'Mexico', 'Micronesia', 'Micronesia (Federated States of)', 'Middle Africa', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Net Food Importing Developing Countries', 'Netherlands (Kingdom of the)', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Niue', 'North Macedonia', 'Northern Africa', 'Northern America', 'Northern Europe', 'Norway', 'Oceania', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Polynesia', 'Portugal', 'Puerto Rico', 'Qatar', 'Republic of Korea', 'Republic of Moldova', 'Romania', 'Russian Federation', 'Rwanda', 'Réunion', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Serbia and Montenegro', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Small Island Developing States', 'Solomon Islands', 'Somalia', 'South Africa', 'South America', 'South Sudan', 'South-eastern Asia', 'Southern Africa', 'Southern Asia', 'Southern Europe', 'Spain', 'Sri Lanka', 'Sudan', 'Sudan (former)', 'Suriname', 'Sweden', 'Switzerland', 'Syrian Arab Republic', 'Tajikistan', 'Thailand', 'Timor-Leste', 'Togo', 'Tokelau', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkmenistan', 'Tuvalu', 'Türkiye', 'USSR', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom of Great Britain and Northern Ireland', 'United Republic of Tanzania', 'United States of America', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela (Bolivarian Republic of)', 'Viet Nam', 'Western Africa', 'Western Asia', 'Western Europe', 'World', 'Yemen', 'Yugoslav SFR', 'Zambia', 'Zimbabwe'];
 
 const CROPS = ['Abaca, manila hemp, raw', 'Agave fibres, raw, n.e.c.', 'Almonds, in shell', 'Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw', 'Apples', 'Apricots', 'Areca nuts', 'Artichokes', 'Asparagus', 'Avocados', 'Bambara beans, dry', 'Bananas', 'Barley', 'Beans, dry', 'Blueberries', 'Broad beans and horse beans, dry', 'Broad beans and horse beans, green', 'Buckwheat', 'Cabbages', 'Canary seed', 'Cantaloupes and other melons', 'Carrots and turnips', 'Cashew nuts, in shell', 'Cashewapple', 'Cassava leaves', 'Cassava, fresh', 'Castor oil seeds', 'Cauliflowers and broccoli', 'Cereals n.e.c.', 'Cereals, primary', 'Cherries', 'Chestnuts, in shell', 'Chick peas, dry', 'Chicory roots', 'Chillies and peppers, dry (Capsicum spp., Pimenta spp.), raw', 'Chillies and peppers, green (Capsicum spp. and Pimenta spp.)', 'Cinnamon and cinnamon-tree flowers, raw', 'Citrus Fruit, Total', 'Cloves (whole stems), raw', 'Cocoa beans', 'Coconuts, in shell', 'Coffee, green', 'Cow peas, dry', 'Cranberries', 'Cucumbers and gherkins', 'Currants', 'Dates', 'Edible roots and tubers with high starch or inulin content, n.e.c., fresh', 'Eggplants (aubergines)', 'Fibre Crops, Fibre Equivalent', 'Figs', 'Flax, raw or retted', 'Fonio', 'Fruit Primary', 'Ginger, raw', 'Gooseberries', 'Grapes', 'Green corn (maize)', 'Green garlic', 'Groundnuts, excluding shelled', 'Hazelnuts, in shell', 'Hempseed', 'Hop cones', 'Jojoba seeds', 'Jute, raw or retted', 'Kapok fruit', 'Karite nuts (sheanuts)', 'Kenaf, and other textile bast fibres, raw or retted', 'Kiwi fruit', 'Kola nuts', 'Leeks and other alliaceous vegetables', 'Lemons and limes', 'Lentils, dry', 'Lettuce and chicory', 'Linseed', 'Locust beans (carobs)', 'Lupins', 'Maize (corn)', 'Mangoes, guavas and mangosteens', 'Maté leaves', 'Melonseed', 'Millet', 'Mixed grain', 'Mustard seed', 'Natural rubber in primary forms', 'Nutmeg, mace, cardamoms, raw', 'Oats', 'Oil palm fruit', 'Oilcrops, Cake Equivalent', 'Oilcrops, Oil Equivalent', 'Okra', 'Olives', 'Onions and shallots, dry (excluding dehydrated)', 'Onions and shallots, green', 'Oranges', 'Other beans, green', 'Other berries and fruits of the genus vaccinium n.e.c.', 'Other citrus fruit, n.e.c.', 'Other fibre crops, raw, n.e.c.', 'Other fruits, n.e.c.', 'Other nuts (excluding wild edible nuts and groundnuts), in shell, n.e.c.', 'Other oil seeds, n.e.c.', 'Other pome fruits', 'Other pulses n.e.c.', 'Other stimulant, spice and aromatic crops, n.e.c.', 'Other stone fruits', 'Other sugar crops n.e.c.', 'Other tropical fruits, n.e.c.', 'Other vegetables, fresh n.e.c.', 'Papayas', 'Peaches and nectarines', 'Pears', 'Peas, dry', 'Peas, green', 'Pepper (Piper spp.), raw', 'Peppermint, spearmint', 'Persimmons', 'Pigeon peas, dry', 'Pineapples', 'Pistachios, in shell', 'Plantains and cooking bananas', 'Plums and sloes', 'Pomelos and grapefruits', 'Poppy seed', 'Potatoes', 'Pulses, Total', 'Pumpkins, squash and gourds', 'Pyrethrum, dried flowers', 'Quinces', 'Quinoa', 'Ramie, raw or retted', 'Rape or colza seed', 'Raspberries', 'Rice', 'Roots and Tubers, Total', 'Rye', 'Safflower seed', 'Seed cotton, unginned', 'Sesame seed', 'Sisal, raw', 'Sorghum', 'Sour cherries', 'Soya beans', 'Spinach', 'Strawberries', 'String beans', 'Sugar Crops Primary', 'Sugar beet', 'Sugar cane', 'Sunflower seed', 'Sweet potatoes', 'Tallowtree seeds', 'Tangerines, mandarins, clementines', 'Taro', 'Tea leaves', 'Tomatoes', 'Treenuts, Total', 'Triticale', 'True hemp, raw or retted', 'Tung nuts', 'Unmanufactured tobacco', 'Vanilla, raw', 'Vegetables Primary', 'Vetches', 'Walnuts, in shell', 'Watermelons', 'Wheat', 'Yams', 'Yautia'];
@@ -68,6 +70,8 @@ interface ScenarioResult {
  * Allows users to compare different countries, crops, or time periods.
  */
 const FutureScenarioAnalyzer: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [results, setResults] = useState<ScenarioResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +98,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
       crop: '',
       startYear: 2025,
       endYear: 2030,
-      name: `Scenariu ${scenarios.length + 1}`
+      name: t('scenarioAnalyzer.defaultScenarioName', { number: scenarios.length + 1 })
     };
     setScenarios([...scenarios, newScenario]);
   };
@@ -188,11 +192,11 @@ const FutureScenarioAnalyzer: React.FC = () => {
       setLoading(false);
       setProgress(0);
     }
-  }, [scenarios, yieldApi]);
+  }, [scenarios, yieldApi, t]);
 
   // Format numbers
   const formatYield = (value: number) => {
-    return value.toLocaleString('ro-RO', { 
+    return value.toLocaleString(i18n.language === 'en' ? 'en-US' : 'ro-RO', { 
       minimumFractionDigits: 0, 
       maximumFractionDigits: 0 
     });
@@ -225,18 +229,17 @@ const FutureScenarioAnalyzer: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-primary" />
-            Analizor Scenarii Viitoare
+            {t('scenarioAnalyzer.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-gray-600 mb-4">
-            Compară predicții pentru diferite țări, culturi sau perioade de timp pentru a identifica 
-            cele mai promițătoare oportunități agricole.
+            {t('scenarioAnalyzer.description')}
           </p>
           
           <Button onClick={addScenario} variant="outline" className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
-            Adaugă Scenariu
+            {t('scenarioAnalyzer.addScenario')}
           </Button>
         </CardContent>
       </Card>
@@ -251,7 +254,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
                   value={scenario.name}
                   onChange={(e) => updateScenario(scenario.id, { name: e.target.value })}
                   className="text-lg font-semibold border-none p-0 h-auto"
-                  placeholder={`Scenariu ${index + 1}`}
+                  placeholder={t('scenarioAnalyzer.defaultScenarioName', { number: index + 1 })}
                 />
               </CardTitle>
               <Button 
@@ -270,11 +273,11 @@ const FutureScenarioAnalyzer: React.FC = () => {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm">
                   <Globe className="w-4 h-4" />
-                  Țara
+                  {t('scenarioAnalyzer.labels.country')}
                 </Label>
                 <SearchSelect
                   options={countryOptions}
-                  placeholder="Selectează țara..."
+                  placeholder={t('scenarioAnalyzer.placeholders.country')}
                   value={scenario.country}
                   onValueChange={(value) => updateScenario(scenario.id, { country: value as string })}
                   modal={false}
@@ -285,11 +288,11 @@ const FutureScenarioAnalyzer: React.FC = () => {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm">
                   <Wheat className="w-4 h-4" />
-                  Cultura
+                  {t('scenarioAnalyzer.labels.crop')}
                 </Label>
                 <SearchSelect
                   options={cropOptions}
-                  placeholder="Selectează cultura..."
+                  placeholder={t('scenarioAnalyzer.placeholders.crop')}
                   value={scenario.crop}
                   onValueChange={(value) => updateScenario(scenario.id, { crop: value as string })}
                   modal={false}
@@ -298,7 +301,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
 
               {/* Start Year */}
               <div className="space-y-2">
-                <Label className="text-sm">An Start</Label>
+                <Label className="text-sm">{t('scenarioAnalyzer.labels.startYear')}</Label>
                 <Input
                   type="number"
                   min="2025"
@@ -312,7 +315,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
 
               {/* End Year */}
               <div className="space-y-2">
-                <Label className="text-sm">An Final</Label>
+                <Label className="text-sm">{t('scenarioAnalyzer.labels.endYear')}</Label>
                 <Input
                   type="number"
                   min="2025"
@@ -340,12 +343,12 @@ const FutureScenarioAnalyzer: React.FC = () => {
             {loading ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Analizez scenarii... {progress}%</span>
+                <span>{t('scenarioAnalyzer.analyzing', { progress })}</span>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4" />
-                <span>Rulează Analiza</span>
+                <span>{t('scenarioAnalyzer.runAnalysis')}</span>
               </div>
             )}
           </Button>
@@ -358,18 +361,18 @@ const FutureScenarioAnalyzer: React.FC = () => {
           {/* Statistics Comparison */}
           <Card>
             <CardHeader>
-              <CardTitle>Comparația Scenariilor</CardTitle>
+              <CardTitle>{t('scenarioAnalyzer.results.comparison')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left p-2">Scenariu</th>
-                      <th className="text-center p-2">Media (kg/ha)</th>
-                      <th className="text-center p-2">Min (kg/ha)</th>
-                      <th className="text-center p-2">Max (kg/ha)</th>
-                      <th className="text-center p-2">Încredere Înaltă</th>
+                      <th className="text-left p-2">{t('scenarioAnalyzer.table.scenario')}</th>
+                      <th className="text-center p-2">{t('scenarioAnalyzer.table.average')}</th>
+                      <th className="text-center p-2">{t('scenarioAnalyzer.table.minimum')}</th>
+                      <th className="text-center p-2">{t('scenarioAnalyzer.table.maximum')}</th>
+                      <th className="text-center p-2">{t('scenarioAnalyzer.table.highConfidence')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -409,7 +412,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
           {/* Evolution Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Evoluția Scenariilor în Timp</CardTitle>
+              <CardTitle>{t('scenarioAnalyzer.charts.evolution')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
@@ -419,7 +422,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
                   <YAxis tickFormatter={(value) => formatYield(value)} />
                   <Tooltip 
                     formatter={(value: any) => [formatYield(value), '']}
-                    labelFormatter={(label) => `Anul ${label}`}
+                    labelFormatter={(label) => t('scenarioAnalyzer.charts.yearLabel', { year: label })}
                   />
                   <Legend />
                   {results.map((result, index) => (
@@ -441,7 +444,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
           {/* Comparative Bar Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Comparația Mediilor</CardTitle>
+              <CardTitle>{t('scenarioAnalyzer.charts.averageComparison')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -449,7 +452,7 @@ const FutureScenarioAnalyzer: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => formatYield(value)} />
-                  <Tooltip formatter={(value: any) => [formatYield(value), 'Media']} />
+                  <Tooltip formatter={(value: any) => [formatYield(value), t('scenarioAnalyzer.charts.averageLabel')]} />
                   <Bar 
                     dataKey="avgYield" 
                     fill="#3b82f6"
@@ -468,16 +471,16 @@ const FutureScenarioAnalyzer: React.FC = () => {
           <CardContent className="p-6 text-center">
             <AlertCircle className="w-12 h-12 text-blue-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              Începe să Compari Scenarii
+              {t('scenarioAnalyzer.help.title')}
             </h3>
             <p className="text-blue-800 mb-4">
-              Adaugă multiple scenarii pentru a compara predicții și a identifica cele mai bune oportunități.
+              {t('scenarioAnalyzer.help.description')}
             </p>
             <div className="text-sm text-blue-700 space-y-1">
-              <p>💡 <strong>Exemple de scenarii:</strong></p>
-              <p>• România vs Germania pentru Wheat în 2025-2030</p>
-              <p>• Wheat vs Maize în România pentru 2025-2035</p>
-              <p>• Evoluția pe termen scurt (2025-2027) vs lung (2025-2040)</p>
+              <p>{t('scenarioAnalyzer.help.examplesTitle')}</p>
+              <p>{t('scenarioAnalyzer.help.example1')}</p>
+              <p>{t('scenarioAnalyzer.help.example2')}</p>
+              <p>{t('scenarioAnalyzer.help.example3')}</p>
             </div>
           </CardContent>
         </Card>

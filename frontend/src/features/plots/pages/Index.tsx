@@ -4,6 +4,7 @@ import React, {
     useMemo,
     useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plot } from '../interfaces/plot';
 import AgGridTable from '@/components/table/AgGridTable';
 import {
@@ -28,6 +29,8 @@ import PlotViewModal from './PlotPage/PlotViewModal';
  * via modals. Also supports viewing plot details in a modal overlay.
  */
 const Index: React.FC = () => {
+    const { t } = useTranslation();
+
     // State for fetched plots
     const [plots, setPlots] = useState<Plot[]>([]);
     // Loading indicator for data fetch
@@ -145,7 +148,7 @@ const Index: React.FC = () => {
                     isOpen={deleteModal}
                     onClose={() => setDeleteModal(false)}
                     onConfirm={handleDelete}
-                    confirmText="Sigur doriți să ștergeți acest teren?"
+                    confirmText={t('plotsIndex.deleteConfirm')}
                 />
 
                 <ModalForm
@@ -165,7 +168,7 @@ const Index: React.FC = () => {
                 data={plots}
                 loading={loading}
                 columns={columns}
-                title="Terenuri"
+                title={t('plotsIndex.title')}
                 pagination={pagination}
                 paginationPageSize={paginationPageSize}
                 paginationPageSizeSelector={paginationPageSizeSelector}
@@ -179,7 +182,7 @@ const Index: React.FC = () => {
                         }}
                     >
                         <Plus className="w-4 h-4 mr-2" strokeWidth={2.5} />
-                        Adaugă teren
+                        {t('plotsIndex.addPlot')}
                     </Button>
                 }
             />
@@ -189,7 +192,7 @@ const Index: React.FC = () => {
                 isOpen={deleteModal}
                 onClose={() => setDeleteModal(false)}
                 onConfirm={handleDelete}
-                confirmText="Sigur doriți să ștergeți acest teren?"
+                confirmText={t('plotsIndex.deleteConfirm')}
             />
 
             {/* Create/Edit form modal */}

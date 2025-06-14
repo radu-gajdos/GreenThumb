@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { PlotApi } from "../api/plot.api";
 import { PlotFormType } from "../constants/formSchema";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
   onSave,
   uid,
 }) => {
+  const { t } = useTranslation();
+
   // Loading state for initial data fetch
   const [loading, setLoading] = useState(false);
   // Holds the Plot data when editing; null when creating
@@ -102,11 +105,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
             </div>
             <div>
               <DialogTitle className="text-lg font-semibold">
-                {uid ? "Actualizează parcela" : "Creează o parcelă nouă"}
+                {uid ? t('plotModal.title.edit') : t('plotModal.title.create')}
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Completează formularul și apasă pe butonul de{" "}
-                {uid ? "actualizare" : "creare"}.
+                {uid ? t('plotModal.description.edit') : t('plotModal.description.create')}
               </DialogDescription>
             </div>
           </div>
@@ -133,7 +135,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
               variant="outline"
               className="text-sm h-9"
             >
-              Închide
+              {t('plotModal.buttons.close')}
             </Button>
           </DialogClose>
           {/* Submit button tied to FormContent via form="plotForm" */}
@@ -143,7 +145,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
             className="text-sm h-9"
             form="plotForm"
           >
-            {uid ? "Actualizează parcela" : "Creează parcela"}
+            {uid ? t('plotModal.buttons.update') : t('plotModal.buttons.create')}
           </Button>
         </DialogFooter>
       </DialogContent>

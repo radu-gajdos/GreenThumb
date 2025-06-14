@@ -1,5 +1,6 @@
 // src/components/analytics/YieldChart.tsx
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   LineChart,
   Line,
@@ -31,57 +32,6 @@ const getPointColor = (dataPoint: any) => {
 };
 
 /**
- * Custom tooltip for the yield chart with confidence information
- */
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    
-    return (
-      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg max-w-xs">
-        <p className="font-semibold text-gray-900 mb-2">{`Anul ${label}`}</p>
-        {data.yield !== null ? (
-          <>
-            <p className="text-primary font-medium mb-2">
-              {`Randament: ${data.yield.toLocaleString()} kg/ha`}
-            </p>
-            
-            {/* Confidence Level */}
-            {data.confidenceLevel && (
-              <div className="flex items-center gap-2 mb-2">
-                <div 
-                  className="w-3 h-3 rounded-full flex-shrink-0" 
-                  style={{ backgroundColor: ConfidenceLevelColors[data.confidenceLevel as ConfidenceLevel] }}
-                ></div>
-                <span className="text-sm text-gray-600">
-                  Încredere: {ConfidenceLevelLabels[data.confidenceLevel as ConfidenceLevel]}
-                </span>
-              </div>
-            )}
-            
-            {/* Prediction Method */}
-            {data.predictionMethod && (
-              <p className="text-xs text-gray-500 mb-2">
-                Metodă: {PredictionMethodLabels[data.predictionMethod as PredictionMethod] || data.predictionMethod}
-              </p>
-            )}
-            
-            <div className="pt-2 border-t border-gray-100">
-              <p className="text-xs text-gray-600">{data.country}</p>
-              <p className="text-xs text-gray-600">{data.crop}</p>
-            </div>
-          </>
-        ) : (
-          <p className="text-gray-500 italic">Date indisponibile</p>
-        )}
-      </div>
-    );
-  }
-
-  return null;
-};
-
-/**
  * YieldChart
  * 
  * Interactive chart component for displaying crop yield evolution over time.
@@ -93,6 +43,65 @@ const YieldChart: React.FC<YieldChartProps> = ({
   showAverage = true,
   height = 400 
 }) => {
+  const { t, i18n } = useTranslation();
+
+  /**
+   * Custom tooltip for the yield chart with confidence information
+   */
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      
+      return (
+        <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg max-w-xs">
+          <p className="font-semibold text-gray-900 mb-2">{t('yieldChart.tooltip.year', { year: label })}</p>
+          {data.yield !== null ? (
+            <>
+              <p className="text-primary font-medium mb-2">
+                {t('yieldChart.tooltip.yield', { 
+                  yield: data.yield.toLocaleString(i18n.language === 'en' ? 'en-US' : 'ro-RO') 
+                })}
+              </p>
+              
+              {/* Confidence Level */}
+              {data.confidenceLevel && (
+                <div className="flex items-center gap-2 mb-2">
+                  <div 
+                    className="w-3 h-3 rounded-full flex-shrink-0" 
+                    style={{ backgroundColor: ConfidenceLevelColors[data.confidenceLevel as ConfidenceLevel] }}
+                  ></div>
+                  <span className="text-sm text-gray-600">
+                    {t('yieldChart.tooltip.confidence', { 
+                      level: ConfidenceLevelLabels[data.confidenceLevel as ConfidenceLevel] 
+                    })}
+                  </span>
+                </div>
+              )}
+              
+              {/* Prediction Method */}
+              {data.predictionMethod && (
+                <p className="text-xs text-gray-500 mb-2">
+                  {t('yieldChart.tooltip.method', { 
+                    method: PredictionMethodLabels[data.predictionMethod as PredictionMethod] || data.predictionMethod 
+                  })}
+                </p>
+              )}
+              
+              <div className="pt-2 border-t border-gray-100">
+                <p className="text-xs text-gray-600">{data.country}</p>
+                <p className="text-xs text-gray-600">{data.crop}</p>
+              </div>
+            </>
+          ) : (
+            <p className="text-gray-500 italic">{t('yieldChart.tooltip.noData')}</p>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   // Prepare chart data - filter out null values for trend calculation
   const chartData = useMemo(() => {
     return data.data.map((point: any) => ({
@@ -188,7 +197,7 @@ const YieldChart: React.FC<YieldChartProps> = ({
             tick={{ fontSize: 12 }}
             stroke="#666"
             label={{ 
-              value: 'Randament (kg/ha)', 
+              value: t('yieldChart.axes.yLabel'), 
               angle: -90, 
               position: 'insideLeft',
               style: { textAnchor: 'middle' }
@@ -209,7 +218,9 @@ const YieldChart: React.FC<YieldChartProps> = ({
               stroke="#f59e0b"
               strokeDasharray="5 5"
               label={{ 
-                value: `Media: ${formatYAxisLabel(data.averageYield)}`, 
+                value: t('yieldChart.references.average', { 
+                  value: formatYAxisLabel(data.averageYield) 
+                }), 
                 position: "right",
                 fontSize: 12
               }}
@@ -225,7 +236,7 @@ const YieldChart: React.FC<YieldChartProps> = ({
               strokeWidth={2}
               strokeDasharray="8 4"
               dot={false}
-              name="Trend"
+              name={t('yieldChart.legend.trend')}
               connectNulls={true}
             />
           )}
@@ -261,7 +272,7 @@ const YieldChart: React.FC<YieldChartProps> = ({
               strokeWidth: 2,
               fill: "#fff"
             }}
-            name="Randament"
+            name={t('yieldChart.legend.yield')}
             connectNulls={false}
           />
         </ComposedChart>
@@ -273,40 +284,40 @@ const YieldChart: React.FC<YieldChartProps> = ({
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-600">
           <div className="flex items-center gap-2">
             <div className="w-3 h-0.5 bg-primary"></div>
-            <span>Randament actual</span>
+            <span>{t('yieldChart.legend.actualYield')}</span>
           </div>
           {showTrend && (
             <div className="flex items-center gap-2">
               <div className="w-3 h-0.5 bg-red-500" style={{ borderTop: '1px dashed' }}></div>
-              <span>Trend general</span>
+              <span>{t('yieldChart.legend.generalTrend')}</span>
             </div>
           )}
           {showAverage && (
             <div className="flex items-center gap-2">
               <div className="w-3 h-0.5 bg-amber-500" style={{ borderTop: '1px dashed' }}></div>
-              <span>Media perioadei</span>
+              <span>{t('yieldChart.legend.periodAverage')}</span>
             </div>
           )}
         </div>
 
         {/* Confidence Level Legend */}
         <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-600">
-          <span className="font-medium">Nivel încredere predicții:</span>
+          <span className="font-medium">{t('yieldChart.confidence.title')}:</span>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span>Înaltă</span>
+            <span>{t('yieldChart.confidence.high')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Medie</span>
+            <span>{t('yieldChart.confidence.medium')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-            <span>Scăzută</span>
+            <span>{t('yieldChart.confidence.low')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>F. Scăzută</span>
+            <span>{t('yieldChart.confidence.veryLow')}</span>
           </div>
         </div>
       </div>
@@ -316,8 +327,11 @@ const YieldChart: React.FC<YieldChartProps> = ({
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs">
           <div className="w-2 h-2 rounded-full bg-green-500"></div>
           <span>
-            {data.totalYearsWithData} din 25 ani au date disponibile 
-            ({Math.round((data.totalYearsWithData / 25) * 100)}% completitudine)
+            {t('yieldChart.dataQuality.completeness', {
+              available: data.totalYearsWithData,
+              total: 25,
+              percentage: Math.round((data.totalYearsWithData / 25) * 100)
+            })}
           </span>
         </div>
       </div>
@@ -327,18 +341,26 @@ const YieldChart: React.FC<YieldChartProps> = ({
        data.lowConfidencePoints > 0 || data.veryLowConfidencePoints > 0 ? (
         <div className="mt-3 text-center">
           <div className="inline-flex items-center gap-4 px-4 py-2 bg-blue-50 rounded-lg text-xs">
-            <span className="font-medium text-blue-900">Distribuția încrederii:</span>
+            <span className="font-medium text-blue-900">{t('yieldChart.confidenceDistribution.title')}:</span>
             {data.highConfidencePoints > 0 && (
-              <span className="text-green-700">{data.highConfidencePoints} înaltă</span>
+              <span className="text-green-700">
+                {t('yieldChart.confidenceDistribution.high', { count: data.highConfidencePoints })}
+              </span>
             )}
             {data.mediumConfidencePoints > 0 && (
-              <span className="text-yellow-700">{data.mediumConfidencePoints} medie</span>
+              <span className="text-yellow-700">
+                {t('yieldChart.confidenceDistribution.medium', { count: data.mediumConfidencePoints })}
+              </span>
             )}
             {data.lowConfidencePoints > 0 && (
-              <span className="text-orange-700">{data.lowConfidencePoints} scăzută</span>
+              <span className="text-orange-700">
+                {t('yieldChart.confidenceDistribution.low', { count: data.lowConfidencePoints })}
+              </span>
             )}
             {data.veryLowConfidencePoints > 0 && (
-              <span className="text-red-700">{data.veryLowConfidencePoints} f. scăzută</span>
+              <span className="text-red-700">
+                {t('yieldChart.confidenceDistribution.veryLow', { count: data.veryLowConfidencePoints })}
+              </span>
             )}
           </div>
         </div>

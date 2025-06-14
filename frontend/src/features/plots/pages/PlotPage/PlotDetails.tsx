@@ -260,7 +260,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Sigur doriți să ștergeți această acțiune?"
+        confirmText={t('plotDetails.deleteActionConfirm')}
       />
 
       {/* Modal for browsing all actions */}

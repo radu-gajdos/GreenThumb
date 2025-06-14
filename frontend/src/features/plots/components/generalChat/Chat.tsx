@@ -1,10 +1,3 @@
-/**
- * GeneralAIChat.tsx - Final Version
- * 
- * Main component for the general AI chat interface.
- * Fixed to fit within the allocated content area without scrolling.
- */
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlotApi } from '@/features/plots/api/plot.api';
@@ -30,15 +23,11 @@ const GeneralAIChat: React.FC = () => {
   const plotApi = useMemo(() => new PlotApi(), []);
   const conversationApi = useMemo(() => new ConversationApi(), []);
 
-  /**
-   * Load initial data with detailed logging
-   */
   useEffect(() => {
     const loadInitialData = async () => {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
-        // Load all plots
         const plots = await plotApi.findAll();
         setAvailablePlots(plots);
 
@@ -46,15 +35,13 @@ const GeneralAIChat: React.FC = () => {
           setState(prev => ({
             ...prev,
             loading: false,
-            error: 'Nu aveți parcele create. Creați o parcelă pentru a începe conversații.',
+            error: t('generalAIChat.noPlots'),
           }));
           return;
         }
 
-        // Create conversation objects for each plot
         const plotConversations: PlotConversation[] = await Promise.all(
           plots.map(async (plot) => {
-
             const messages = await conversationApi.getConversationHistory(plot.id);
 
             return {
@@ -70,17 +57,13 @@ const GeneralAIChat: React.FC = () => {
           })
         );
 
-
-        // Sort by last activity
         plotConversations.sort((a, b) =>
           b.lastMessageAt.getTime() - a.lastMessageAt.getTime()
         );
 
-        // Auto-select first conversation or one with messages
         const conversationWithMessages = plotConversations.find(conv => conv.messages.length > 0);
         const firstConversationId = conversationWithMessages?.plotId ||
           (plotConversations.length > 0 ? plotConversations[0].plotId : null);
-
 
         setState({
           plotConversations: plotConversations.map(conv => ({
@@ -92,22 +75,18 @@ const GeneralAIChat: React.FC = () => {
           error: null,
         });
 
-
       } catch (error) {
         setState(prev => ({
           ...prev,
           loading: false,
-          error: 'Nu s-au putut încărca conversațiile. Verificați conexiunea.',
+          error: t('generalAIChat.loadError'),
         }));
       }
     };
 
     loadInitialData();
-  }, [plotApi, conversationApi]);
+  }, [plotApi, conversationApi, t]);
 
-  /**
-   * Handle plot selection
-   */
   const handleSelectPlot = useCallback((plotId: string) => {
     setState(prev => ({
       ...prev,
@@ -120,26 +99,14 @@ const GeneralAIChat: React.FC = () => {
     }));
   }, []);
 
-  /**
-   * Handle new messages
-   */
   const handleMessageSent = useCallback(async (plotId: string, userMessage: Message | null, aiMessage: Message | null) => {
     setState(prev => ({
       ...prev,
       plotConversations: prev.plotConversations.map(conv => {
         if (conv.plotId === plotId) {
           const newMessages = [...conv.messages];
-
-          // Adaugă mesajul utilizatorului dacă există
-          if (userMessage) {
-            newMessages.push(userMessage);
-          }
-
-          // Adaugă mesajul AI-ului dacă există
-          if (aiMessage) {
-            newMessages.push(aiMessage);
-          }
-
+          if (userMessage) newMessages.push(userMessage);
+          if (aiMessage) newMessages.push(aiMessage);
           return {
             ...conv,
             messages: newMessages,
@@ -151,13 +118,9 @@ const GeneralAIChat: React.FC = () => {
     }));
   }, []);
 
-  /**
-   * Handle conversation clearing
-   */
   const handleConversationCleared = useCallback(async (plotId: string) => {
     try {
       await conversationApi.clearConversation(plotId);
-
       setState(prev => ({
         ...prev,
         plotConversations: prev.plotConversations.map(conv => {
@@ -177,9 +140,6 @@ const GeneralAIChat: React.FC = () => {
     }
   }, [conversationApi]);
 
-  /**
-   * Handle starting new conversation
-   */
   const handleStartNewConversation = useCallback(() => {
     const plotWithoutConversation = availablePlots.find(plot =>
       !state.plotConversations.some(conv => conv.plotId === plot.id)
@@ -209,7 +169,6 @@ const GeneralAIChat: React.FC = () => {
     return state.plotConversations.find(conv => conv.plotId === state.selectedPlotId) || null;
   }, [state.plotConversations, state.selectedPlotId]);
 
-  // Loading state
   if (state.loading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-120px)]">
@@ -218,77 +177,46 @@ const GeneralAIChat: React.FC = () => {
     );
   }
 
-  // Error state
   if (state.error) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
         <div className="mb-4">
-          <svg
-            className="w-16 h-16 text-red-400 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+          <svg className="w-16 h-16 text-red-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Eroare la încărcarea conversațiilor
+          {t('generalAIChat.errorTitle')}
         </h3>
         <p className="text-gray-500 max-w-md mb-4">
           {state.error}
         </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded"
-        >
-          Încearcă din nou
+        <button onClick={() => window.location.reload()} className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded">
+          {t('generalAIChat.retry')}
         </button>
       </div>
     );
   }
 
-  // Empty state
   if (availablePlots.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
         <div className="mb-4">
-          <svg
-            className="w-16 h-16 text-gray-400 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
+          <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Nicio parcelă disponibilă
+          {t('generalAIChat.noPlotsTitle')}
         </h3>
         <p className="text-gray-500 max-w-md">
-          Nu aveți încă parcele create. Creați o parcelă pentru a începe conversații cu AI-ul.
+          {t('generalAIChat.noPlotsDescription')}
         </p>
       </div>
     );
   }
 
-  // Main UI
   return (
     <div className="flex h-[calc(100vh-120px)] bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
       <ChatSidebar
@@ -299,7 +227,6 @@ const GeneralAIChat: React.FC = () => {
         onSelectPlot={handleSelectPlot}
         onSearchChange={setSearchTerm}
       />
-
       <ChatContent
         conversation={selectedConversation}
         loading={false}

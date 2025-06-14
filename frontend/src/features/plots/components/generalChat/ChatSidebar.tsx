@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   MessageSquare,
   MapPin,
@@ -16,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PlotConversation } from '../../interfaces/conversation';
+
 interface ChatSidebarProps {
   conversations: PlotConversation[];
   selectedPlotId: string | null;
@@ -33,6 +35,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onSelectPlot,
   onSearchChange,
 }) => {
+  const { t, i18n } = useTranslation();
+
   /**
    * Format the last message timestamp for display
    */
@@ -44,17 +48,17 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffMinutes < 1) {
-      return 'Acum';
+      return t('chatSidebar.time.now');
     } else if (diffMinutes < 60) {
-      return `${diffMinutes} min`;
+      return t('chatSidebar.time.minutes', { count: diffMinutes });
     } else if (diffHours < 24) {
-      return `${diffHours}h`;
+      return t('chatSidebar.time.hours', { count: diffHours });
     } else if (diffDays === 1) {
-      return 'Ieri';
+      return t('chatSidebar.time.yesterday');
     } else if (diffDays < 7) {
-      return `${diffDays} zile`;
+      return t('chatSidebar.time.days', { count: diffDays });
     } else {
-      return date.toLocaleDateString('ro-RO', {
+      return date.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'ro-RO', {
         day: 'numeric',
         month: 'short',
       });
@@ -74,13 +78,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
    */
   const getLastMessagePreview = (conversation: PlotConversation): string => {
     if (!conversation.messages || conversation.messages.length === 0) {
-      return 'Nicio conversație încă';
+      return t('chatSidebar.messages.noConversation');
     }
 
     const lastMessage = conversation.messages[conversation.messages.length - 1];
     
     if (!lastMessage) {
-      return 'Nicio conversație încă';
+      return t('chatSidebar.messages.noConversation');
     }
     
     // Handle both text and content properties + defensive programming
@@ -92,18 +96,18 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         messageText = (messageText as any).result;
       } else {
         console.warn('Message text is an object:', messageText);
-        messageText = 'Mesaj în format invalid';
+        messageText = t('chatSidebar.messages.invalidFormat');
       }
     }
     
     // Ensure we have a string
     if (typeof messageText !== 'string') {
       console.warn('Message text is not a string:', messageText, typeof messageText);
-      return 'Mesaj fără conținut valid';
+      return t('chatSidebar.messages.invalidContent');
     }
     
     if (!messageText) {
-      return 'Mesaj fără conținut';
+      return t('chatSidebar.messages.noContent');
     }
     
     const maxLength = 60;
@@ -135,7 +139,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h1 className="text-lg font-semibold text-gray-900 mb-3">
-          Chat AI General
+          {t('chatSidebar.header.title')}
         </h1>
         
         {/* Search Bar */}
@@ -143,7 +147,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             type="text"
-            placeholder="Caută parcele..."
+            placeholder={t('chatSidebar.search.placeholder')}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"
@@ -158,8 +162,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <MessageSquare className="w-12 h-12 mx-auto mb-2 text-gray-300" />
             <p className="text-sm">
               {searchTerm 
-                ? 'Nicio parcelă găsită' 
-                : 'Nicio conversație activă'
+                ? t('chatSidebar.empty.noResults')
+                : t('chatSidebar.empty.noConversations')
               }
             </p>
           </div>
@@ -230,7 +234,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                               : 'text-gray-300'
                           }`} />
                           <span className="text-xs text-gray-500">
-                            {conversation.messages.length} mesaje
+                            {t('chatSidebar.conversation.messagesCount', { count: conversation.messages.length })}
                           </span>
                         </div>
                       )}
@@ -246,7 +250,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* Footer with stats */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <div className="text-xs text-gray-500 text-center">
-          {conversations.length} {conversations.length === 1 ? 'conversație' : 'conversații'} active
+          {t('chatSidebar.footer.conversationsCount', { 
+            count: conversations.length 
+          })}
         </div>
       </div>
     </div>

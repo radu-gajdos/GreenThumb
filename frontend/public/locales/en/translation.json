@@ -1,64 +1,22 @@
 {
     "plotDetails": {
-        "hectares": "hectare",
-        "soilType": "Soil type",
-        "notSpecified": "Not specified",
+        "hectares": "hectares",
+        "soilType": "Soil Type",
         "topography": "Topography",
-        "owner": "Owner",
-        "notAvailable": "—",
-        "created": "Created on",
-        "activityLog": "Activity log",
-        "addAction": "+ Add action",
-        "actionTypes": {
-            "planting": "Planting",
-            "harvesting": "Harvesting",
-            "fertilizing": "Fertilizing",
-            "treatment": "Treatment",
-            "watering": "Watering",
-            "soil_reading": "Soil analysis"
-        }
+        "created": "Created",
+        "notSpecified": "Not specified",
+        "notAvailable": "Not available",
+        "activityLog": "Activity Log",
+        "addAction": "Add Action",
+        "viewAllActions": "View All Actions",
+        "allActions": "All Actions",
+        "deleteActionConfirm": "Are you sure you want to delete this action?"
+    },
+    "common": {
+        "close": "Close"
     },
     "actionsList": {
         "noActivities": "No activities recorded yet."
-    },
-    "actionItem": {
-        "labels": {
-            "crop": "Crop",
-            "variety": "Variety",
-            "seedingRate": "Seeding Rate",
-            "date": "Date",
-            "yield": "Yield",
-            "comments": "Comments",
-            "fertilizer": "Fertilizer",
-            "rate": "Rate",
-            "method": "Method",
-            "pesticide": "Pesticide",
-            "targetPest": "Target Pest",
-            "dosage": "Dosage",
-            "amount": "Amount",
-            "source": "Source",
-            "ph": "pH",
-            "nitrogen": "Nitrogen",
-            "phosphorus": "Phosphorus",
-            "potassium": "Potassium",
-            "organicMatter": "Organic Matter"
-        },
-        "units": {
-            "kg/ha": "kg/ha",
-            "kgPerHa": "kg/ha",
-            "lPerHa": "l/ha",
-            "mm": "mm",
-            "mgPerKg": "mg/kg"
-        },
-        "unknownType": "Unknown action type",
-        "types": {
-            "planting": "Planting",
-            "harvesting": "Harvesting",
-            "fertilizing": "Fertilizing",
-            "treatment": "Treatment",
-            "watering": "Watering",
-            "soil_reading": "Soil Reading"
-        }
     },
     "plotPage": {
         "error": {
@@ -70,6 +28,23 @@
         "notFound": {
             "title": "Plot Not Found",
             "message": "The requested plot information could not be found."
+        },
+        "aiChat": {
+            "title": "AI Chat",
+            "messagesCount": "{{count}} message",
+            "messagesCount_plural": "{{count}} messages",
+            "clearHistoryTooltip": "Clear chat history",
+            "clearHistoryLabel": "Clear chat history",
+            "clearButton": "Clear",
+            "noContent": "Message without content",
+            "saveTooltip": "Save as note",
+            "saveLabel": "Save message as field note",
+            "saveButton": "Save",
+            "placeholder": "Start a conversation with the AI assistant to get personalized agricultural advice for this plot.",
+            "inputPlaceholder": "Write your message here...",
+            "sendLabel": "Send message",
+            "errorLoadingHistory": "Error loading conversation history",
+            "deleteConfirmText": "Are you sure you want to delete the entire conversation for plot \"{{plotName}}\"? This action cannot be undone and all messages will be permanently lost."
         }
     },
     "actionApi": {
@@ -636,6 +611,434 @@
             },
             "terrain": {
                 "attribution": "© OpenTopoMap contributors"
+            }
+        }
+    },
+    "generalAIChat": {
+        "noPlots": "You don't have any plots created. Create a plot to start conversations.",
+        "loadError": "Failed to load conversations. Please check your connection.",
+        "errorTitle": "Error loading conversations",
+        "retry": "Try again",
+        "noPlotsTitle": "No available plots",
+        "noPlotsDescription": "You haven't created any plots yet. Create a plot to start conversations with the AI."
+    },
+    "chatContent": {
+        "noConversation": {
+            "title": "Select a plot",
+            "description": "Choose a plot from the sidebar to start a conversation with the AI about field management."
+        },
+        "header": {
+            "assistant": "Agricultural Assistant",
+            "messagesCount": "{{count}} messages"
+        },
+        "delete": {
+            "button": "Delete conversation",
+            "deleting": "Deleting...",
+            "confirmText": "Are you sure you want to delete the entire conversation for the plot \"{{plotName}}\"? This action cannot be undone and all messages will be permanently lost."
+        },
+        "messages": {
+            "noContent": "Message without content",
+            "save": "Save",
+            "saveTooltip": "Save as note"
+        },
+        "welcome": {
+            "title": "Welcome to the chat for {{plotName}}"
+        },
+        "input": {
+            "placeholder": "Type your message here...",
+            "sendButton": "Send message"
+        },
+        "errors": {
+            "deleteError": "Error deleting conversation"
+        }
+    },
+    "chatSidebar": {
+        "header": {
+            "title": "General AI Chat"
+        },
+        "search": {
+            "placeholder": "Search plots..."
+        },
+        "time": {
+            "now": "Now",
+            "minutes": "{{count}} min",
+            "hours": "{{count}}h",
+            "yesterday": "Yesterday",
+            "days": "{{count}} days"
+        },
+        "messages": {
+            "noConversation": "No conversation yet",
+            "invalidFormat": "Message in invalid format",
+            "invalidContent": "Message without valid content",
+            "noContent": "Message without content"
+        },
+        "empty": {
+            "noResults": "No plots found",
+            "noConversations": "No active conversations"
+        },
+        "conversation": {
+            "messagesCount": "{{count}} messages"
+        },
+        "footer": {
+            "conversationsCount": "{{count}} conversation",
+            "conversationsCount_plural": "{{count}} conversations"
+        }
+    },
+    "plotForm": {
+        "fields": {
+            "name": "Name",
+            "area": "Area (ha)",
+            "topography": "Topography",
+            "soilType": "Soil Type",
+            "boundary": "Plot Boundaries"
+        },
+        "placeholders": {
+            "name": "Enter plot name",
+            "topography": "Ex: Hill, Valley, Slope...",
+            "soilType": "Ex: Clay, Loam, Chernozem..."
+        }
+    },
+    "actionItem": {
+        "types": {
+            "planting": "Planting",
+            "harvesting": "Harvesting",
+            "fertilizing": "Fertilizing",
+            "treatment": "Treatment",
+            "watering": "Watering",
+            "soil_reading": "Soil Reading"
+        },
+        "labels": {
+            "crop": "Crop:",
+            "variety": "Variety:",
+            "seedingRate": "Seeding rate:",
+            "yield": "Yield:",
+            "fertilizer": "Fertilizer:",
+            "rate": "Rate:",
+            "method": "Method:",
+            "pesticide": "Pesticide:",
+            "targetPest": "Target pest:",
+            "dosage": "Dosage:",
+            "amount": "Amount:",
+            "source": "Source:",
+            "ph": "pH:",
+            "nitrogen": "Nitrogen:",
+            "phosphorus": "Phosphorus:",
+            "potassium": "Potassium:",
+            "organicMatter": "Organic matter:",
+            "date": "Date:",
+            "comments": "Comments:"
+        },
+        "units": {
+            "kgPerHa": "kg/ha",
+            "lPerHa": "l/ha",
+            "mm": "mm",
+            "mgPerKg": "mg/kg"
+        },
+        "buttons": {
+            "edit": "Edit action",
+            "delete": "Delete action"
+        },
+        "unknownType": "Unknown action type"
+    },
+    "aiChatPlaceholder": {
+        "title": "AI Assistant",
+        "messagesPlaceholder": "Chat messages will appear here...",
+        "inputPlaceholder": "Ask about your plot...",
+        "sendButton": "Send message"
+    },
+    "plotViewModal": {
+        "defaultTitle": "Plot Details"
+    },
+    "plotsIndex": {
+        "title": "Plots",
+        "addPlot": "Add Plot",
+        "deleteConfirm": "Are you sure you want to delete this plot?"
+    },
+    "plotModal": {
+        "title": {
+            "create": "Create a new plot",
+            "edit": "Update plot"
+        },
+        "description": {
+            "create": "Fill out the form and press the create button.",
+            "edit": "Fill out the form and press the update button."
+        },
+        "buttons": {
+            "close": "Close",
+            "create": "Create plot",
+            "update": "Update plot"
+        }
+    },
+    "futurePrediction": {
+        "title": "Future Prediction",
+        "labels": {
+            "country": "Country",
+            "crop": "Crop",
+            "year": "Year"
+        },
+        "placeholders": {
+            "country": "Select country...",
+            "crop": "Select crop..."
+        },
+        "buttons": {
+            "calculating": "Calculating...",
+            "predict": "Calculate Prediction"
+        },
+        "result": {
+            "description": "Predicted yield for {{crop}} in {{country}}, year {{year}}"
+        },
+        "confidence": {
+            "title": "Confidence",
+            "subtitle": "AI certainty level"
+        },
+        "method": {
+            "default": "AI Method",
+            "subtitle": "Prediction algorithm"
+        },
+        "interpretation": {
+            "title": "Interpretation",
+            "high": "Very reliable prediction based on solid historical data.",
+            "medium": "Moderately reliable prediction for the near future.",
+            "low": "Prediction with increased uncertainty due to temporal distance.",
+            "veryLow": "Exploratory prediction with high uncertainty."
+        },
+        "help": {
+            "suggestion": "💡 Suggestion: Start with Romania and a familiar crop like Wheat or Maize for more reliable results.",
+            "period": "📅 Supported period: 2025-2050"
+        }
+    },
+    "scenarioAnalyzer": {
+        "title": "Future Scenario Analyzer",
+        "description": "Compare predictions for different countries, crops, or time periods to identify the most promising agricultural opportunities.",
+        "addScenario": "Add Scenario",
+        "defaultScenarioName": "Scenario {{number}}",
+        "labels": {
+            "country": "Country",
+            "crop": "Crop",
+            "startYear": "Start Year",
+            "endYear": "End Year"
+        },
+        "placeholders": {
+            "country": "Select country...",
+            "crop": "Select crop..."
+        },
+        "analyzing": "Analyzing scenarios... {{progress}}%",
+        "runAnalysis": "Run Analysis",
+        "results": {
+            "comparison": "Scenarios Comparison"
+        },
+        "table": {
+            "scenario": "Scenario",
+            "average": "Average (kg/ha)",
+            "minimum": "Min (kg/ha)",
+            "maximum": "Max (kg/ha)",
+            "highConfidence": "High Confidence"
+        },
+        "charts": {
+            "evolution": "Scenario Evolution Over Time",
+            "yearLabel": "Year {{year}}",
+            "averageComparison": "Average Comparison",
+            "averageLabel": "Average"
+        },
+        "help": {
+            "title": "Start Comparing Scenarios",
+            "description": "Add multiple scenarios to compare predictions and identify the best opportunities.",
+            "examplesTitle": "💡 Scenario examples:",
+            "example1": "• Romania vs Germany for Wheat in 2025-2030",
+            "example2": "• Wheat vs Maize in Romania for 2025-2035",
+            "example3": "• Short-term evolution (2025-2027) vs long-term (2025-2040)"
+        }
+    },
+    "yieldChart": {
+        "tooltip": {
+            "year": "Year {{year}}",
+            "yield": "Yield: {{yield}} kg/ha",
+            "confidence": "Confidence: {{level}}",
+            "method": "Method: {{method}}",
+            "noData": "Data unavailable"
+        },
+        "axes": {
+            "yLabel": "Yield (kg/ha)"
+        },
+        "references": {
+            "average": "Average: {{value}}"
+        },
+        "legend": {
+            "trend": "Trend",
+            "yield": "Yield",
+            "actualYield": "Actual yield",
+            "generalTrend": "General trend",
+            "periodAverage": "Period average"
+        },
+        "confidence": {
+            "title": "Prediction confidence level",
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low",
+            "veryLow": "Very Low"
+        },
+        "dataQuality": {
+            "completeness": "{{available}} out of {{total}} years have available data ({{percentage}}% completeness)"
+        },
+        "confidenceDistribution": {
+            "title": "Confidence distribution",
+            "high": "{{count}} high",
+            "medium": "{{count}} medium",
+            "low": "{{count}} low",
+            "veryLow": "{{count}} very low"
+        }
+    },
+    "yieldEvolution": {
+        "header": {
+            "title": "Global Agricultural Yield Evolution",
+            "description": "Analyze the evolution of agricultural crop yields by country for the period 2000-2024 using advanced AI predictions with confidence levels and prediction methods."
+        },
+        "selection": {
+            "title": "Select Country and Crop",
+            "country": "Country/Region",
+            "countryPlaceholder": "Select country...",
+            "crop": "Agricultural Crop",
+            "cropPlaceholder": "Select crop..."
+        },
+        "buttons": {
+            "generate": "Generate AI Evolution",
+            "generating": "Generating data... {{progress}}%"
+        },
+        "stats": {
+            "average": "Average",
+            "minimum": "Minimum",
+            "maximum": "Maximum",
+            "yearsWithData": "Years with Data",
+            "outOf25Years": "out of 25 years"
+        },
+        "units": {
+            "kgPerHa": "kg/ha"
+        },
+        "confidence": {
+            "title": "AI Confidence Level Distribution",
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low",
+            "veryLow": "Very Low",
+            "predictions": "predictions"
+        },
+        "chart": {
+            "title": "Yield Evolution (2000-2024)"
+        },
+        "aiModel": {
+            "title": "AI Model Information",
+            "model": "Model: Enhanced RandomForest v2.0",
+            "source": "Source: FAOSTAT Global Data",
+            "baseline": "Baseline: 1961",
+            "description": "Predictions are generated using an AI model trained on FAOSTAT global data. The confidence level reflects the model's certainty based on historical data availability and temporal distance from the present."
+        }
+    },
+    "analytics": {
+        "header": {
+            "title": "AI Agricultural Analytics Center",
+            "description": "Complete platform for agricultural analysis and predictions based on artificial intelligence. Explore historical evolution, forecast future yields and compare multiple scenarios."
+        },
+        "features": {
+            "historical": {
+                "title": "Historical Analysis",
+                "description": "2000-2024 yield evolution for any country and crop"
+            },
+            "future": {
+                "title": "Future Predictions",
+                "description": "Rapid forecasts for 2025-2050 with confidence levels"
+            },
+            "scenarios": {
+                "title": "Multiple Scenarios",
+                "description": "Compare and analyze multiple options for strategic planning"
+            }
+        },
+        "tabs": {
+            "evolution": {
+                "title": "Historical Evolution",
+                "subtitle": "2000-2024"
+            },
+            "future": {
+                "title": "Future Predictions",
+                "subtitle": "2025-2050"
+            },
+            "scenarios": {
+                "title": "Scenario Analysis",
+                "subtitle": "Multiple comparison"
+            }
+        },
+        "evolutionTab": {
+            "header": {
+                "title": "Detailed Historical Analysis",
+                "description": "Explore the evolution of agricultural yields over the last 25 years. This analysis gives you a complete perspective on historical trends, climate variations and technological progress in agriculture."
+            },
+            "features": {
+                "data": "25 years of FAOSTAT data",
+                "countries": "245+ countries available",
+                "crops": "180+ agricultural crops",
+                "analysis": "Advanced trend analysis"
+            }
+        },
+        "futureTab": {
+            "info": {
+                "title": "About Future Predictions"
+            },
+            "confidence": {
+                "title": "Confidence Levels",
+                "high": {
+                    "label": "High",
+                    "description": "Very reliable predictions based on consistent data"
+                },
+                "medium": {
+                    "label": "Medium",
+                    "description": "Predictions with moderate reliability (1-5 years in the future)"
+                },
+                "low": {
+                    "label": "Low",
+                    "description": "Predictions with increased uncertainty (5-15 years)"
+                },
+                "veryLow": {
+                    "label": "Very Low",
+                    "description": "Exploratory predictions (15+ years in the future)"
+                }
+            },
+            "methods": {
+                "title": "Prediction Methods",
+                "interpolation": {
+                    "label": "Interpolation",
+                    "description": "Based on existing historical data"
+                },
+                "extrapolation": {
+                    "label": "Extrapolation",
+                    "description": "Continuation of current trends"
+                },
+                "projection": {
+                    "label": "Projection",
+                    "description": "Advanced modeling for long term"
+                }
+            },
+            "disclaimer": {
+                "title": "Note",
+                "content": "Predictions are generated by an AI model trained on FAOSTAT global data and reflect current trends. Factors such as climate change, agricultural policies and technological innovations may influence actual results."
+            }
+        },
+        "scenariosTab": {
+            "header": {
+                "title": "Strategic Scenario Analysis",
+                "description": "Compare multiple scenarios to make informed decisions in agricultural planning. This functionality allows you to analyze different options and identify the most promising opportunities."
+            },
+            "features": {
+                "countries": {
+                    "title": "Country Comparison",
+                    "description": "Compare agricultural potential between different regions"
+                },
+                "crops": {
+                    "title": "Crop Comparison",
+                    "description": "Evaluate which crops are more profitable"
+                },
+                "temporal": {
+                    "title": "Temporal Analysis",
+                    "description": "Plan for short vs. long term"
+                }
             }
         }
     }

@@ -7,6 +7,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import {
     Form,
     FormControl,
@@ -56,6 +57,8 @@ const FormContent: React.FC<FormContentProps> = ({
     formId,
     initialData,
 }) => {
+    const { t } = useTranslation();
+
     // Initialize RHF with Zod schema and optional default values
     const form = useForm<PlotFormType>({
         resolver: zodResolver(formSchema),
@@ -131,9 +134,9 @@ const FormContent: React.FC<FormContentProps> = ({
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nume</FormLabel>
+                            <FormLabel>{t('plotForm.fields.name')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="Introduceți numele parcelei" />
+                                <Input {...field} placeholder={t('plotForm.placeholders.name')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -146,7 +149,7 @@ const FormContent: React.FC<FormContentProps> = ({
                     name="size"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Suprafață (ha)</FormLabel>
+                            <FormLabel>{t('plotForm.fields.area')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"
@@ -166,12 +169,12 @@ const FormContent: React.FC<FormContentProps> = ({
                     name="topography"
                     render={({ field }) => (
                         <FormItem className="col-span-1">
-                            <FormLabel>Topografie</FormLabel>
+                            <FormLabel>{t('plotForm.fields.topography')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
                                     value={field.value || ""}
-                                    placeholder="Ex: Deal, Vale, Panta..."
+                                    placeholder={t('plotForm.placeholders.topography')}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -185,12 +188,12 @@ const FormContent: React.FC<FormContentProps> = ({
                     name="soilType"
                     render={({ field }) => (
                         <FormItem className="col-span-1">
-                            <FormLabel>Tip sol</FormLabel>
+                            <FormLabel>{t('plotForm.fields.soilType')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
                                     value={field.value || ""}
-                                    placeholder="Ex: Argilos, Lutosol, Cernoziom..."
+                                    placeholder={t('plotForm.placeholders.soilType')}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -204,7 +207,7 @@ const FormContent: React.FC<FormContentProps> = ({
                     name="boundary"
                     render={({ field }) => (
                         <FormItem className="md:col-span-4">
-                            <FormLabel>Limite parcelă</FormLabel>
+                            <FormLabel>{t('plotForm.fields.boundary')}</FormLabel>
                             <MapInput value={field.value} onChange={handleBoundaryChange} />
                             <FormMessage />
                         </FormItem>

@@ -91,7 +91,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
           <div>
             <p>
               <span className="font-medium">{t('actionItem.labels.yield')}</span> {harvesting.cropYield}{' '}
-              {t('actionItem.units.kg/ha')}
+              {t('actionItem.units.kgPerHa')}
             </p>
             <p>
               <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.date)}
@@ -296,7 +296,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
             size="sm"
             onClick={() => onEdit(action.id)}
             className="h-8 w-8 p-0 hover:bg-blue-100"
-            title="Editează acțiunea"
+            title={t('actionItem.buttons.edit')}
           >
             <Edit className="h-4 w-4 text-blue-600" />
           </Button>
@@ -305,7 +305,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
             size="sm"
             onClick={() => onDelete(action.id)}
             className="h-8 w-8 p-0 hover:bg-red-100"
-            title="Șterge acțiunea"
+            title={t('actionItem.buttons.delete')}
           >
             <Trash2 className="h-4 w-4 text-red-600" />
           </Button>

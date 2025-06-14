@@ -117,7 +117,7 @@ const PlotViewModal: React.FC<PlotViewModalProps> = ({
         
         <div className="flex items-center space-x-2">
           <h2 className="text-lg font-semibold text-gray-800">
-            {plot ? `${plot.name}` : 'Detalii teren'}
+            {plot ? `${plot.name}` : t('plotViewModal.defaultTitle')}
           </h2>
         </div>
       </div>

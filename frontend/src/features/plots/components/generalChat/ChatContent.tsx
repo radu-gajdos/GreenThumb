@@ -137,12 +137,12 @@ const ChatContent: React.FC<ChatContentProps> = ({
       
       // Opțional: afișează un toast de eroare
       const errorText = ERROR_MESSAGES[currentLanguage] || ERROR_MESSAGES.en;
-      alert(`Eroare la ștergerea conversației: ${error instanceof Error ? error.message : errorText}`);
+      alert(`${t('chatContent.errors.deleteError')}: ${error instanceof Error ? error.message : errorText}`);
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);
     }
-  }, [conversation, conversationApi, onConversationCleared, currentLanguage]);
+  }, [conversation, conversationApi, onConversationCleared, currentLanguage, t]);
 
   const handleSaveMessage = (message: Message) => {
     setMessageToSave(message);
@@ -258,10 +258,10 @@ const ChatContent: React.FC<ChatContentProps> = ({
             <MapPin className="w-8 h-8 text-gray-400" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Selectați o parcelă
+            {t('chatContent.noConversation.title')}
           </h3>
           <p className="text-gray-500 max-w-sm">
-            Alegeți o parcelă din sidebar pentru a începe o conversație cu AI-ul despre gestionarea terenului.
+            {t('chatContent.noConversation.description')}
           </p>
         </div>
       </div>
@@ -283,7 +283,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
                 {conversation.plotName}
               </h3>
               <p className="text-sm text-gray-500">
-                Asistent agricol • {conversation.messages.length} mesaje
+                {t('chatContent.header.assistant')} • {t('chatContent.header.messagesCount', { count: conversation.messages.length })}
               </p>
             </div>
           </div>
@@ -296,7 +296,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
             <Trash2 className="w-4 h-4 mr-1" />
-            {isDeleting ? 'Se șterge...' : 'Șterge conversația'}
+            {isDeleting ? t('chatContent.delete.deleting') : t('chatContent.delete.button')}
           </Button>
         </div>
       </div>
@@ -324,13 +324,13 @@ const ChatContent: React.FC<ChatContentProps> = ({
                       {message.sender === 'user' ? (
                         // User messages - simple text formatting
                         <div className="leading-relaxed break-words whitespace-pre-wrap">
-                          {String(message.text || 'Mesaj fără conținut')}
+                          {String(message.text || t('chatContent.messages.noContent'))}
                         </div>
                       ) : (
                         // AI messages - full markdown formatting
                         <div className="prose prose-sm max-w-none leading-relaxed break-words">
                           <ReactMarkdown components={markdownComponents}>
-                            {String(message.text || 'Mesaj fără conținut')}
+                            {String(message.text || t('chatContent.messages.noContent'))}
                           </ReactMarkdown>
                         </div>
                       )}
@@ -349,10 +349,10 @@ const ChatContent: React.FC<ChatContentProps> = ({
                         <button
                           onClick={() => handleSaveMessage(message)}
                           className="flex items-center gap-1.5 ml-2 font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1 rounded-md hover:bg-primary/10 group flex-shrink-0"
-                          title="Salvează ca notiță"
+                          title={t('chatContent.messages.saveTooltip')}
                         >
                           <BookMarked className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-                          <span className="hidden sm:inline">Salvează</span>
+                          <span className="hidden sm:inline">{t('chatContent.messages.save')}</span>
                         </button>
                       )}
                     </div>
@@ -368,7 +368,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
                   <MapPin className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Bun venit la chat-ul pentru {conversation.plotName}
+                  {t('chatContent.welcome.title', { plotName: conversation.plotName })}
                 </h3>
                 <div className="text-gray-600 leading-relaxed">
                   <ReactMarkdown components={markdownComponents}>
@@ -411,7 +411,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               className="w-full p-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
-              placeholder="Scrie mesajul tău aici..."
+              placeholder={t('chatContent.input.placeholder')}
               disabled={isInputDisabled}
             />
             <button
@@ -422,7 +422,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-sm'
               }`}
-              aria-label="Send message"
+              aria-label={t('chatContent.input.sendButton')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -457,7 +457,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDeleteConfirm}
-        confirmText={`Ești sigur că dorești să ștergi întreaga conversație pentru parcela "${conversation.plotName}"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv.`}
+        confirmText={t('chatContent.delete.confirmText', { plotName: conversation.plotName })}
       />
     </div>
   );

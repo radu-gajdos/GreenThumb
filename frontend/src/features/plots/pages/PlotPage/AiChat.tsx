@@ -157,7 +157,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
     };
 
     loadConversationHistory();
-  }, [plot.id, conversationApi]);
+  }, [plot.id, conversationApi, t]);
 
   /**
    * Initialize chat with a welcome message from the AI.
@@ -325,7 +325,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
               {t('plotPage.aiChat.title')}
             </h3>
             <p className="text-sm text-gray-500">
-              {messages.length} {messages.length === 1 ? 'mesaj' : 'mesaje'}
+              {t('plotPage.aiChat.messagesCount', { count: messages.length })}
             </p>
           </div>
         </div>
@@ -334,16 +334,12 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
         <button
           onClick={() => setShowDeleteModal(true)}
           className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
-          title={
-            currentLanguage === 'ro'
-              ? 'Șterge istoricul conversației'
-              : 'Clear chat history'
-          }
-          aria-label="Clear chat history"
+          title={t('plotPage.aiChat.clearHistoryTooltip')}
+          aria-label={t('plotPage.aiChat.clearHistoryLabel')}
         >
           <Trash2 className="h-4 w-4" />
           <span className="text-sm hidden sm:inline">
-            {currentLanguage === 'ro' ? 'Șterge' : 'Clear'}
+            {t('plotPage.aiChat.clearButton')}
           </span>
         </button>
       </div>
@@ -371,13 +367,13 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                     {message.sender === 'user' ? (
                       // User messages - simple text formatting
                       <div className="leading-relaxed break-words whitespace-pre-wrap">
-                        {String(message.text || 'Mesaj fără conținut')}
+                        {String(message.text || t('plotPage.aiChat.noContent'))}
                       </div>
                     ) : (
                       // AI messages - full markdown formatting
                       <div className="prose prose-sm max-w-none leading-relaxed break-words">
                         <ReactMarkdown components={markdownComponents}>
-                          {String(message.text || 'Mesaj fără conținut')}
+                          {String(message.text || t('plotPage.aiChat.noContent'))}
                         </ReactMarkdown>
                       </div>
                     )}
@@ -398,16 +394,12 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
                       <button
                         onClick={() => handleSaveMessage(message)}
                         className="flex items-center gap-1.5 ml-2 font-medium text-gray-600 hover:text-primary transition-all duration-200 px-2 py-1 rounded-md hover:bg-primary/10 group flex-shrink-0"
-                        title={
-                          currentLanguage === 'ro'
-                            ? 'Salvează ca notiță'
-                            : 'Save as note'
-                        }
-                        aria-label="Save message as field note"
+                        title={t('plotPage.aiChat.saveTooltip')}
+                        aria-label={t('plotPage.aiChat.saveLabel')}
                       >
                         <BookMarked className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                         <span className="hidden sm:inline">
-                          {currentLanguage === 'ro' ? 'Salvează' : 'Save'}
+                          {t('plotPage.aiChat.saveButton')}
                         </span>
                       </button>
                     )}
@@ -474,7 +466,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-sm'
             }`}
-          aria-label="Send message"
+          aria-label={t('plotPage.aiChat.sendLabel')}
         >
           {/* Paper plane icon */}
           <svg
@@ -507,7 +499,7 @@ const AIChat: React.FC<AIChatProps> = ({ plot }) => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDeleteConfirm}
-        confirmText={`Ești sigur că dorești să ștergi întreaga conversație pentru parcela "${plot.name}"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv.`}
+        confirmText={t('plotPage.aiChat.deleteConfirmText', { plotName: plot.name })}
       />
 
     </div>
