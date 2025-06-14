@@ -51,7 +51,7 @@ const DashboardIndex: React.FC = () => {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-primart hover:bg-primary/80 text-white font-bold py-2 px-4 rounded"
         >
           Încearcă din nou
         </button>
@@ -103,7 +103,7 @@ const DashboardIndex: React.FC = () => {
             <StatsCard
               title="Acțiuni Active"
               value={stats.activeActions}
-              description="În desfășurare acum"
+              description="Acțiuni în ne-finalizate"
               icon={Activity}
               color="blue"
               onClick={() => setShowActiveActionsModal(true)}

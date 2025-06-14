@@ -64,7 +64,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities, onNavigate,
           </div>
           <p className="text-gray-500 mb-4">Nu există activitate recentă</p>
           <button
-            onClick={() => onNavigate('/plots')}
+            onClick={() => onNavigate('/app/plots')}
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
             Începe prin a crea un teren →

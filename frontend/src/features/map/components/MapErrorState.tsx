@@ -82,7 +82,7 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
           <div className="flex flex-col space-y-2">
             <button
               onClick={onRetry}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              className="bg-primary hover:bg-primary/80 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Încearcă din nou</span>

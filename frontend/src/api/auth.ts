@@ -27,6 +27,11 @@ export const authApi = {
     return response;
   },
 
+  register: async (payload: { name: string; email: string; phone: string; password: string }) => {
+    const response = await http.post(`${API_URL}/auth/register`, payload);
+    return response;
+  },
+
   verify2FA: async (credentials: TwoFactorCredentials) => {
     const tempToken = localStorage.getItem('tempToken');
     const response = await http.post(`${API_URL}/auth/verify-2fa`, credentials, {

@@ -4,6 +4,25 @@ export interface LoginFormType {
     rememberMe: boolean;
 }
 
+export interface RegisterFormType {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+}
+
+export interface RegisterApiPayload {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
 export interface TwoFactorFormType {
     token: string;
     rememberMe: boolean;

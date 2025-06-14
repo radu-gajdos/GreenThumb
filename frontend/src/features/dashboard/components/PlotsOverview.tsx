@@ -81,7 +81,7 @@ const PlotsOverview: React.FC<PlotsOverviewProps> = ({ plots, onNavigate, onPlot
           <p className="text-gray-500 mb-4">Nu aveți terenuri create</p>
           <button
             onClick={() => onNavigate('/app/plots')}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
+            className="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg font-medium"
           >
             Creează primul teren
           </button>

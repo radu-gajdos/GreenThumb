@@ -95,6 +95,7 @@ const calculateStats = (plots: Plot[]): DashboardStats => {
           activeActions++;
         } else if (action.status === 'planned') {
           upcomingActions++;
+          activeActions++;
         }
       });
     }
