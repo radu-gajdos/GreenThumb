@@ -1,7 +1,6 @@
 import React from "react"
 import { Route, Routes, Navigate } from 'react-router-dom';
-import Index from './pages/Index';
-import DashboardIndex from "./components/DashboardIndex";
+import DashboardIndex from "./pages/DashboardIndex";
 
 const DashboardRoutes: React.FC = () => {
   return (

@@ -10,14 +10,14 @@ import {
   BarChart3
 } from 'lucide-react';
 import { useDashboardData } from '../hooks/useDashboardData';
-import StatsCard from './StatsCard';
-import RecentActivity from './RecentActivity';
-import PlotsOverview from './PlotsOverview';
-import ActiveActionsModal from './modals/ActiveActionsModal';
-import TodayActions from './TodaysActions';
 import { CalendarEvent } from '@/features/calendar/types/calendar';
-import OverdueActionsModal from './modals/OverdueActionsModal';
 import PlotViewModal from '@/features/plots/pages/PlotPage/PlotViewModal';
+import ActiveActionsModal from '../components/modals/ActiveActionsModal';
+import OverdueActionsModal from '../components/modals/OverdueActionsModal';
+import PlotsOverview from '../components/PlotsOverview';
+import RecentActivity from '../components/RecentActivity';
+import StatsCard from '../components/StatsCard';
+import TodayActions from '../components/TodaysActions';
 
 const DashboardIndex: React.FC = () => {
   const { t } = useTranslation();
