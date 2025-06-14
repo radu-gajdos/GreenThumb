@@ -564,5 +564,79 @@
                 "description": "Choose a note from the sidebar to see the full content."
             }
         }
+    },
+    "mapControls": {
+        "satellite": "Satellite",
+        "satelliteDescription": "Satellite imagery",
+        "street": "Street",
+        "streetDescription": "Street map view",
+        "changeLayer": "Change map type",
+        "layerType": "Map Type",
+        "showPlots": "Show plots",
+        "hidePlots": "Hide plots",
+        "resetView": "Reset view"
+    },
+    "mapErrorState": {
+        "network": {
+            "title": "Connection issue",
+            "description": "Check your internet connection and try again."
+        },
+        "data": {
+            "title": "Data loading error",
+            "description": "We couldn't retrieve the plots data from the database."
+        },
+        "permission": {
+            "title": "Access denied",
+            "description": "You don't have the required permissions to view this map."
+        },
+        "unknown": {
+            "title": "Map loading error",
+            "description": "An unexpected error occurred. Please try again."
+        },
+        "technicalDetails": "Technical details",
+        "tryAgain": "Try again",
+        "reloadPage": "Reload page",
+        "supportNote": "If the issue persists, please contact support."
+    },
+    "mapLoadingState": {
+        "message": "Loading map",
+        "subMessage": "Fetching plot data..."
+    },
+    "plotMarker": {
+        "area": "Area",
+        "soil": "Soil",
+        "soilType": "Soil type",
+        "status": "Status",
+        "active": "Active",
+        "created": "Created",
+        "viewDetails": "View details",
+        "clickHint": "Click to see more details"
+    },
+    "plotMap": {
+        "header": {
+            "title": "Plot Map",
+            "plotsFound": "{{count}} plots found",
+            "searchingPlots": "Searching plots..."
+        },
+        "controls": {
+            "visible": "Visible",
+            "hidden": "Hidden"
+        },
+        "footer": {
+            "plots": "plots",
+            "totalHectares": "total hectares",
+            "activePlots": "Active plots"
+        },
+        "tileLayer": {
+            "satellite": {
+                "attribution": "Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics"
+            },
+            "street": {
+                "attribution": "© OpenStreetMap contributors"
+            },
+            "terrain": {
+                "attribution": "© OpenTopoMap contributors"
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ import { LatLngExpression } from 'leaflet';
 import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import { MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Plot } from '@/features/plots/interfaces/plot';
 import MapControls, { MapLayerType } from '../components/MapControls';
 import MapLoadingState from '../components/MapLoadingState';
@@ -71,6 +72,8 @@ const PlotMap: React.FC<PlotMapProps> = ({
   showControls = true,
   className = ""
 }) => {
+  const { t } = useTranslation();
+
   // Use custom hook for map data
   const {
     plots,
@@ -117,22 +120,22 @@ const PlotMap: React.FC<PlotMapProps> = ({
       case 'satellite':
         return {
           url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          attribution: "Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
+          attribution: t('plotMap.tileLayer.satellite.attribution')
         };
       case 'street':
         return {
           url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          attribution: "© OpenStreetMap contributors"
+          attribution: t('plotMap.tileLayer.street.attribution')
         };
       case 'terrain':
         return {
           url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-          attribution: "© OpenTopoMap contributors"
+          attribution: t('plotMap.tileLayer.terrain.attribution')
         };
       default:
         return {
           url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          attribution: "Tiles © Esri — Sursa: Esri, Maxar, Earthstar Geographics"
+          attribution: t('plotMap.tileLayer.satellite.attribution')
         };
     }
   };
@@ -148,9 +151,14 @@ const PlotMap: React.FC<PlotMapProps> = ({
             <MapPin className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">Harta Terenurilor</h3>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {t('plotMap.header.title')}
+            </h3>
             <p className="text-sm text-gray-500">
-              {hasPlots ? `${plotsCount} terenuri găsite` : 'Căutare terenuri...'}
+              {hasPlots 
+                ? t('plotMap.header.plotsFound', { count: plotsCount })
+                : t('plotMap.header.searchingPlots')
+              }
             </p>
           </div>
         </div>
@@ -165,7 +173,10 @@ const PlotMap: React.FC<PlotMapProps> = ({
                   : 'bg-gray-100 text-gray-700 border border-gray-200'
               }`}
             >
-              {showPlots ? 'Vizibile' : 'Ascunse'}
+              {showPlots 
+                ? t('plotMap.controls.visible')
+                : t('plotMap.controls.hidden')
+              }
             </button>
           </div>
         )}
@@ -228,16 +239,16 @@ const PlotMap: React.FC<PlotMapProps> = ({
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-4 text-gray-600">
               <span>
-                <strong>{plotsCount}</strong> terenuri
+                <strong>{plotsCount}</strong> {t('plotMap.footer.plots')}
               </span>
               <span>
-                <strong>{totalArea.toFixed(2)}</strong> hectare total
+                <strong>{totalArea.toFixed(2)}</strong> {t('plotMap.footer.totalHectares')}
               </span>
             </div>
             
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-gray-600">Terenuri active</span>
+              <span className="text-gray-600">{t('plotMap.footer.activePlots')}</span>
             </div>
           </div>
         </div>

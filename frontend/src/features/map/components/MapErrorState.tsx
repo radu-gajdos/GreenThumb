@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Wifi, MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface MapErrorStateProps {
   error: string;
@@ -12,8 +13,10 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
   error,
   onRetry,
   errorType = 'unknown',
-  className = ""
+  className = "",
 }) => {
+  const { t } = useTranslation();
+
   const getErrorIcon = () => {
     switch (errorType) {
       case 'network':
@@ -28,29 +31,11 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
   };
 
   const getErrorTitle = () => {
-    switch (errorType) {
-      case 'network':
-        return 'Probleme de conexiune';
-      case 'data':
-        return 'Eroare la încărcarea datelor';
-      case 'permission':
-        return 'Acces restricționat';
-      default:
-        return 'Eroare la încărcarea hărții';
-    }
+    return t(`mapErrorState.${errorType}.title`);
   };
 
   const getErrorDescription = () => {
-    switch (errorType) {
-      case 'network':
-        return 'Verifică conexiunea la internet și încearcă din nou.';
-      case 'data':
-        return 'Nu am putut prelua datele terenurilor din baza de date.';
-      case 'permission':
-        return 'Nu ai permisiunile necesare pentru a accesa această hartă.';
-      default:
-        return 'A apărut o eroare neașteptată. Te rugăm să încerci din nou.';
-    }
+    return t(`mapErrorState.${errorType}.description`);
   };
 
   return (
@@ -59,7 +44,6 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
         {/* Error icon */}
         <div className="mb-6">
           {getErrorIcon()}
-          <div className="mx-auto" />
         </div>
 
         {/* Error content */}
@@ -73,7 +57,7 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
             </p>
             {error && (
               <p className="text-gray-500 text-xs bg-gray-50 p-2 rounded border">
-                Detalii tehnice: {error}
+                {t("mapErrorState.technicalDetails")}: {error}
               </p>
             )}
           </div>
@@ -85,21 +69,21 @@ const MapErrorState: React.FC<MapErrorStateProps> = ({
               className="bg-primary hover:bg-primary/80 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
               <RefreshCw className="w-4 h-4" />
-              <span>Încearcă din nou</span>
+              <span>{t("mapErrorState.tryAgain")}</span>
             </button>
-            
+
             <button
               onClick={() => window.location.reload()}
               className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
             >
-              Reîncarcă pagina
+              {t("mapErrorState.reloadPage")}
             </button>
           </div>
 
           {/* Help text */}
           <div className="pt-2 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              Dacă problema persistă, contactează echipa de suport.
+              {t("mapErrorState.supportNote")}
             </p>
           </div>
         </div>
