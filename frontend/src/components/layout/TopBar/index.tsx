@@ -14,7 +14,7 @@ export const TopBar = () => {
         
         <div className="flex items-end gap-2 justify justify-end">
           <LanguageSelector />
-          <ThemeSwitcher />
+          {/* <ThemeSwitcher /> */}
           {/* <NotificationsMenu /> */}
         </div>
       </div>

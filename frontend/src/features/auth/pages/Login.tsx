@@ -145,7 +145,7 @@ const Login: React.FC = () => {
       {/* Right panel: decorative image for large screens */}
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="https://ui.shadcn.com/placeholder.svg"
+          src="/login.jpg"
           alt="Decorative"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

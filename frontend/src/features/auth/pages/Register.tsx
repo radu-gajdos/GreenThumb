@@ -65,10 +65,10 @@ const Register: React.FC = () => {
       };
 
       const response = await authApi.register(payload);
-      
+
       // Show success message
       setSuccessMessage(response.data.message);
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login');
@@ -102,17 +102,17 @@ const Register: React.FC = () => {
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center gap-2">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg 
-                      className="w-8 h-8 text-green-600" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-8 h-8 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M5 13l4 4L19 7" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
                       />
                     </svg>
                   </div>
@@ -124,9 +124,9 @@ const Register: React.FC = () => {
                     Redirecting to login page in 3 seconds...
                   </p>
                 </div>
-                
-                <a 
-                  href="/login" 
+
+                <a
+                  href="/login"
                   className="text-sm underline underline-offset-4 hover:text-primary"
                 >
                   Go to login page now
@@ -139,7 +139,7 @@ const Register: React.FC = () => {
         {/* Right panel: decorative image for large screens */}
         <div className="relative hidden bg-muted lg:block">
           <img
-            src="https://ui.shadcn.com/placeholder.svg"
+            src="/login.jpg"
             alt="Decorative"
             className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           />
@@ -177,7 +177,7 @@ const Register: React.FC = () => {
       {/* Right panel: decorative image for large screens */}
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="https://ui.shadcn.com/placeholder.svg"
+          src="/login.jpg"
           alt="Decorative"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
