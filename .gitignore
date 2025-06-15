@@ -5,3 +5,5 @@ node_modules/
 
 .DS_Store
 ai-model/model_global_enhanced.pkl
+/ai-model/venv/*
+/ai-model/Production_Crops_Livestock_E_All_Data_(Normalized).csv
