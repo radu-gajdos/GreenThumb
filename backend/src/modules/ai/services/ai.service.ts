@@ -28,7 +28,7 @@ export class AiService {
   constructor(
     @InjectRepository(Plot)
     private readonly plotRepository: Repository<Plot>,
-  ) {}
+  ) { }
 
   async getRecommendationFromFieldData(data: FieldData): Promise<string> {
     const prompt = this.buildPrompt(data);
@@ -66,9 +66,24 @@ export class AiService {
       throw new Error(`Plot with ID ${data.plotId} not found`);
     }
 
+
     const recentActions = plot.actions
+      .filter(action => action.type !== 'soil_reading')
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 5);
+
+    console.log('Recent actions:', recentActions);
+
+    // Find the most recent soil reading
+    const mostRecentSoilReading = plot.actions
+      .filter(action => action.type === 'soil_reading')
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .shift();
+
+    // Add the most recent soil reading to recentActions if it exists
+    if (mostRecentSoilReading) {
+      recentActions.push(mostRecentSoilReading);
+    }
 
     const coordinates = this.extractCentroidCoordinates(plot.boundary);
 
@@ -134,8 +149,6 @@ ${instruction}
     conversationHistory?: ConversationMessage[],
     coordinates?: string
   ): any[] {
-    const isRomanian = language === 'ro';
-
     const systemPrompt = this.buildSystemPrompt(plot, recentActions, language, coordinates);
 
     const messages = [
@@ -170,9 +183,12 @@ ${instruction}
     coordinates?: string
   ): string {
     const isRomanian = language === 'ro';
+    const isGerman = language === 'de';
 
     const intro = isRomanian
       ? 'Ești un asistent agricol inteligent specializat în monitorizarea și gestionarea parcelelor agricole. Ai acces la informații despre această parcelă și istoricul conversațiilor.'
+      : isGerman
+      ? 'Sie sind ein intelligenter landwirtschaftlicher Assistent, der auf die Überwachung und Verwaltung landwirtschaftlicher Flächen spezialisiert ist. Sie haben Zugriff auf Informationen über diese Parzelle und den Konversationsverlauf.'
       : 'You are an intelligent agriculture assistant specialized in monitoring and managing agricultural plots. You have access to information about this plot and conversation history.';
 
     const actionDetails = recentActions.map((action) => {
@@ -181,11 +197,37 @@ ${instruction}
 
       if (action.type === 'harvesting') {
         const harvesting = action as any;
-        details += `, Yield: ${harvesting.cropYield} ${harvesting.comments ? `, Comments: ${harvesting.comments}` : ''}`;
+        details += `Yield: ${harvesting.cropYield} ${harvesting.comments ? `, Comments: ${harvesting.comments}` : ''}`;
+
       } else if (action.type === 'treatment') {
         const treatment = action as any;
-        details += `, Pesticide: ${treatment.pesticideType}, Target: ${treatment.targetPest}, Dosage: ${treatment.dosage}, Method: ${treatment.applicationMethod}`;
+        details += `Pesticide: ${treatment.pesticideType}, Target: ${treatment.targetPest}, Dosage: ${treatment.dosage}, Method: ${treatment.applicationMethod}`;
+
+      } else if (action.type === 'fertilizing') {
+        const fertilizing = action as any;
+        details += `Fertilizer: ${fertilizing.fertilizerType}, Rate: ${fertilizing.applicationRate}, Method: ${fertilizing.method}`;
+
+      } else if (action.type === 'planting') {
+        const planting = action as any;
+        details += `Crop: ${planting.cropType}` +
+          (planting.variety ? `, Variety: ${planting.variety}` : '') +
+          (planting.seedingRate ? `, Seeding Rate: ${planting.seedingRate}` : '');
+
+      } else if (action.type === 'soil_reading') {
+        const soil = action as any;
+        details += `pH: ${soil.ph}` +
+          (soil.nitrogen != null ? `, N: ${soil.nitrogen}` : '') +
+          (soil.phosphorus != null ? `, P: ${soil.phosphorus}` : '') +
+          (soil.potassium != null ? `, K: ${soil.potassium}` : '') +
+          (soil.organicMatter ? `, Organic Matter: ${soil.organicMatter}` : '');
+
+      } else if (action.type === 'watering') {
+        const watering = action as any;
+        details += `Method: ${watering.method}` +
+          (watering.amount != null ? `, Amount: ${watering.amount}` : '') +
+          (watering.waterSource ? `, Source: ${watering.waterSource}` : '');
       }
+
 
       return details;
     }).join('\n');
