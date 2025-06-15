@@ -54,27 +54,3 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
-
-/**
- * Formatează data într-un format ușor de citit
- */
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ro-RO', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    // hour: '2-digit',
-    // minute: '2-digit'
-  });
-}
-export function formatDateGeneral(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ro-RO', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    // hour: '2-digit',
-    // minute: '2-digit'
-  });
-}

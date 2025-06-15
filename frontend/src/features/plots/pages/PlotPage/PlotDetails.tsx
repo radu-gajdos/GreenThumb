@@ -26,7 +26,7 @@ import {
 import { Action } from '@/features/actions/interfaces/action';
 import { ActionApi } from '@/features/actions/api/action.api';
 import { MapPin, Layers, User, Map } from 'lucide-react';
-import { formatDateGeneral } from '@/lib/utils';
+import { formatDate } from '@/lib/formatDateTime';
 
 interface PlotDetailsProps {
   /** The plot object to render details for */
@@ -210,7 +210,7 @@ const PlotDetails: React.FC<PlotDetailsProps> = ({ plot, onActionsChange }) => {
             <h3 className="text-sm font-medium text-blue-800">{t('plotDetails.created')}</h3>
           </div>
           <p className="text-blue-900 font-medium">
-            {formatDateGeneral(plot.createdAt) || t('plotDetails.notAvailable')}
+            {formatDate(plot.createdAt) || t('plotDetails.notAvailable')}
           </p>
         </div>
       </div>

@@ -1,75 +1,1134 @@
 {
   "plotDetails": {
     "hectares": "hectare",
-    "soilType": "Tip sol",
-    "notSpecified": "Nespecificat",
+    "soilType": "Tipul solului",
     "topography": "Topografie",
-    "owner": "Proprietar",
-    "notAvailable": "—",
-    "created": "Creat la",
+    "created": "Creat",
+    "notSpecified": "Nu este specificat",
+    "notAvailable": "Nu este disponibil",
     "activityLog": "Jurnal de activități",
-    "addAction": "+ Adaugă acțiune",
-    "actionTypes": {
-      "planting": "Plantări",
-      "harvesting": "Recoltări",
-      "fertilizing": "Fertilizări",
-      "treatment": "Tratamente",
-      "watering": "Udări",
-      "soil_reading": "Analize sol"
-    }
+    "addAction": "Adaugă acțiune",
+    "viewAllActions": "Vezi toate acțiunile",
+    "allActions": "Toate acțiunile",
+    "deleteActionConfirm": "Ești sigur că vrei să ștergi această acțiune?"
+  },
+  "common": {
+    "close": "Închide"
   },
   "actionsList": {
-    "noActivities": "Nici o activitate înregistrată încă."
+    "noActivities": "Nu au fost înregistrate activități încă."
+  },
+  "plotPage": {
+    "error": {
+      "title": "Eroare",
+      "retry": "Încearcă din nou",
+      "noId": "ID-ul parcelei este necesar",
+      "unknown": "A apărut o eroare necunoscută"
+    },
+    "notFound": {
+      "title": "Parcela nu a fost găsită",
+      "message": "Informațiile despre parcela solicitată nu au putut fi găsite."
+    },
+    "aiChat": {
+      "title": "Chat AI",
+      "messagesCount": "{{count}} mesaj",
+      "messagesCount_plural": "{{count}} mesaje",
+      "clearHistoryTooltip": "Șterge istoricul conversației",
+      "clearHistoryLabel": "Șterge istoricul conversației",
+      "clearButton": "Șterge",
+      "noContent": "Mesaj fără conținut",
+      "saveTooltip": "Salvează ca notă",
+      "saveLabel": "Salvează mesajul ca notă de teren",
+      "saveButton": "Salvează",
+      "placeholder": "Începe o conversație cu asistentul AI pentru a primi sfaturi agricole personalizate pentru această parcelă.",
+      "inputPlaceholder": "Scrie mesajul tău aici...",
+      "sendLabel": "Trimite mesaj",
+      "errorLoadingHistory": "Eroare la încărcarea istoricului conversației",
+      "deleteConfirmText": "Ești sigur că vrei să ștergi întreaga conversație pentru parcela \"{{plotName}}\"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv."
+    }
+  },
+  "actionApi": {
+    "create": {
+      "success": "Acțiunea a fost creată cu succes.",
+      "error": "Nu s-a putut crea acțiunea."
+    },
+    "update": {
+      "success": "Acțiunea a fost actualizată cu succes.",
+      "error": "Nu s-a putut actualiza acțiunea."
+    },
+    "updateStatus": {
+      "success": "Starea acțiunii a fost actualizată cu succes.",
+      "error": "Nu s-a putut actualiza starea acțiunii."
+    },
+    "findOne": {
+      "error": "Nu s-a putut încărca acțiunea."
+    },
+    "findAll": {
+      "error": "Nu s-au putut încărca acțiunile."
+    },
+    "findByPlot": {
+      "error": "Nu s-au putut încărca acțiunile pentru această parcelă."
+    },
+    "getByDateRange": {
+      "error": "Nu s-au putut încărca acțiunile pentru perioada selectată."
+    },
+    "getOverdueActions": {
+      "error": "Nu s-au putut încărca acțiunile întârziate."
+    },
+    "delete": {
+      "success": "Acțiunea a fost ștearsă cu succes.",
+      "error": "Nu s-a putut șterge acțiunea."
+    }
+  },
+  "actionForm": {
+    "errors": {
+      "cropTypeRequired": "Tipul culturii este obligatoriu.",
+      "cropYieldRequired": "Randamentul este obligatoriu.",
+      "fertilizerTypeRequired": "Tipul îngrășământului este obligatoriu.",
+      "applicationRateRequired": "Doza de aplicare este obligatorie.",
+      "pesticideTypeRequired": "Tipul pesticidului este obligatoriu.",
+      "dosageRequired": "Dozajul este obligatoriu.",
+      "amountRequired": "Cantitatea de apă este obligatorie.",
+      "positiveNumber": "Valoarea trebuie să fie pozitivă.",
+      "minZero": "Valoarea nu poate fi negativă."
+    },
+    "types": {
+      "planting": "Plantare",
+      "harvesting": "Recoltare",
+      "fertilizing": "Fertilizare",
+      "treatment": "Tratament",
+      "watering": "Udare",
+      "soil_reading": "Analiză sol"
+    },
+    "status": {
+      "planned": "Planificat",
+      "inProgress": "În curs",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    },
+    "fields": {
+      "plannedDate": "Data planificată",
+      "status": "Starea",
+      "description": "Descriere",
+      "notes": "Note",
+      "cropType": "Tipul culturii",
+      "variety": "Soiul",
+      "seedingRate": "Norma de însămânțare",
+      "cropYield": "Randament (kg/ha)",
+      "fertilizerType": "Tipul îngrășământului",
+      "applicationRate": "Doza de aplicare (kg/ha)",
+      "applicationMethod": "Metoda de aplicare",
+      "pesticideType": "Tipul pesticidului",
+      "targetPest": "Dăunătorul țintă",
+      "dosage": "Dozaj (l/ha)",
+      "waterSource": "Sursa de apă",
+      "waterAmount": "Cantitatea (m³/ha)",
+      "phLevel": "Nivelul pH (0–14)",
+      "nitrogen": "Azot (mg/kg)",
+      "phosphorus": "Fosfor (mg/kg)",
+      "potassium": "Potasiu (mg/kg)",
+      "organicMatter": "Materie organică (%)"
+    },
+    "placeholders": {
+      "selectStatus": "Selectează starea",
+      "description": "Descrierea acțiunii",
+      "notes": "Note suplimentare",
+      "cropType": "ex., Grâu",
+      "variety": "ex., Dropia",
+      "seedingRate": "kg/ha",
+      "fertilizerType": "ex., Uree",
+      "applicationMethod": "ex., Împrăștiere",
+      "pesticideType": "ex., Glifosat",
+      "targetPest": "ex., Afide",
+      "treatmentMethod": "ex., Pulverizare",
+      "waterSource": "ex., Fântână",
+      "organicMatter": "ex., 3.5"
+    }
+  },
+  "actionTable": {
+    "type": "Tip",
+    "date": "Data",
+    "details": "Detalii",
+    "yield": "Randament",
+    "kg": "kg",
+    "na": "N/A"
+  },
+  "actionIndex": {
+    "title": "Acțiuni",
+    "addAction": "Adaugă acțiune",
+    "confirmDelete": "Ești sigur că vrei să ștergi această acțiune?"
+  },
+  "loginForm": {
+    "title": "Conectează-te la contul tău",
+    "subtitle": "Introdu email-ul de mai jos pentru a te conecta la contul tău",
+    "usernameLabel": "Nume utilizator",
+    "usernamePlaceholder": "test123",
+    "passwordLabel": "Parolă",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "Ai uitat parola?",
+    "rememberMe": "Ține-mă minte",
+    "errorTitle": "Eroare!",
+    "submit": "Conectare",
+    "loading": "Se încarcă...",
+    "noAccount": "Nu ai un cont?",
+    "signUp": "Înregistrează-te"
+  },
+  "registerForm": {
+    "title": "Creează-ți contul",
+    "subtitle": "Introdu detaliile de mai jos pentru a-ți crea contul",
+    "nameLabel": "Nume complet",
+    "namePlaceholder": "Ion Popescu",
+    "emailLabel": "Adresa de email",
+    "emailPlaceholder": "ion@exemplu.com",
+    "phoneLabel": "Numărul de telefon",
+    "phonePlaceholder": "+40123456789",
+    "passwordLabel": "Parolă",
+    "passwordPlaceholder": "********",
+    "confirmPasswordLabel": "Confirmă parola",
+    "confirmPasswordPlaceholder": "********",
+    "passwordTooShort": "Parola trebuie să aibă cel puțin 6 caractere",
+    "passwordMismatch": "Parolele nu se potrivesc",
+    "errorTitle": "Eroare!",
+    "submit": "Creează cont",
+    "loading": "Se creează contul...",
+    "hasAccount": "Ai deja un cont?",
+    "signIn": "Conectează-te"
+  },
+  "twoStepForm": {
+    "title": "Verificare în doi pași",
+    "messages": {
+      "app": "Te rugăm să introduci codul din aplicația ta de autentificare",
+      "email": "Te rugăm să introduci codul trimis pe email"
+    },
+    "fields": {
+      "code": "Cod"
+    },
+    "placeholders": {
+      "code": "123456"
+    },
+    "errorTitle": "Eroare!",
+    "buttons": {
+      "login": "Conectare",
+      "loading": "Se încarcă...",
+      "back": "Înapoi la conectare"
+    }
+  },
+  "calendarFilters": {
+    "open": "Filtre",
+    "clearFilters": "Șterge filtrele",
+    "clearAll": "Șterge toate",
+    "title": "Filtre calendar",
+    "actionTypes": "Tipuri de acțiuni",
+    "plots": "Parcele",
+    "status": {
+      "label": "Starea",
+      "planned": "Planificat",
+      "in_progress": "În curs",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    },
+    "overdue": {
+      "title": "Afișează întârziate",
+      "subtitle": "Include acțiunile care au depășit termenul"
+    }
+  },
+  "calendarToolbar": {
+    "today": "Astăzi",
+    "view": {
+      "month": "Lună",
+      "week": "Săptămână",
+      "list": "Listă"
+    }
+  },
+  "calendarListView": {
+    "open": "Filtre",
+    "clearFilters": "Șterge filtrele",
+    "clearAll": "Șterge toate",
+    "title": "Filtre calendar",
+    "actionTypes": "Tipuri de acțiuni",
+    "plots": "Parcele",
+    "status": {
+      "label": "Starea",
+      "planned": "Planificat",
+      "in_progress": "În curs",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    },
+    "overdue": {
+      "title": "Afișează întârziate",
+      "subtitle": "Include acțiunile care au depășit termenul"
+    }
+  },
+  "calendarMonthView": {
+    "weekdays": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mie",
+      "thu": "Joi",
+      "fri": "Vin",
+      "sat": "Sâm",
+      "sun": "Dum"
+    },
+    "more": "+{{count}} în plus"
+  },
+  "calendarWeekView": {
+    "weekdays": {
+      "mon": "Luni",
+      "tue": "Marți",
+      "wed": "Miercuri",
+      "thu": "Joi",
+      "fri": "Vineri",
+      "sat": "Sâmbătă",
+      "sun": "Duminică"
+    }
+  },
+  "calendarHeader": {
+    "today": {
+      "title": "Astăzi",
+      "description": "evenimente programate"
+    },
+    "week": {
+      "title": "Săptămâna aceasta",
+      "description": "evenimente planificate"
+    },
+    "overdue": {
+      "title": "Întârziate",
+      "description": "acțiuni întârziate"
+    },
+    "completed": {
+      "title": "Finalizate",
+      "description": "luna aceasta"
+    }
+  },
+  "calendarIndex": {
+    "in": "în",
+    "days": "zile",
+    "today": "Astăzi",
+    "yesterday": "Ieri",
+    "tomorrow": "Mâine",
+    "errorFallbackTitle": "Eroare la încărcarea calendarului",
+    "errorFallbackDescription": "A apărut o problemă la încărcarea datelor calendarului.",
+    "retry": "Încearcă din nou",
+    "dialogActionDetails": "Detalii acțiune"
+  },
+  "calendarEventDetails": {
+    "status": {
+      "planned": "Planificat",
+      "in_progress": "În curs",
+      "completed": "Finalizat",
+      "cancelled": "Anulat",
+      "unknown": "Necunoscut"
+    },
+    "overdue": {
+      "title": "Acțiune întârziată",
+      "subtitle": "Această acțiune a depășit data programată"
+    },
+    "sections": {
+      "scheduledDate": "Data programată",
+      "description": "Descriere",
+      "notes": "Note",
+      "info": "Informații",
+      "fertilizing": "Detalii fertilizare",
+      "harvesting": "Detalii recoltare"
+    },
+    "fields": {
+      "type": "Tip",
+      "rate": "Doza de aplicare",
+      "method": "Metoda",
+      "yield": "Randament",
+      "comments": "Comentarii",
+      "created": "Creat",
+      "updated": "Actualizat"
+    },
+    "buttons": {
+      "start": "Începe",
+      "complete": "Marchează ca finalizat",
+      "cancel": "Anulează",
+      "stop": "Oprește",
+      "reopen": "Redeschide",
+      "close": "Închide"
+    },
+    "loading": "Se actualizează starea..."
+  },
+  "activeActions": {
+    "status": {
+      "planned": "Planificat",
+      "in_progress": "În curs",
+      "cancelled": "Anulat",
+      "completed": "Finalizat",
+      "overdue": "Întârziat"
+    },
+    "summary": {
+      "in_progress": "În curs",
+      "planned": "Planificat",
+      "overdue": "Întârziat",
+      "today": "Astăzi"
+    },
+    "filters": {
+      "searchPlaceholder": "Caută activități...",
+      "statusPlaceholder": "Starea",
+      "typePlaceholder": "Tipul acțiunii",
+      "reset": "Resetează filtrele"
+    },
+    "empty": {
+      "title": "Nicio activitate activă"
+    },
+    "labels": {
+      "created": "Creat",
+      "updated": "Actualizat",
+      "scheduled": "Programat",
+      "notes": "Note",
+      "unknown": "Necunoscut"
+    },
+    "buttons": {
+      "finish": "Finalizează",
+      "cancel": "Anulează"
+    }
+  },
+  "activeActionsModal": {
+    "title": "Activități active",
+    "description": "Gestionează activitățile în curs și planificate pentru parcelele tale."
+  },
+  "overdueActions": {
+    "stats": {
+      "total": "Total întârziate",
+      "lastWeek": "1–7 zile",
+      "lastMonth": "8–30 zile",
+      "critical": "Peste 30 zile"
+    },
+    "status": {
+      "in_progress": "În curs",
+      "planned": "Planificat",
+      "completed": "Finalizat",
+      "cancelled": "Anulat"
+    },
+    "search": "Caută activități întârziate...",
+    "type": "Tipul activității",
+    "all": "Toate",
+    "reset": "Resetează filtrele",
+    "noOverdue": "Felicitări! Nu există activități întârziate.",
+    "noResults": "Niciun rezultat nu se potrivește cu filtrele selectate.",
+    "daysOverdue": "{{count}} zi întârziere",
+    "daysOverdue_plural": "{{count}} zile întârziere",
+    "created": "Creat",
+    "updated": "Actualizat",
+    "scheduled": "Programat",
+    "notes": "Note",
+    "completeNow": "Marchează ca finalizat",
+    "startNow": "Începe acum",
+    "cancel": "Anulează",
+    "unknown": "Necunoscut"
+  },
+  "overdueActionsModal": {
+    "title": "Activități întârziate",
+    "description": "Acțiuni care au depășit data programată și necesită atenție imediată."
+  },
+  "plotsOverview": {
+    "title": "Parcelele mele",
+    "emptyTitle": "Parcelele mele",
+    "emptyMessage": "Nu ai nicio parcelă creată",
+    "createFirst": "Creează prima ta parcelă",
+    "viewAll": "Vezi toate →",
+    "viewAllWithCount": "Vezi toate parcelele ({{count}})",
+    "sizeUnit": "{{size}} ha",
+    "activeActions": "{{count}} active",
+    "completedActions": "{{count}} finalizate",
+    "days": "{{count}} zile",
+    "weeks": "{{count}} săptămâni",
+    "status": {
+      "active": "Activă",
+      "planning": "Planificare",
+      "harvested": "Recoltată",
+      "fallow": "Odihnă",
+      "unknown": "Necunoscut"
+    }
+  },
+  "recentActivity": {
+    "title": "Activitate recentă",
+    "emptyMessage": "Nu a fost găsită activitate recentă",
+    "createFirstPlot": "Începe prin a crea o parcelă →",
+    "viewAll": "Vezi toate →",
+    "time": {
+      "now": "acum",
+      "minutes": "{{count}} min",
+      "hours": "{{count}} h",
+      "days": "{{count}} z"
+    }
+  },
+  "todayActions": {
+    "title": "Acțiunile de astăzi",
+    "noEvents": "Nicio acțiune programată pentru astăzi",
+    "now": "ACUM",
+    "currentCount": "{{count}} acum",
+    "inMinutes": "în {{count}} min",
+    "inHours": "în {{hours}}h {{minutes}}min",
+    "minutesAgo": "{{count}} min în urmă",
+    "hoursAgo": "{{hours}}h {{minutes}}min în urmă"
+  },
+  "dashboardIndex": {
+    "errorTitle": "Eroare la încărcarea panoului de control",
+    "retryButton": "Încearcă din nou",
+    "stats": {
+      "activeActions": "Acțiuni active",
+      "activeActionsDescription": "Acțiuni nefinalizate",
+      "upcomingWeek": "Următoarele 7 zile",
+      "scheduledActions": "Acțiuni programate",
+      "overdueActions": "Acțiuni întârziate",
+      "overdueDescription": "Întârziate și nefinalizate",
+      "totalPlots": "Total parcele",
+      "totalArea": "{{area}} hectare în total",
+      "avgSize": "Mărimea medie",
+      "avgArea": "hectare per parcelă"
+    }
+  },
+  "fieldNoteContent": {
+    "editTitlePlaceholder": "Titlul notei de teren...",
+    "noteContentLabel": "Conținutul notei",
+    "noteContentPlaceholder": "Scrie conținutul notei...",
+    "edit": "Editează",
+    "delete": "Șterge",
+    "save": "Salvează",
+    "saving": "Se salvează...",
+    "cancel": "Anulează",
+    "modifiedBadge": "Modificat",
+    "lastModified": "Ultima modificare:",
+    "at": "la",
+    "deleteConfirm": "Ești sigur că vrei să ștergi nota \"{{title}}\"? Această acțiune nu poate fi anulată."
+  },
+  "fieldNotesSidebar": {
+    "createNew": "Creează notă nouă",
+    "today": "Astăzi",
+    "yesterday": "Ieri",
+    "daysAgo": "{{count}} zile în urmă"
+  },
+  "saveMessageModal": {
+    "createTitle": "Creează o notă nouă",
+    "saveTitle": "Salvează mesajul ca notă",
+    "createDescription": "Scrie manual o notă pentru una din parcelele tale.",
+    "saveDescription": "Transformă acest sfat AI într-o notă permanentă pentru parcela ta.",
+    "plot": "Parcela",
+    "selectPlot": "Selectează o parcelă",
+    "title": "Titlu",
+    "generateFromDate": "Generează din dată",
+    "generateFromMessage": "Generează titlu",
+    "titlePlaceholder": "Introdu un titlu pentru această notă",
+    "noteContent": "Conținutul notei",
+    "messageContent": "Conținutul mesajului",
+    "noteContentPlaceholder": "Scrie conținutul notei...",
+    "messageContentPlaceholder": "Conținutul mesajului...",
+    "cancel": "Anulează",
+    "create": "Creează nota",
+    "save": "Salvează nota",
+    "creating": "Se creează...",
+    "saving": "Se salvează...",
+    "generatedTitlePrefix": "Notă"
+  },
+  "fieldNotes": {
+    "unknownPlot": "Parcelă necunoscută",
+    "empty": {
+      "title": "Nu există note salvate",
+      "description": "Nu ai încă nicio notă salvată din conversațiile AI. Începe să salvezi sfaturile utile din chat-ul AI pentru a le vedea aici."
+    },
+    "sidebar": {
+      "title": "Notele mele",
+      "notesCount": "{{count}} note salvate"
+    },
+    "content": {
+      "selectNote": {
+        "title": "Selectează o notă pentru vizualizare",
+        "description": "Alege o notă din bara laterală pentru a vedea conținutul complet."
+      }
+    }
+  },
+  "mapControls": {
+    "satellite": "Satelit",
+    "satelliteDescription": "Imagini din satelit",
+    "street": "Stradă",
+    "streetDescription": "Vedere hartă stradală",
+    "changeLayer": "Schimbă tipul hărții",
+    "layerType": "Tipul hărții",
+    "showPlots": "Afișează parcelele",
+    "hidePlots": "Ascunde parcelele",
+    "resetView": "Resetează vizualizarea"
+  },
+  "mapErrorState": {
+    "network": {
+      "title": "Problemă de conexiune",
+      "description": "Verifică conexiunea la internet și încearcă din nou."
+    },
+    "data": {
+      "title": "Eroare la încărcarea datelor",
+      "description": "Nu am putut prelua datele parcelelor din baza de date."
+    },
+    "permission": {
+      "title": "Acces refuzat",
+      "description": "Nu ai permisiunile necesare pentru a vizualiza această hartă."
+    },
+    "unknown": {
+      "title": "Eroare la încărcarea hărții",
+      "description": "A apărut o eroare neașteptată. Te rugăm să încerci din nou."
+    },
+    "technicalDetails": "Detalii tehnice",
+    "tryAgain": "Încearcă din nou",
+    "reloadPage": "Reîncarcă pagina",
+    "supportNote": "Dacă problema persistă, te rugăm să contactezi suportul."
+  },
+  "mapLoadingState": {
+    "message": "Se încarcă harta",
+    "subMessage": "Se preiau datele parcelelor..."
+  },
+  "plotMarker": {
+    "area": "Suprafața",
+    "soil": "Sol",
+    "soilType": "Tipul solului",
+    "status": "Starea",
+    "active": "Activă",
+    "created": "Creat",
+    "viewDetails": "Vezi detaliile",
+    "clickHint": "Fă clic pentru mai multe detalii"
+  },
+  "plotMap": {
+    "header": {
+      "title": "Harta parcelelor",
+      "plotsFound": "{{count}} parcele găsite",
+      "searchingPlots": "Se caută parcele..."
+    },
+    "controls": {
+      "visible": "Vizibil",
+      "hidden": "Ascuns"
+    },
+    "footer": {
+      "plots": "parcele",
+      "totalHectares": "hectare în total",
+      "activePlots": "Parcele active"
+    },
+    "tileLayer": {
+      "satellite": {
+        "attribution": "Tiles © Esri — Sursă: Esri, Maxar, Earthstar Geographics"
+      },
+      "street": {
+        "attribution": "© Contribuitorii OpenStreetMap"
+      },
+      "terrain": {
+        "attribution": "© Contribuitorii OpenTopoMap"
+      }
+    }
+  },
+  "generalAIChat": {
+    "noPlots": "Nu ai nicio parcelă creată. Creează o parcelă pentru a începe conversații.",
+    "loadError": "Nu s-au putut încărca conversațiile. Te rugăm să verifici conexiunea.",
+    "errorTitle": "Eroare la încărcarea conversațiilor",
+    "retry": "Încearcă din nou",
+    "noPlotsTitle": "Nu există parcele disponibile",
+    "noPlotsDescription": "Nu ai creat încă nicio parcelă. Creează o parcelă pentru a începe conversații cu AI-ul."
+  },
+  "chatContent": {
+    "noConversation": {
+      "title": "Selectează o parcelă",
+      "description": "Alege o parcelă din bara laterală pentru a începe o conversație cu AI-ul despre managementul terenului."
+    },
+    "header": {
+      "assistant": "Asistent agricol",
+      "messagesCount": "{{count}} mesaje"
+    },
+    "delete": {
+      "button": "Șterge conversația",
+      "deleting": "Se șterge...",
+      "confirmText": "Ești sigur că vrei să ștergi întreaga conversație pentru parcela \"{{plotName}}\"? Această acțiune nu poate fi anulată și toate mesajele vor fi pierdute definitiv."
+    },
+    "messages": {
+      "noContent": "Mesaj fără conținut",
+      "save": "Salvează",
+      "saveTooltip": "Salvează ca notă"
+    },
+    "welcome": {
+      "title": "Bun venit în chat-ul pentru {{plotName}}"
+    },
+    "input": {
+      "placeholder": "Scrie mesajul tău aici...",
+      "sendButton": "Trimite mesaj"
+    },
+    "errors": {
+      "deleteError": "Eroare la ștergerea conversației"
+    }
+  },
+  "chatSidebar": {
+    "header": {
+      "title": "Chat AI general"
+    },
+    "search": {
+      "placeholder": "Caută parcele..."
+    },
+    "time": {
+      "now": "Acum",
+      "minutes": "{{count}} min",
+      "hours": "{{count}}h",
+      "yesterday": "Ieri",
+      "days": "{{count}} zile"
+    },
+    "messages": {
+      "noConversation": "Încă nu există conversație",
+      "invalidFormat": "Mesaj în format invalid",
+      "invalidContent": "Mesaj fără conținut valid",
+      "noContent": "Mesaj fără conținut"
+    },
+    "empty": {
+      "noResults": "Nu s-au găsit parcele",
+      "noConversations": "Nu există conversații active"
+    },
+    "conversation": {
+      "messagesCount": "{{count}} mesaje"
+    },
+    "footer": {
+      "conversationsCount": "{{count}} conversație",
+      "conversationsCount_plural": "{{count}} conversații"
+    }
+  },
+  "plotForm": {
+    "fields": {
+      "name": "Nume",
+      "area": "Suprafața (ha)",
+      "topography": "Topografie",
+      "soilType": "Tipul solului",
+      "boundary": "Limitele parcelei"
+    },
+    "placeholders": {
+      "name": "Introdu numele parcelei",
+      "topography": "Ex: Deal, Vale, Pantă...",
+      "soilType": "Ex: Argilă, Lut, Cernoziom..."
+    }
   },
   "actionItem": {
+    "types": {
+      "planting": "Plantare",
+      "harvesting": "Recoltare",
+      "fertilizing": "Fertilizare",
+      "treatment": "Tratament",
+      "watering": "Udare",
+      "soil_reading": "Analiză sol"
+    },
     "labels": {
-      "crop": "Cultura",
-      "variety": "Varietate",
-      "seedingRate": "Rată de semănat",
-      "date": "Dată",
-      "yield": "Recoltă",
-      "comments": "Comentarii",
-      "fertilizer": "Fertilizant",
-      "rate": "Rată",
-      "method": "Metodă",
-      "pesticide": "Pesticid",
-      "targetPest": "Dăunător țintă",
-      "dosage": "Doză",
-      "amount": "Cantitate",
-      "source": "Sursă",
-      "ph": "pH",
-      "nitrogen": "Azot",
-      "phosphorus": "Fosfor",
-      "potassium": "Potasiu",
-      "organicMatter": "Materie organică"
+      "crop": "Cultură:",
+      "variety": "Soi:",
+      "seedingRate": "Norma de însămânțare:",
+      "yield": "Randament:",
+      "fertilizer": "Îngrășământ:",
+      "rate": "Doză:",
+      "method": "Metodă:",
+      "pesticide": "Pesticid:",
+      "targetPest": "Dăunător țintă:",
+      "dosage": "Dozaj:",
+      "amount": "Cantitate:",
+      "source": "Sursă:",
+      "ph": "pH:",
+      "nitrogen": "Azot:",
+      "phosphorus": "Fosfor:",
+      "potassium": "Potasiu:",
+      "organicMatter": "Materie organică:",
+      "date": "Data:",
+      "comments": "Comentarii:"
     },
     "units": {
-      "kg/ha": "kg/ha",
       "kgPerHa": "kg/ha",
       "lPerHa": "l/ha",
       "mm": "mm",
       "mgPerKg": "mg/kg"
     },
-    "unknownType": "Tip acțiune necunoscut",
-    "types": {
-      "planting": "Semănare",
-      "harvesting": "Recoltare",
-      "fertilizing": "Fertilizare",
-      "treatment": "Tratare",
-      "watering": "Udire",
-      "soil_reading": "Analiză sol"
+    "buttons": {
+      "edit": "Editează acțiunea",
+      "delete": "Șterge acțiunea"
+    },
+    "unknownType": "Tip de acțiune necunoscut"
+  },
+  "aiChatPlaceholder": {
+    "title": "Asistent AI",
+    "messagesPlaceholder": "Mesajele din chat vor apărea aici...",
+    "inputPlaceholder": "Întreabă despre parcela ta...",
+    "sendButton": "Trimite mesaj"
+  },
+  "plotViewModal": {
+    "defaultTitle": "Detalii parcelă"
+  },
+  "plotsIndex": {
+    "title": "Parcele",
+    "addPlot": "Adaugă parcelă",
+    "deleteConfirm": "Ești sigur că vrei să ștergi această parcelă?"
+  },
+  "plotModal": {
+    "title": {
+      "create": "Creează o parcelă nouă",
+      "edit": "Actualizează parcela"
+    },
+    "description": {
+      "create": "Completează formularul și apasă butonul de creare.",
+      "edit": "Completează formularul și apasă butonul de actualizare."
+    },
+    "buttons": {
+      "close": "Închide",
+      "create": "Creează parcela",
+      "update": "Actualizează parcela"
     }
   },
-  "plotPage": {
-    "error": {
-      "title": "Eroare",
-      "retry": "Reîncearcă",
-      "noId": "ID-ul parcelei este necesar",
-      "unknown": "A apărut o eroare necunoscută"
+  "futurePrediction": {
+    "title": "Predicție pentru viitor",
+    "labels": {
+      "country": "Țara",
+      "crop": "Cultura",
+      "year": "Anul"
     },
-    "notFound": {
-      "title": "Parcelă inexistentă",
-      "message": "Informațiile despre parcela solicitată nu au putut fi găsite."
+    "placeholders": {
+      "country": "Selectează țara...",
+      "crop": "Selectează cultura..."
+    },
+    "buttons": {
+      "calculating": "Se calculează...",
+      "predict": "Calculează predicția"
+    },
+    "result": {
+      "description": "Randament prezis pentru {{crop}} în {{country}}, anul {{year}}"
+    },
+    "confidence": {
+      "title": "Încredere",
+      "subtitle": "Nivelul de certitudine AI"
+    },
+    "method": {
+      "default": "Metodă AI",
+      "subtitle": "Algoritm de predicție"
+    },
+    "interpretation": {
+      "title": "Interpretare",
+      "high": "Predicție foarte fiabilă bazată pe date istorice solide.",
+      "medium": "Predicție moderat fiabilă pentru viitorul apropiat.",
+      "low": "Predicție cu incertitudine crescută datorită distanței temporale.",
+      "veryLow": "Predicție exploratorie cu incertitudine mare."
+    },
+    "help": {
+      "suggestion": "💡 Sugestie: Începe cu România și o cultură familiară precum Grâul sau Porumbul pentru rezultate mai fiabile.",
+      "period": "📅 Perioadă suportată: 2025-2050"
+    }
+  },
+  "scenarioAnalyzer": {
+    "title": "Analizor scenarii viitoare",
+    "description": "Compară predicțiile pentru diferite țări, culturi sau perioade de timp pentru a identifica cele mai promițătoare oportunități agricole.",
+    "addScenario": "Adaugă scenariu",
+    "defaultScenarioName": "Scenariul {{number}}",
+    "labels": {
+      "country": "Țara",
+      "crop": "Cultura",
+      "startYear": "Anul de început",
+      "endYear": "Anul de sfârșit"
+    },
+    "placeholders": {
+      "country": "Selectează țara...",
+      "crop": "Selectează cultura..."
+    },
+    "analyzing": "Se analizează scenariile... {{progress}}%",
+    "runAnalysis": "Rulează analiza",
+    "results": {
+      "comparison": "Comparația scenariilor"
+    },
+    "table": {
+      "scenario": "Scenariu",
+      "average": "Media (kg/ha)",
+      "minimum": "Min (kg/ha)",
+      "maximum": "Max (kg/ha)",
+      "highConfidence": "Încredere mare"
+    },
+    "charts": {
+      "evolution": "Evoluția scenariilor în timp",
+      "yearLabel": "Anul {{year}}",
+      "averageComparison": "Comparația mediilor",
+      "averageLabel": "Media"
+    },
+    "help": {
+      "title": "Începe să compari scenarii",
+      "description": "Adaugă mai multe scenarii pentru a compara predicțiile și a identifica cele mai bune oportunități.",
+      "examplesTitle": "💡 Exemple de scenarii:",
+      "example1": "• România vs Germania pentru Grâu în 2025-2030",
+      "example2": "• Grâu vs Porumb în România pentru 2025-2035",
+      "example3": "• Evoluție pe termen scurt (2025-2027) vs pe termen lung (2025-2040)"
+    }
+  },
+  "yieldChart": {
+    "tooltip": {
+      "year": "Anul {{year}}",
+      "yield": "Randament: {{yield}} kg/ha",
+      "confidence": "Încredere: {{level}}",
+      "method": "Metodă: {{method}}",
+      "noData": "Date indisponibile"
+    },
+    "axes": {
+      "yLabel": "Randament (kg/ha)"
+    },
+    "references": {
+      "average": "Media: {{value}}"
+    },
+    "legend": {
+      "trend": "Trend",
+      "yield": "Randament",
+      "actualYield": "Randament real",
+      "generalTrend": "Trend general",
+      "periodAverage": "Media perioadei"
+    },
+    "confidence": {
+      "title": "Nivelul de încredere în predicție",
+      "high": "Mare",
+      "medium": "Mediu",
+      "low": "Scăzut",
+      "veryLow": "Foarte scăzut"
+    },
+    "dataQuality": {
+      "completeness": "{{available}} din {{total}} ani au date disponibile ({{percentage}}% completitudine)"
+    },
+    "confidenceDistribution": {
+      "title": "Distribuția încrederii",
+      "high": "{{count}} mare",
+      "medium": "{{count}} mediu",
+      "low": "{{count}} scăzut",
+      "veryLow": "{{count}} foarte scăzut"
+    }
+  },
+  "yieldEvolution": {
+    "header": {
+      "title": "Evoluția globală a randamentelor agricole",
+      "description": "Analizează evoluția randamentelor culturilor agricole pe țări pentru perioada 2000-2024 folosind predicții AI avansate cu nivele de încredere și metode de predicție."
+    },
+    "selection": {
+      "title": "Selectează țara și cultura",
+      "country": "Țara/Regiunea",
+      "countryPlaceholder": "Selectează țara...",
+      "crop": "Cultura agricolă",
+      "cropPlaceholder": "Selectează cultura..."
+    },
+    "buttons": {
+      "generate": "Generează evoluția AI",
+      "generating": "Se generează datele... {{progress}}%"
+    },
+    "stats": {
+      "average": "Media",
+      "minimum": "Minimul",
+      "maximum": "Maximul",
+      "yearsWithData": "Ani cu date",
+      "outOf25Years": "din 25 de ani"
+    },
+    "units": {
+      "kgPerHa": "kg/ha"
+    },
+    "confidence": {
+      "title": "Distribuția nivelului de încredere AI",
+      "high": "Mare",
+      "medium": "Mediu",
+      "low": "Scăzut",
+      "veryLow": "Foarte scăzut",
+      "predictions": "predicții"
+    },
+    "chart": {
+      "title": "Evoluția randamentului (2000-2024)"
+    },
+    "aiModel": {
+      "title": "Informații model AI",
+      "model": "Model: Enhanced RandomForest v2.0",
+      "source": "Sursă: Date globale FAOSTAT",
+      "baseline": "Linia de bază: 1961",
+      "description": "Predicțiile sunt generate folosind un model AI antrenat pe date globale FAOSTAT. Nivelul de încredere reflectă certitudinea modelului bazată pe disponibilitatea datelor istorice și distanța temporală față de prezent."
+    }
+  },
+  "analytics": {
+    "header": {
+      "title": "Centrul AI de analiză agricolă",
+      "description": "Platformă completă pentru analiză agricolă și predicții bazate pe inteligență artificială. Explorează evoluția istorică, previzionează randamentele viitoare și compară multiple scenarii."
+    },
+    "features": {
+      "historical": {
+        "title": "Analiză istorică",
+        "description": "Evoluția randamentului 2000-2024 pentru orice țară și cultură"
+      },
+      "future": {
+        "title": "Predicții viitoare",
+        "description": "Prognoze rapide pentru 2025-2050 cu nivele de încredere"
+      },
+      "scenarios": {
+        "title": "Scenarii multiple",
+        "description": "Compară și analizează multiple opțiuni pentru planificare strategică"
+      }
+    },
+    "tabs": {
+      "evolution": {
+        "title": "Evoluție istorică",
+        "subtitle": "2000-2024"
+      },
+      "future": {
+        "title": "Predicții viitoare",
+        "subtitle": "2025-2050"
+      },
+      "scenarios": {
+        "title": "Analiză scenarii",
+        "subtitle": "Comparație multiplă"
+      }
+    },
+    "evolutionTab": {
+      "header": {
+        "title": "Analiză istorică detaliată",
+        "description": "Explorează evoluția randamentelor agricole din ultimii 25 de ani. Această analiză îți oferă o perspectivă completă asupra tendințelor istorice, variațiilor climatice și progresului tehnologic în agricultură."
+      },
+      "features": {
+        "data": "25 de ani de date FAOSTAT",
+        "countries": "245+ țări disponibile",
+        "crops": "180+ culturi agricole",
+        "analysis": "Analiză avansată de tendințe"
+      }
+    },
+    "futureTab": {
+      "info": {
+        "title": "Despre predicțiile viitoare"
+      },
+      "confidence": {
+        "title": "Nivele de încredere",
+        "high": {
+          "label": "Mare",
+          "description": "Predicții foarte fiabile bazate pe date consistente"
+        },
+        "medium": {
+          "label": "Mediu",
+          "description": "Predicții cu fiabilitate moderată (1-5 ani în viitor)"
+        },
+        "low": {
+          "label": "Scăzut",
+          "description": "Predicții cu incertitudine crescută (5-15 ani)"
+        },
+        "veryLow": {
+          "label": "Foarte scăzut",
+          "description": "Predicții exploratorii (15+ ani în viitor)"
+        }
+      },
+      "methods": {
+        "title": "Metode de predicție",
+        "interpolation": {
+          "label": "Interpolare",
+          "description": "Bazată pe datele istorice existente"
+        },
+        "extrapolation": {
+          "label": "Extrapolare",
+          "description": "Continuarea tendințelor actuale"
+        },
+        "projection": {
+          "label": "Proiecție",
+          "description": "Modelare avansată pentru termen lung"
+        }
+      },
+      "disclaimer": {
+        "title": "Notă",
+        "content": "Predicțiile sunt generate de un model AI antrenat pe date globale FAOSTAT și reflectă tendințele actuale. Factori precum schimbările climatice, politicile agricole și inovațiile tehnologice pot influența rezultatele reale."
+      }
+    },
+    "scenariosTab": {
+      "header": {
+        "title": "Analiză strategică de scenarii",
+        "description": "Compară multiple scenarii pentru a lua decizii informate în planificarea agricolă. Această funcționalitate îți permite să analizezi diferite opțiuni și să identifici cele mai promițătoare oportunități."
+      },
+      "features": {
+        "countries": {
+          "title": "Comparație țări",
+          "description": "Compară potențialul agricol între diferite regiuni"
+        },
+        "crops": {
+          "title": "Comparație culturi",
+          "description": "Evaluează care culturi sunt mai profitabile"
+        },
+        "temporal": {
+          "title": "Analiză temporală",
+          "description": "Planifică pe termen scurt vs. lung"
+        }
+      }
+    }
+  },
+  "appSidebar": {
+    "help": "Ajutor",
+    "dashboard": "Tablou de bord",
+    "calendar": "Calendar",
+    "plots": "Terenuri",
+    "aiChat": "Chat AI",
+    "fieldNotes": "Notițe de câmp",
+    "yieldPredictor": "Predicție Randament",
+    "map": "Hartă",
+    "brandSubtitle": "Agricultură"
+  },
+  "plotApi": {
+    "findAll": {
+      "error": "Eroare la încărcarea terenurilor."
+    },
+    "findOne": {
+      "error": "Eroare la încărcarea terenului."
+    },
+    "create": {
+      "success": "Terenul a fost creat cu succes.",
+      "error": "Eroare la crearea terenului."
+    },
+    "update": {
+      "success": "Terenul a fost actualizat cu succes.",
+      "error": "Eroare la actualizarea terenului."
+    },
+    "delete": {
+      "success": "Terenul a fost șters cu succes.",
+      "error": "Eroare la ștergerea terenului."
+    }
+  },
+  "fieldNoteApi": {
+    "create": {
+      "success": "Notița de câmp a fost salvată cu succes.",
+      "error": "Eroare la salvarea notiței de câmp."
+    },
+    "findAll": {
+      "error": "Eroare la încărcarea notițelor de câmp."
+    },
+    "findAllForPlot": {
+      "error": "Eroare la încărcarea notițelor pentru acest teren."
+    },
+    "findOne": {
+      "error": "Eroare la încărcarea notiței de câmp."
+    },
+    "update": {
+      "success": "Notița de câmp a fost actualizată cu succes.",
+      "error": "Eroare la actualizarea notiței de câmp."
+    },
+    "delete": {
+      "success": "Notița de câmp a fost ștearsă cu succes.",
+      "error": "Eroare la ștergerea notiței de câmp."
+    }
+  },
+  "conversationApi": {
+    "sendMessage": {
+      "error": "Mesajul nu a putut fi trimis. Încercați din nou."
+    },
+    "clear": {
+      "success": "Conversația a fost ștearsă.",
+      "error": "Eroare la ștergerea conversației."
+    },
+    "loadMessage": {
+      "error": "Eroare la încărcarea mesajului."
+    },
+    "message": {
+      "noContent": "Mesaj gol.",
+      "invalidContent": "Conținutul mesajului este invalid."
+    },
+    "summary": {
+      "unknownPlot": "Teren necunoscut",
+      "noMessagesYet": "Niciun mesaj încă"
+    }
+  },
+  "plotFormSchema": {
+    "errors": {
+      "nameRequired": "Numele este obligatoriu.",
+      "sizeTooSmall": "Suprafața trebuie să fie mai mare decât 0.",
+      "boundaryRequired": "Boundary este obligatoriu."
+    },
+    "fieldNoteFormSchema": {
+      "errors": {
+        "titleRequired": "Titlul este obligatoriu.",
+        "titleTooLong": "Titlul nu poate avea mai mult de 100 de caractere.",
+        "messageRequired": "Mesajul este obligatoriu.",
+        "plotIdRequired": "ID-ul parcelei este obligatoriu."
+      }
     }
   }
 }

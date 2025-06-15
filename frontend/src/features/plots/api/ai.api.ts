@@ -27,7 +27,8 @@ interface HttpResponse<T> {
  */
 const ERROR_MESSAGES = {
   ro: "Nu s-a putut obține răspunsul de la asistentul AI.",
-  en: "Could not get response from AI assistant."
+  en: "Could not get response from AI assistant.",
+  de: "Die Antwort des KI-Assistenten konnte nicht abgerufen werden.",
 } as const;
 
 /**
@@ -105,7 +106,6 @@ export class AiApi {
    */
   private handleError(error: unknown, language: keyof typeof ERROR_MESSAGES): void {
     console.error('AI API Error:', error);
-    
     const errorMessage = ERROR_MESSAGES[language] || ERROR_MESSAGES.en;
     ToastService.error(errorMessage);
   }

@@ -21,6 +21,7 @@ import {
   FileText,
   PillBottle
 } from 'lucide-react';
+import { formatDateTime } from '@/lib/formatDateTime';
 
 interface ActionItemProps {
   /** The generic action object to render; will be narrowed via `castAction`. */
@@ -42,19 +43,6 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
 
   // Narrow the generic action into its specific interface
   const typedAction = castAction(action);
-
-  /**
-   * Formats a Date or date-string into localized format.
-   */
-  const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString(i18n.language, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
 
   /**
    * Returns the JSX for the action-specific details.
@@ -79,7 +67,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(planting.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(planting.date)}
             </p>
           </div>
         );
@@ -94,7 +82,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               {t('actionItem.units.kgPerHa')}
             </p>
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(harvesting.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(harvesting.date)}
             </p>
             {harvesting.comments && (
               <p>
@@ -122,7 +110,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(fert.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(fert.date)}
             </p>
           </div>
         );
@@ -150,7 +138,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(treat.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(treat.date)}
             </p>
           </div>
         );
@@ -177,7 +165,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(water.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(water.date)}
             </p>
           </div>
         );
@@ -216,7 +204,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ action, onEdit, onDelete }) => 
               </p>
             )}
             <p>
-              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDate(soil.date)}
+              <span className="font-medium">{t('actionItem.labels.date')}</span> {formatDateTime(soil.date)}
             </p>
           </div>
         );

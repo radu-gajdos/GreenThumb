@@ -27,11 +27,14 @@ const WELCOME_MESSAGES = {
     `Bună ziua! Sunt asistentul tău agricol pentru parcela "${plotName}". Cum te pot ajuta astăzi cu gestionarea sau planificarea activităților pentru această parcelă?`,
   en: (plotName: string) =>
     `Hello! I'm your agricultural assistant for plot "${plotName}". How can I help you today with managing or planning activities for this plot?`,
+  de: (plotName: string) =>
+    `Hallo! Ich bin dein landwirtschaftlicher Assistent für das Feld "${plotName}". Wie kann ich dir heute bei der Verwaltung oder Planung von Aktivitäten für dieses Feld helfen?`,
 } as const;
 
 const ERROR_MESSAGES = {
   ro: 'Îmi pare rău, nu am putut procesa solicitarea. Te rog să încerci din nou.',
   en: 'Sorry, I couldn\'t process your request. Please try again.',
+  de: 'Entschuldigung, ich konnte deine Anfrage nicht verarbeiten. Bitte versuche es erneut.',
 } as const;
 
 const ChatContent: React.FC<ChatContentProps> = ({

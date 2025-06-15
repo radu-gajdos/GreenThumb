@@ -1,19 +1,11 @@
-/**
- * conversation.api.ts - FIX URGENT
- * 
- * Fixed pentru a gestiona structura corectă de răspuns
- */
-
 import http from '@/api/http';
 import { ToastService } from '@/services/toast.service';
 import { Message, ConversationSummary, CreateMessagePayload } from '../interfaces/conversation';
+import { $t } from '@/i18n';
 
 export class ConversationApi {
   private readonly basePath = '/ai/conversations';
 
-  /**
-   * Send message using database-backed conversation system
-   */
   async sendMessageWithDetails(payload: CreateMessagePayload): Promise<{
     userMessage: Message;
     aiMessage: Message;
@@ -27,7 +19,7 @@ export class ConversationApi {
       });
 
       let responseData;
-      
+
       if (response.data?.data?.data) {
         responseData = response.data.data.data;
       } else if (response.data?.data) {
@@ -47,15 +39,8 @@ export class ConversationApi {
         throw new Error('Missing conversation data in API response');
       }
 
-      const userMessage: Message = this.mapBackendMessageToFrontend(
-        conversationData.userMessage, 
-        payload.plotId
-      );
-
-      const aiMessage: Message = this.mapBackendMessageToFrontend(
-        conversationData.aiMessage, 
-        payload.plotId
-      );
+      const userMessage: Message = this.mapBackendMessageToFrontend(conversationData.userMessage, payload.plotId);
+      const aiMessage: Message = this.mapBackendMessageToFrontend(conversationData.aiMessage, payload.plotId);
 
       return {
         userMessage,
@@ -63,20 +48,17 @@ export class ConversationApi {
         aiResponse: responseData.response || aiMessage.text,
       };
     } catch (error) {
-      ToastService.error('Nu s-a putut trimite mesajul. Încercați din nou.');
+      ToastService.error($t("conversationApi.sendMessage.error"));
       throw error;
     }
   }
 
-  /**
-   * Load conversation history from database
-   */
   async getConversationHistory(plotId: string): Promise<Message[]> {
     try {
       const response = await http.get(`${this.basePath}/${plotId}/messages`);
-      
+
       let messagesData;
-      
+
       if (response.data?.data?.data?.data) {
         messagesData = response.data.data.data.data;
       } else if (response.data?.data?.data) {
@@ -103,7 +85,7 @@ export class ConversationApi {
         } catch (error) {
           return {
             id: `error-${index}-${Date.now()}`,
-            text: 'Mesaj cu eroare la încărcare',
+            text: $t("conversationApi.loadMessage.error"),
             sender: 'ai' as const,
             timestamp: new Date(),
             plotId: plotId,
@@ -117,9 +99,6 @@ export class ConversationApi {
     }
   }
 
-  /**
-   * Get conversation summaries from database
-   */
   async getConversationSummaries(): Promise<ConversationSummary[]> {
     try {
       const response = await http.get(`${this.basePath}/summaries`);
@@ -147,27 +126,21 @@ export class ConversationApi {
     }
   }
 
-  /**
-   * Clear conversation history in database
-   */
   async clearConversation(plotId: string): Promise<void> {
     try {
       await http.delete(`${this.basePath}/${plotId}`);
-      ToastService.success('Conversația a fost ștearsă.');
+      ToastService.success($t("conversationApi.clear.success"));
     } catch (error) {
-      ToastService.error('Nu s-a putut șterge conversația.');
+      ToastService.error($t("conversationApi.clear.error"));
       throw error;
     }
   }
 
-  /**
-   * Map backend message to frontend format with defensive checks
-   */
   private mapBackendMessageToFrontend(backendMessage: any, plotId: string): Message {
     if (!backendMessage) {
       return {
         id: `fallback-${Date.now()}-${Math.random()}`,
-        text: 'Mesaj fără conținut',
+        text: $t("conversationApi.message.noContent"),
         sender: 'ai',
         timestamp: new Date(),
         plotId: plotId,
@@ -182,7 +155,7 @@ export class ConversationApi {
     } else if (typeof backendMessage.message === 'string') {
       messageText = backendMessage.message;
     } else {
-      messageText = 'Mesaj fără conținut valid';
+      messageText = $t("conversationApi.message.invalidContent");
     }
 
     let sender: 'user' | 'ai' = 'ai';
@@ -208,20 +181,16 @@ export class ConversationApi {
     };
   }
 
-  /**
-   * Map backend summary to frontend format
-   */
   private mapBackendSummaryToFrontend(backendSummary: any): ConversationSummary {
     return {
       plotId: backendSummary.plotId || '',
-      plotName: backendSummary.plotName || 'Unknown Plot',
+      plotName: backendSummary.plotName || $t("conversationApi.summary.unknownPlot"),
       messageCount: backendSummary.messageCount || 0,
       lastMessageAt: backendSummary.lastMessageAt ? new Date(backendSummary.lastMessageAt) : new Date(),
-      lastMessagePreview: backendSummary.lastMessagePreview || 'Nicio conversație încă',
+      lastMessagePreview: backendSummary.lastMessagePreview || $t("conversationApi.summary.noMessagesYet"),
     };
   }
 
-  // Legacy compatibility methods
   async sendMessage(payload: CreateMessagePayload): Promise<string> {
     const result = await this.sendMessageWithDetails(payload);
     return result.aiResponse;

@@ -1,6 +1,7 @@
 import http from "@/api/http";
 import { ToastService } from "@/services/toast.service";
 import { IAction, IFertilizing, IHarvesting, IPlanting, ISoilReading, ITreatment, IWatering, Plot } from "../interfaces/plot";
+import { $t } from "@/i18n";
 
 /**
  * @class PlotApi
@@ -15,12 +16,10 @@ export class PlotApi {
    */
   async findAll(): Promise<Plot[]> {
     try {
-      // GET /plots → { data: { data: Plot[] } }
       const response = await http.get("/plots");
       return response.data.data;
     } catch (error) {
-      // Notify user of failure, but don't throw so UI can handle an empty list gracefully
-      ToastService.error("Nu s-au putut încărca terenurile.");
+      ToastService.error($t("plotApi.findAll.error"));
       return [];
     }
   }
@@ -35,26 +34,24 @@ export class PlotApi {
       const response = await http.get(`/plots/${id}`);
       return response.data.data;
     } catch (error) {
-      ToastService.error("Nu s-a putut încărca terenul.");
-      // Casting to Plot to satisfy return type; caller should handle missing fields
+      ToastService.error($t("plotApi.findOne.error"));
       return {} as Plot;
     }
   }
 
   /**
    * Create a new plot.
-   * @param data - Partial plot data (e.g. name, boundary, etc.)
+   * @param data - Partial plot data
    * @returns Promise resolving to the newly created Plot object.
-   * @throws Propagates HTTP errors for upstream handling after showing toast.
    */
   async create(data: Partial<Plot>): Promise<Plot> {
     try {
-      delete data.id; // Ensure no ID is sent for creation
+      delete data.id;
       const response = await http.post("/plots", data);
-      ToastService.success("Terenul a fost creat.");
+      ToastService.success($t("plotApi.create.success"));
       return response.data.data;
     } catch (error) {
-      ToastService.error("Crearea terenului a eșuat.");
+      ToastService.error($t("plotApi.create.error"));
       throw error;
     }
   }
@@ -63,16 +60,14 @@ export class PlotApi {
    * Update an existing plot.
    * @param data - Partial plot object including an ID
    * @returns Promise resolving to the updated Plot object.
-   * @throws Propagates HTTP errors after showing toast.
    */
   async update(data: Partial<Plot>): Promise<Plot> {
     try {
-      // Note: endpoint expects PUT /plots with full or partial payload
       const response = await http.put(`/plots`, data);
-      ToastService.success("Terenul a fost actualizat.");
+      ToastService.success($t("plotApi.update.success"));
       return response.data.data;
     } catch (error) {
-      ToastService.error("Actualizarea terenului a eșuat.");
+      ToastService.error($t("plotApi.update.error"));
       throw error;
     }
   }
@@ -85,30 +80,28 @@ export class PlotApi {
   async delete(id: string): Promise<void> {
     try {
       await http.delete(`/plots/${id}`);
-      ToastService.success("Terenul a fost șters.");
+      ToastService.success($t("plotApi.delete.success"));
     } catch (error) {
-      ToastService.error("Ștergerea terenului a eșuat.");
+      ToastService.error($t("plotApi.delete.error"));
     }
   }
-
-  
 }
 
 export const castAction = (action: IAction): IAction => {
-    switch (action.type) {
-      case 'planting':
-        return action as IPlanting;
-      case 'harvesting':
-        return action as IHarvesting;
-      case 'fertilizing':
-        return action as IFertilizing;
-      case 'treatment':
-        return action as ITreatment;
-      case 'watering':
-        return action as IWatering;
-      case 'soil_reading':
-        return action as ISoilReading;
-      default:
-        return action;
-    }
+  switch (action.type) {
+    case 'planting':
+      return action as IPlanting;
+    case 'harvesting':
+      return action as IHarvesting;
+    case 'fertilizing':
+      return action as IFertilizing;
+    case 'treatment':
+      return action as ITreatment;
+    case 'watering':
+      return action as IWatering;
+    case 'soil_reading':
+      return action as ISoilReading;
+    default:
+      return action;
   }
+};

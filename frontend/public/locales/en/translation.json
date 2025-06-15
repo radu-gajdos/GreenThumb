@@ -1041,5 +1041,94 @@
                 }
             }
         }
+    },
+    "appSidebar": {
+        "help": "Help",
+        "dashboard": "Dashboard",
+        "calendar": "Calendar",
+        "plots": "Plots",
+        "aiChat": "AI Chat",
+        "fieldNotes": "Field Notes",
+        "yieldPredictor": "Yield Predictor",
+        "map": "Map",
+        "brandSubtitle": "Agriculture"
+    },
+    "plotApi": {
+        "findAll": {
+            "error": "Failed to load plots."
+        },
+        "findOne": {
+            "error": "Failed to load plot."
+        },
+        "create": {
+            "success": "Plot was created successfully.",
+            "error": "Failed to create plot."
+        },
+        "update": {
+            "success": "Plot was updated successfully.",
+            "error": "Failed to update plot."
+        },
+        "delete": {
+            "success": "Plot was deleted successfully.",
+            "error": "Failed to delete plot."
+        }
+    },
+    "fieldNoteApi": {
+        "create": {
+            "success": "Field note was successfully saved.",
+            "error": "Failed to save field note."
+        },
+        "findAll": {
+            "error": "Failed to load field notes."
+        },
+        "findAllForPlot": {
+            "error": "Failed to load field notes for this plot."
+        },
+        "findOne": {
+            "error": "Failed to load the field note."
+        },
+        "update": {
+            "success": "Field note was updated successfully.",
+            "error": "Failed to update field note."
+        },
+        "delete": {
+            "success": "Field note was deleted successfully.",
+            "error": "Failed to delete field note."
+        }
+    },
+    "conversationApi": {
+        "sendMessage": {
+            "error": "Message could not be sent. Please try again."
+        },
+        "clear": {
+            "success": "Conversation has been cleared.",
+            "error": "Failed to clear the conversation."
+        },
+        "loadMessage": {
+            "error": "Message failed to load."
+        },
+        "message": {
+            "noContent": "Empty message.",
+            "invalidContent": "Invalid message content."
+        },
+        "summary": {
+            "unknownPlot": "Unknown Plot",
+            "noMessagesYet": "No messages yet"
+        }
+    },
+    "plotFormSchema": {
+        "errors": {
+            "nameRequired": "Name is required.",
+            "sizeTooSmall": "Size must be greater than 0.",
+            "boundaryRequired": "Boundary is required."
+        }
+    },
+    "fieldNoteFormSchema": {
+        "errors": {
+            "titleRequired": "Title is required.",
+            "titleTooLong": "Title must not exceed 100 characters.",
+            "messageRequired": "Message is required.",
+            "plotIdRequired": "Plot ID is required."
+        }
     }
 }

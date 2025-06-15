@@ -16,6 +16,7 @@ import { CalendarEvent } from '../types/calendar';
 import { ActionType, getActionIcon } from '@/features/actions/constants/formSchema';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { formatDate, formatTime } from '@/lib/formatDateTime';
 
 interface EventDetailsProps {
   event: CalendarEvent;
@@ -62,21 +63,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onClose, onStatusUpd
         };
     }
   };
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString('en-GB', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-  const formatTime = (date: Date) =>
-    date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
 
   const handleStatusUpdate = async (newStatus: 'completed' | 'cancelled' | 'in_progress' | 'planned') => {
     if (!onStatusUpdate) return;

@@ -1,7 +1,6 @@
 import React from "react"
 import { LanguageSelector } from "./LanguageSelector"
 import { NotificationsMenu } from "./NotificationsMenu"
-import { QuickActions } from "./QuickActions"
 import { ThemeSwitcher } from "./ThemeSwicher"
 
 export const TopBar = () => {
@@ -16,8 +15,7 @@ export const TopBar = () => {
         <div className="flex items-end gap-2 justify justify-end">
           <LanguageSelector />
           <ThemeSwitcher />
-          <NotificationsMenu />
-          <QuickActions />
+          {/* <NotificationsMenu /> */}
         </div>
       </div>
     </div>

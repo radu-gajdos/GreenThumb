@@ -38,7 +38,7 @@ export class AuthService {
     private authLogRepository: Repository<AuthLog>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     // Check if user exists
@@ -46,7 +46,7 @@ export class AuthService {
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
-    
+
     const user = await this.userService.create(registerDto);
 
     // Generate email verification token
@@ -64,20 +64,7 @@ export class AuthService {
       throw new UnauthorizedException('Please verify your email first.');
     }
 
-    // Generate tokens
-    const tokens = await this.generateTokens(user.id, false, loginDto.rememberMe);
-
-    if (user.twoFactorEnabled) {
-      if (user.twoFactorType === 'email') {
-        await this.sendTwoFactorCodeEmail(user);
-      }
-      return {
-        requires2FA: true,
-        twoFactorType: user.twoFactorType,
-        tempToken: tokens.accessToken,
-      };
-    }
-
+    // Generate tokens direct – fără 2FA
     const newTokens = await this.generateTokens(user.id, true, loginDto.rememberMe);
 
     // Creăm sesiune activă doar pentru login-ul complet
@@ -93,6 +80,7 @@ export class AuthService {
       refreshToken: newTokens.refreshToken,
     };
   }
+
 
   async verify2FA(verify2FADto: Verify2FADto, userId: string, userAgent: string, ipAddress: string) {
     const user = await this.userService.findById(userId);
@@ -186,19 +174,19 @@ export class AuthService {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     };
-}
+  }
 
   private async generateTokens(
     userId: string,
     is2FAAuthenticated: boolean,
     rememberMe: boolean
-  ) : Promise<{ accessToken: string; refreshToken: string; refreshTokenId: number; }> {
+  ): Promise<{ accessToken: string; refreshToken: string; refreshTokenId: number; }> {
     const user = await this.userService.findById(userId);
 
-    const payload : PayloadTokenInterface = {
-        sub: userId,
-        is2FAAuthenticated,
-        passwordResetCount: user.passwordResetCount,
+    const payload: PayloadTokenInterface = {
+      sub: userId,
+      is2FAAuthenticated,
+      passwordResetCount: user.passwordResetCount,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -223,7 +211,7 @@ export class AuthService {
       isRememberMe: rememberMe,
     });
 
-    return { accessToken, refreshToken, refreshTokenId: refreshTokenEntity.id  };
+    return { accessToken, refreshToken, refreshTokenId: refreshTokenEntity.id };
   }
 
   private async createActiveSession(

@@ -1,56 +1,97 @@
 {
   "plotDetails": {
     "hectares": "Hektar",
-    "soilType": "Bodenart",
+    "soilType": "Bodentyp",
+    "topography": "Topographie",
+    "created": "Erstellt",
     "notSpecified": "Nicht angegeben",
-    "topography": "Topografie",
-    "owner": "Eigentümer",
-    "notAvailable": "—",
-    "created": "Erstellt am",
+    "notAvailable": "Nicht verfügbar",
     "activityLog": "Aktivitätsprotokoll",
-    "addAction": "+ Aktion hinzufügen",
-    "actionTypes": {
-      "planting": "Pflanzung",
-      "harvesting": "Ernte",
-      "fertilizing": "Düngung",
-      "treatment": "Behandlung",
-      "watering": "Bewässerung",
-      "soil_reading": "Bodenanalyse"
-    }
+    "addAction": "Aktion hinzufügen",
+    "viewAllActions": "Alle Aktionen anzeigen",
+    "allActions": "Alle Aktionen",
+    "deleteActionConfirm": "Sind Sie sicher, dass Sie diese Aktion löschen möchten?"
+  },
+  "common": {
+    "close": "Schließen"
   },
   "actionsList": {
-    "noActivities": "Bisher keine Aktivitäten aufgezeichnet."
+    "noActivities": "Es wurden noch keine Aktivitäten aufgezeichnet."
   },
-  "actionItem": {
-    "labels": {
-      "crop": "Kulturpflanze",
-      "variety": "Sorte",
-      "seedingRate": "Aussaatmenge",
-      "date": "Datum",
-      "yield": "Ertrag",
-      "comments": "Kommentare",
-      "fertilizer": "Dünger",
-      "rate": "Menge",
-      "method": "Methode",
-      "pesticide": "Pestizid",
-      "targetPest": "Zielschädling",
-      "dosage": "Dosierung",
-      "amount": "Menge",
-      "source": "Quelle",
-      "ph": "pH-Wert",
-      "nitrogen": "Stickstoff",
-      "phosphorus": "Phosphor",
-      "potassium": "Kalium",
-      "organicMatter": "Organische Substanz"
+  "plotPage": {
+    "error": {
+      "title": "Fehler",
+      "retry": "Erneut versuchen",
+      "noId": "Feld-ID ist erforderlich",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten"
     },
-    "units": {
-      "kg/ha": "kg/ha",
-      "kgPerHa": "kg/ha",
-      "lPerHa": "l/ha",
-      "mm": "mm",
-      "mgPerKg": "mg/kg"
+    "notFound": {
+      "title": "Feld nicht gefunden",
+      "message": "Die angeforderten Feldinformationen konnten nicht gefunden werden."
     },
-    "unknownType": "Unbekannter Aktionstyp",
+    "aiChat": {
+      "title": "KI-Chat",
+      "messagesCount": "{{count}} Nachricht",
+      "messagesCount_plural": "{{count}} Nachrichten",
+      "clearHistoryTooltip": "Chat-Verlauf löschen",
+      "clearHistoryLabel": "Chat-Verlauf löschen",
+      "clearButton": "Löschen",
+      "noContent": "Nachricht ohne Inhalt",
+      "saveTooltip": "Als Notiz speichern",
+      "saveLabel": "Nachricht als Feldnotiz speichern",
+      "saveButton": "Speichern",
+      "placeholder": "Beginnen Sie ein Gespräch mit dem KI-Assistenten, um personalisierte landwirtschaftliche Beratung für dieses Feld zu erhalten.",
+      "inputPlaceholder": "Schreiben Sie Ihre Nachricht hier...",
+      "sendLabel": "Nachricht senden",
+      "errorLoadingHistory": "Fehler beim Laden des Gesprächsverlaufs",
+      "deleteConfirmText": "Sind Sie sicher, dass Sie das gesamte Gespräch für das Feld \"{{plotName}}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und alle Nachrichten gehen dauerhaft verloren."
+    }
+  },
+  "actionApi": {
+    "create": {
+      "success": "Die Aktion wurde erfolgreich erstellt.",
+      "error": "Fehler beim Erstellen der Aktion."
+    },
+    "update": {
+      "success": "Die Aktion wurde erfolgreich aktualisiert.",
+      "error": "Fehler beim Aktualisieren der Aktion."
+    },
+    "updateStatus": {
+      "success": "Der Aktionsstatus wurde erfolgreich aktualisiert.",
+      "error": "Fehler beim Aktualisieren des Aktionsstatus."
+    },
+    "findOne": {
+      "error": "Die Aktion konnte nicht geladen werden."
+    },
+    "findAll": {
+      "error": "Die Aktionen konnten nicht geladen werden."
+    },
+    "findByPlot": {
+      "error": "Die Aktionen für dieses Feld konnten nicht geladen werden."
+    },
+    "getByDateRange": {
+      "error": "Die Aktionen für den ausgewählten Zeitraum konnten nicht geladen werden."
+    },
+    "getOverdueActions": {
+      "error": "Überfällige Aktionen konnten nicht geladen werden."
+    },
+    "delete": {
+      "success": "Die Aktion wurde erfolgreich gelöscht.",
+      "error": "Fehler beim Löschen der Aktion."
+    }
+  },
+  "actionForm": {
+    "errors": {
+      "cropTypeRequired": "Kulturtyp ist erforderlich.",
+      "cropYieldRequired": "Ertrag ist erforderlich.",
+      "fertilizerTypeRequired": "Düngertyp ist erforderlich.",
+      "applicationRateRequired": "Ausbringungsrate ist erforderlich.",
+      "pesticideTypeRequired": "Pestizidtyp ist erforderlich.",
+      "dosageRequired": "Dosierung ist erforderlich.",
+      "amountRequired": "Wassermenge ist erforderlich.",
+      "positiveNumber": "Der Wert muss positiv sein.",
+      "minZero": "Der Wert kann nicht negativ sein."
+    },
     "types": {
       "planting": "Pflanzung",
       "harvesting": "Ernte",
@@ -58,18 +99,1036 @@
       "treatment": "Behandlung",
       "watering": "Bewässerung",
       "soil_reading": "Bodenanalyse"
+    },
+    "status": {
+      "planned": "Geplant",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen"
+    },
+    "fields": {
+      "plannedDate": "Geplantes Datum",
+      "status": "Status",
+      "description": "Beschreibung",
+      "notes": "Notizen",
+      "cropType": "Kulturtyp",
+      "variety": "Sorte",
+      "seedingRate": "Saatrate",
+      "cropYield": "Ertrag (kg/ha)",
+      "fertilizerType": "Düngertyp",
+      "applicationRate": "Ausbringungsrate (kg/ha)",
+      "applicationMethod": "Ausbringungsmethode",
+      "pesticideType": "Pestizidtyp",
+      "targetPest": "Zielschädling",
+      "dosage": "Dosierung (l/ha)",
+      "waterSource": "Wasserquelle",
+      "waterAmount": "Menge (m³/ha)",
+      "phLevel": "pH-Wert (0–14)",
+      "nitrogen": "Stickstoff (mg/kg)",
+      "phosphorus": "Phosphor (mg/kg)",
+      "potassium": "Kalium (mg/kg)",
+      "organicMatter": "Organische Substanz (%)"
+    },
+    "placeholders": {
+      "selectStatus": "Status auswählen",
+      "description": "Aktionsbeschreibung",
+      "notes": "Zusätzliche Notizen",
+      "cropType": "z.B. Weizen",
+      "variety": "z.B. Dropia",
+      "seedingRate": "kg/ha",
+      "fertilizerType": "z.B. Harnstoff",
+      "applicationMethod": "z.B. Breitstreuen",
+      "pesticideType": "z.B. Glyphosat",
+      "targetPest": "z.B. Blattläuse",
+      "treatmentMethod": "z.B. Sprühen",
+      "waterSource": "z.B. Brunnen",
+      "organicMatter": "z.B. 3,5"
     }
   },
-  "plotPage": {
-    "error": {
-      "title": "Fehler",
-      "retry": "Erneut versuchen",
-      "noId": "Parzellen-ID ist erforderlich",
-      "unknown": "Ein unbekannter Fehler ist aufgetreten"
+  "actionTable": {
+    "type": "Typ",
+    "date": "Datum",
+    "details": "Details",
+    "yield": "Ertrag",
+    "kg": "kg",
+    "na": "N/V"
+  },
+  "actionIndex": {
+    "title": "Aktionen",
+    "addAction": "Aktion hinzufügen",
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Aktion löschen möchten?"
+  },
+  "loginForm": {
+    "title": "Bei Ihrem Konto anmelden",
+    "subtitle": "Geben Sie unten Ihre E-Mail ein, um sich bei Ihrem Konto anzumelden",
+    "usernameLabel": "Benutzername",
+    "usernamePlaceholder": "test123",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "Passwort vergessen?",
+    "rememberMe": "Angemeldet bleiben",
+    "errorTitle": "Fehler!",
+    "submit": "Anmelden",
+    "loading": "Wird geladen...",
+    "noAccount": "Haben Sie noch kein Konto?",
+    "signUp": "Registrieren"
+  },
+  "registerForm": {
+    "title": "Konto erstellen",
+    "subtitle": "Geben Sie unten Ihre Daten ein, um Ihr Konto zu erstellen",
+    "nameLabel": "Vollständiger Name",
+    "namePlaceholder": "Max Mustermann",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "max@beispiel.com",
+    "phoneLabel": "Telefonnummer",
+    "phonePlaceholder": "+49123456789",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "********",
+    "confirmPasswordLabel": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "********",
+    "passwordTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein",
+    "errorTitle": "Fehler!",
+    "submit": "Konto erstellen",
+    "loading": "Konto wird erstellt...",
+    "hasAccount": "Haben Sie bereits ein Konto?",
+    "signIn": "Anmelden"
+  },
+  "twoStepForm": {
+    "title": "Zwei-Faktor-Authentifizierung",
+    "messages": {
+      "app": "Bitte geben Sie den Code aus Ihrer Authenticator-App ein",
+      "email": "Bitte geben Sie den an Ihre E-Mail gesendeten Code ein"
     },
-    "notFound": {
-      "title": "Parzelle nicht gefunden",
-      "message": "Die angeforderten Informationen zur Parzelle konnten nicht gefunden werden."
+    "fields": {
+      "code": "Code"
+    },
+    "placeholders": {
+      "code": "123456"
+    },
+    "errorTitle": "Fehler!",
+    "buttons": {
+      "login": "Anmelden",
+      "loading": "Wird geladen...",
+      "back": "Zurück zur Anmeldung"
+    }
+  },
+  "calendarFilters": {
+    "open": "Filter",
+    "clearFilters": "Filter löschen",
+    "clearAll": "Alle löschen",
+    "title": "Kalender-Filter",
+    "actionTypes": "Aktionstypen",
+    "plots": "Felder",
+    "status": {
+      "label": "Status",
+      "planned": "Geplant",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen"
+    },
+    "overdue": {
+      "title": "Überfällige anzeigen",
+      "subtitle": "Aktionen nach Fälligkeitsdatum einschließen"
+    }
+  },
+  "calendarToolbar": {
+    "today": "Heute",
+    "view": {
+      "month": "Monat",
+      "week": "Woche",
+      "list": "Liste"
+    }
+  },
+  "calendarListView": {
+    "open": "Filter",
+    "clearFilters": "Filter löschen",
+    "clearAll": "Alle löschen",
+    "title": "Kalender-Filter",
+    "actionTypes": "Aktionstypen",
+    "plots": "Felder",
+    "status": {
+      "label": "Status",
+      "planned": "Geplant",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen"
+    },
+    "overdue": {
+      "title": "Überfällige anzeigen",
+      "subtitle": "Aktionen nach Fälligkeitsdatum einschließen"
+    }
+  },
+  "calendarMonthView": {
+    "weekdays": {
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa",
+      "sun": "So"
+    },
+    "more": "+{{count}} weitere"
+  },
+  "calendarWeekView": {
+    "weekdays": {
+      "mon": "Montag",
+      "tue": "Dienstag",
+      "wed": "Mittwoch",
+      "thu": "Donnerstag",
+      "fri": "Freitag",
+      "sat": "Samstag",
+      "sun": "Sonntag"
+    }
+  },
+  "calendarHeader": {
+    "today": {
+      "title": "Heute",
+      "description": "geplante Ereignisse"
+    },
+    "week": {
+      "title": "Diese Woche",
+      "description": "geplante Ereignisse"
+    },
+    "overdue": {
+      "title": "Überfällig",
+      "description": "überfällige Aktionen"
+    },
+    "completed": {
+      "title": "Abgeschlossen",
+      "description": "diesen Monat"
+    }
+  },
+  "calendarIndex": {
+    "in": "in",
+    "days": "Tagen",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "tomorrow": "Morgen",
+    "errorFallbackTitle": "Fehler beim Laden des Kalenders",
+    "errorFallbackDescription": "Es gab ein Problem beim Laden der Kalenderdaten.",
+    "retry": "Erneut versuchen",
+    "dialogActionDetails": "Aktionsdetails"
+  },
+  "calendarEventDetails": {
+    "status": {
+      "planned": "Geplant",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "unknown": "Unbekannt"
+    },
+    "overdue": {
+      "title": "Überfällige Aktion",
+      "subtitle": "Diese Aktion ist nach ihrem geplanten Datum"
+    },
+    "sections": {
+      "scheduledDate": "Geplantes Datum",
+      "description": "Beschreibung",
+      "notes": "Notizen",
+      "info": "Informationen",
+      "fertilizing": "Düngungsdetails",
+      "harvesting": "Erntedetails"
+    },
+    "fields": {
+      "type": "Typ",
+      "rate": "Ausbringungsrate",
+      "method": "Methode",
+      "yield": "Ertrag",
+      "comments": "Kommentare",
+      "created": "Erstellt",
+      "updated": "Aktualisiert"
+    },
+    "buttons": {
+      "start": "Starten",
+      "complete": "Als abgeschlossen markieren",
+      "cancel": "Abbrechen",
+      "stop": "Stoppen",
+      "reopen": "Wieder öffnen",
+      "close": "Schließen"
+    },
+    "loading": "Status wird aktualisiert..."
+  },
+  "activeActions": {
+    "status": {
+      "planned": "Geplant",
+      "in_progress": "In Bearbeitung",
+      "cancelled": "Abgebrochen",
+      "completed": "Abgeschlossen",
+      "overdue": "Überfällig"
+    },
+    "summary": {
+      "in_progress": "In Bearbeitung",
+      "planned": "Geplant",
+      "overdue": "Überfällig",
+      "today": "Heute"
+    },
+    "filters": {
+      "searchPlaceholder": "Aktivitäten suchen...",
+      "statusPlaceholder": "Status",
+      "typePlaceholder": "Aktionstyp",
+      "reset": "Filter zurücksetzen"
+    },
+    "empty": {
+      "title": "Keine aktiven Aktivitäten"
+    },
+    "labels": {
+      "created": "Erstellt",
+      "updated": "Aktualisiert",
+      "scheduled": "Geplant",
+      "notes": "Notizen",
+      "unknown": "Unbekannt"
+    },
+    "buttons": {
+      "finish": "Abschließen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "activeActionsModal": {
+    "title": "Aktive Aktivitäten",
+    "description": "Verwalten Sie laufende und geplante Aktivitäten für Ihre Felder."
+  },
+  "overdueActions": {
+    "stats": {
+      "total": "Insgesamt überfällig",
+      "lastWeek": "1–7 Tage",
+      "lastMonth": "8–30 Tage",
+      "critical": "Über 30 Tage"
+    },
+    "status": {
+      "in_progress": "In Bearbeitung",
+      "planned": "Geplant",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen"
+    },
+    "search": "Überfällige Aktivitäten suchen...",
+    "type": "Aktivitätstyp",
+    "all": "Alle",
+    "reset": "Filter zurücksetzen",
+    "noOverdue": "Glückwunsch! Es gibt keine überfälligen Aktivitäten.",
+    "noResults": "Keine überfälligen Aktivitäten entsprechen den ausgewählten Filtern.",
+    "daysOverdue": "{{count}} Tag überfällig",
+    "daysOverdue_plural": "{{count}} Tage überfällig",
+    "created": "Erstellt",
+    "updated": "Aktualisiert",
+    "scheduled": "Geplant",
+    "notes": "Notizen",
+    "completeNow": "Als abgeschlossen markieren",
+    "startNow": "Jetzt starten",
+    "cancel": "Abbrechen",
+    "unknown": "Unbekannt"
+  },
+  "overdueActionsModal": {
+    "title": "Überfällige Aktivitäten",
+    "description": "Aktionen, die ihr geplantes Datum überschritten haben und sofortige Aufmerksamkeit erfordern."
+  },
+  "plotsOverview": {
+    "title": "Meine Felder",
+    "emptyTitle": "Meine Felder",
+    "emptyMessage": "Sie haben noch keine Felder erstellt",
+    "createFirst": "Erstellen Sie Ihr erstes Feld",
+    "viewAll": "Alle anzeigen →",
+    "viewAllWithCount": "Alle Felder anzeigen ({{count}})",
+    "sizeUnit": "{{size}} ha",
+    "activeActions": "{{count}} aktiv",
+    "completedActions": "{{count}} abgeschlossen",
+    "days": "{{count}} Tage",
+    "weeks": "{{count}} Wochen",
+    "status": {
+      "active": "Aktiv",
+      "planning": "Planung",
+      "harvested": "Geerntet",
+      "fallow": "Brache",
+      "unknown": "Unbekannt"
+    }
+  },
+  "recentActivity": {
+    "title": "Letzte Aktivität",
+    "emptyMessage": "Keine aktuelle Aktivität gefunden",
+    "createFirstPlot": "Beginnen Sie mit der Erstellung eines Feldes →",
+    "viewAll": "Alle anzeigen →",
+    "time": {
+      "now": "gerade jetzt",
+      "minutes": "{{count}} Min",
+      "hours": "{{count}} Std",
+      "days": "{{count}} T"
+    }
+  },
+  "todayActions": {
+    "title": "Heutige Aktionen",
+    "noEvents": "Keine Aktionen für heute geplant",
+    "now": "JETZT",
+    "currentCount": "{{count}} jetzt",
+    "inMinutes": "in {{count}} Min",
+    "inHours": "in {{hours}}Std {{minutes}}Min",
+    "minutesAgo": "vor {{count}} Min",
+    "hoursAgo": "vor {{hours}}Std {{minutes}}Min"
+  },
+  "dashboardIndex": {
+    "errorTitle": "Fehler beim Laden des Dashboards",
+    "retryButton": "Erneut versuchen",
+    "stats": {
+      "activeActions": "Aktive Aktionen",
+      "activeActionsDescription": "Unvollständige Aktionen",
+      "upcomingWeek": "Nächste 7 Tage",
+      "scheduledActions": "Geplante Aktionen",
+      "overdueActions": "Überfällige Aktionen",
+      "overdueDescription": "Überfällig und unvollständig",
+      "totalPlots": "Gesamtfelder",
+      "totalArea": "{{area}} Hektar insgesamt",
+      "avgSize": "Durchschnittsgröße",
+      "avgArea": "Hektar pro Feld"
+    }
+  },
+  "fieldNoteContent": {
+    "editTitlePlaceholder": "Feldnotiz-Titel...",
+    "noteContentLabel": "Notizinhalt",
+    "noteContentPlaceholder": "Schreiben Sie den Inhalt der Notiz...",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen",
+    "modifiedBadge": "Geändert",
+    "lastModified": "Zuletzt geändert:",
+    "at": "um",
+    "deleteConfirm": "Sind Sie sicher, dass Sie die Notiz \"{{title}}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+  },
+  "fieldNotesSidebar": {
+    "createNew": "Neue Notiz erstellen",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "daysAgo": "vor {{count}} Tagen"
+  },
+  "saveMessageModal": {
+    "createTitle": "Eine neue Notiz erstellen",
+    "saveTitle": "Nachricht als Notiz speichern",
+    "createDescription": "Schreiben Sie manuell eine Notiz für eines Ihrer Felder.",
+    "saveDescription": "Verwandeln Sie diesen KI-Ratschlag in eine permanente Notiz für Ihr Feld.",
+    "plot": "Feld",
+    "selectPlot": "Ein Feld auswählen",
+    "title": "Titel",
+    "generateFromDate": "Aus Datum generieren",
+    "generateFromMessage": "Titel generieren",
+    "titlePlaceholder": "Geben Sie einen Titel für diese Notiz ein",
+    "noteContent": "Notizinhalt",
+    "messageContent": "Nachrichteninhalt",
+    "noteContentPlaceholder": "Schreiben Sie Ihren Notizinhalt...",
+    "messageContentPlaceholder": "Nachrichteninhalt...",
+    "cancel": "Abbrechen",
+    "create": "Notiz erstellen",
+    "save": "Notiz speichern",
+    "creating": "Wird erstellt...",
+    "saving": "Wird gespeichert...",
+    "generatedTitlePrefix": "Notiz"
+  },
+  "fieldNotes": {
+    "unknownPlot": "Unbekanntes Feld",
+    "empty": {
+      "title": "Keine gespeicherten Notizen",
+      "description": "Sie haben noch keine gespeicherten Notizen aus KI-Gesprächen. Beginnen Sie damit, hilfreiche Ratschläge aus dem KI-Chat zu speichern, um sie hier zu sehen."
+    },
+    "sidebar": {
+      "title": "Meine Notizen",
+      "notesCount": "{{count}} gespeicherte Notizen"
+    },
+    "content": {
+      "selectNote": {
+        "title": "Eine Notiz zum Anzeigen auswählen",
+        "description": "Wählen Sie eine Notiz aus der Seitenleiste, um den vollständigen Inhalt zu sehen."
+      }
+    }
+  },
+  "mapControls": {
+    "satellite": "Satellit",
+    "satelliteDescription": "Satellitenbilder",
+    "street": "Straße",
+    "streetDescription": "Straßenkartenansicht",
+    "changeLayer": "Kartentyp ändern",
+    "layerType": "Kartentyp",
+    "showPlots": "Felder anzeigen",
+    "hidePlots": "Felder ausblenden",
+    "resetView": "Ansicht zurücksetzen"
+  },
+  "mapErrorState": {
+    "network": {
+      "title": "Verbindungsproblem",
+      "description": "Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+    },
+    "data": {
+      "title": "Fehler beim Laden der Daten",
+      "description": "Wir konnten die Felddaten nicht aus der Datenbank abrufen."
+    },
+    "permission": {
+      "title": "Zugriff verweigert",
+      "description": "Sie haben nicht die erforderlichen Berechtigungen, um diese Karte anzuzeigen."
+    },
+    "unknown": {
+      "title": "Fehler beim Laden der Karte",
+      "description": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "technicalDetails": "Technische Details",
+    "tryAgain": "Erneut versuchen",
+    "reloadPage": "Seite neu laden",
+    "supportNote": "Falls das Problem weiterhin besteht, wenden Sie sich bitte an den Support."
+  },
+  "mapLoadingState": {
+    "message": "Karte wird geladen",
+    "subMessage": "Felddaten werden abgerufen..."
+  },
+  "plotMarker": {
+    "area": "Fläche",
+    "soil": "Boden",
+    "soilType": "Bodentyp",
+    "status": "Status",
+    "active": "Aktiv",
+    "created": "Erstellt",
+    "viewDetails": "Details anzeigen",
+    "clickHint": "Klicken Sie für weitere Details"
+  },
+  "plotMap": {
+    "header": {
+      "title": "Feldkarte",
+      "plotsFound": "{{count}} Felder gefunden",
+      "searchingPlots": "Felder werden gesucht..."
+    },
+    "controls": {
+      "visible": "Sichtbar",
+      "hidden": "Versteckt"
+    },
+    "footer": {
+      "plots": "Felder",
+      "totalHectares": "Hektar insgesamt",
+      "activePlots": "Aktive Felder"
+    },
+    "tileLayer": {
+      "satellite": {
+        "attribution": "Kacheln © Esri — Quelle: Esri, Maxar, Earthstar Geographics"
+      },
+      "street": {
+        "attribution": "© OpenStreetMap-Mitwirkende"
+      },
+      "terrain": {
+        "attribution": "© OpenTopoMap-Mitwirkende"
+      }
+    }
+  },
+  "generalAIChat": {
+    "noPlots": "Sie haben keine Felder erstellt. Erstellen Sie ein Feld, um Gespräche zu beginnen.",
+    "loadError": "Fehler beim Laden der Gespräche. Bitte überprüfen Sie Ihre Verbindung.",
+    "errorTitle": "Fehler beim Laden der Gespräche",
+    "retry": "Erneut versuchen",
+    "noPlotsTitle": "Keine verfügbaren Felder",
+    "noPlotsDescription": "Sie haben noch keine Felder erstellt. Erstellen Sie ein Feld, um Gespräche mit der KI zu beginnen."
+  },
+  "chatContent": {
+    "noConversation": {
+      "title": "Ein Feld auswählen",
+      "description": "Wählen Sie ein Feld aus der Seitenleiste, um ein Gespräch mit der KI über Feldmanagement zu beginnen."
+    },
+    "header": {
+      "assistant": "Landwirtschaftlicher Assistent",
+      "messagesCount": "{{count}} Nachrichten"
+    },
+    "delete": {
+      "button": "Gespräch löschen",
+      "deleting": "Wird gelöscht...",
+      "confirmText": "Sind Sie sicher, dass Sie das gesamte Gespräch für das Feld \"{{plotName}}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und alle Nachrichten gehen dauerhaft verloren."
+    },
+    "messages": {
+      "noContent": "Nachricht ohne Inhalt",
+      "save": "Speichern",
+      "saveTooltip": "Als Notiz speichern"
+    },
+    "welcome": {
+      "title": "Willkommen im Chat für {{plotName}}"
+    },
+    "input": {
+      "placeholder": "Geben Sie Ihre Nachricht hier ein...",
+      "sendButton": "Nachricht senden"
+    },
+    "errors": {
+      "deleteError": "Fehler beim Löschen des Gesprächs"
+    }
+  },
+  "chatSidebar": {
+    "header": {
+      "title": "Allgemeiner KI-Chat"
+    },
+    "search": {
+      "placeholder": "Felder suchen..."
+    },
+    "time": {
+      "now": "Jetzt",
+      "minutes": "{{count}} Min",
+      "hours": "{{count}}Std",
+      "yesterday": "Gestern",
+      "days": "{{count}} Tage"
+    },
+    "messages": {
+      "noConversation": "Noch kein Gespräch",
+      "invalidFormat": "Nachricht in ungültigem Format",
+      "invalidContent": "Nachricht ohne gültigen Inhalt",
+      "noContent": "Nachricht ohne Inhalt"
+    },
+    "empty": {
+      "noResults": "Keine Felder gefunden",
+      "noConversations": "Keine aktiven Gespräche"
+    },
+    "conversation": {
+      "messagesCount": "{{count}} Nachrichten"
+    },
+    "footer": {
+      "conversationsCount": "{{count}} Gespräch",
+      "conversationsCount_plural": "{{count}} Gespräche"
+    }
+  },
+  "plotForm": {
+    "fields": {
+      "name": "Name",
+      "area": "Fläche (ha)",
+      "topography": "Topographie",
+      "soilType": "Bodentyp",
+      "boundary": "Feldgrenzen"
+    },
+    "placeholders": {
+      "name": "Feldname eingeben",
+      "topography": "z.B.: Hügel, Tal, Hang...",
+      "soilType": "z.B.: Ton, Lehm, Schwarzerde..."
+    }
+  },
+  "actionItem": {
+    "types": {
+      "planting": "Pflanzung",
+      "harvesting": "Ernte",
+      "fertilizing": "Düngung",
+      "treatment": "Behandlung",
+      "watering": "Bewässerung",
+      "soil_reading": "Bodenanalyse"
+    },
+    "labels": {
+      "crop": "Kultur:",
+      "variety": "Sorte:",
+      "seedingRate": "Saatrate:",
+      "yield": "Ertrag:",
+      "fertilizer": "Dünger:",
+      "rate": "Rate:",
+      "method": "Methode:",
+      "pesticide": "Pestizid:",
+      "targetPest": "Zielschädling:",
+      "dosage": "Dosierung:",
+      "amount": "Menge:",
+      "source": "Quelle:",
+      "ph": "pH:",
+      "nitrogen": "Stickstoff:",
+      "phosphorus": "Phosphor:",
+      "potassium": "Kalium:",
+      "organicMatter": "Organische Substanz:",
+      "date": "Datum:",
+      "comments": "Kommentare:"
+    },
+    "units": {
+      "kgPerHa": "kg/ha",
+      "lPerHa": "l/ha",
+      "mm": "mm",
+      "mgPerKg": "mg/kg"
+    },
+    "buttons": {
+      "edit": "Aktion bearbeiten",
+      "delete": "Aktion löschen"
+    },
+    "unknownType": "Unbekannter Aktionstyp"
+  },
+  "aiChatPlaceholder": {
+    "title": "KI-Assistent",
+    "messagesPlaceholder": "Chat-Nachrichten werden hier angezeigt...",
+    "inputPlaceholder": "Fragen Sie nach Ihrem Feld...",
+    "sendButton": "Nachricht senden"
+  },
+  "plotViewModal": {
+    "defaultTitle": "Felddetails"
+  },
+  "plotsIndex": {
+    "title": "Felder",
+    "addPlot": "Feld hinzufügen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie dieses Feld löschen möchten?"
+  },
+  "plotModal": {
+    "title": {
+      "create": "Ein neues Feld erstellen",
+      "edit": "Feld aktualisieren"
+    },
+    "description": {
+      "create": "Füllen Sie das Formular aus und drücken Sie die Erstellen-Taste.",
+      "edit": "Füllen Sie das Formular aus und drücken Sie die Aktualisieren-Taste."
+    },
+    "buttons": {
+      "close": "Schließen",
+      "create": "Feld erstellen",
+      "update": "Feld aktualisieren"
+    }
+  },
+  "futurePrediction": {
+    "title": "Zukunftsprognose",
+    "labels": {
+      "country": "Land",
+      "crop": "Kultur",
+      "year": "Jahr"
+    },
+    "placeholders": {
+      "country": "Land auswählen...",
+      "crop": "Kultur auswählen..."
+    },
+    "buttons": {
+      "calculating": "Wird berechnet...",
+      "predict": "Prognose berechnen"
+    },
+    "result": {
+      "description": "Vorhergesagter Ertrag für {{crop}} in {{country}}, Jahr {{year}}"
+    },
+    "confidence": {
+      "title": "Vertrauen",
+      "subtitle": "KI-Sicherheitsniveau"
+    },
+    "method": {
+      "default": "KI-Methode",
+      "subtitle": "Vorhersagealgorithmus"
+    },
+    "interpretation": {
+      "title": "Interpretation",
+      "high": "Sehr zuverlässige Prognose basierend auf soliden historischen Daten.",
+      "medium": "Mäßig zuverlässige Prognose für die nahe Zukunft.",
+      "low": "Prognose mit erhöhter Unsicherheit aufgrund zeitlicher Distanz.",
+      "veryLow": "Explorative Prognose mit hoher Unsicherheit."
+    },
+    "help": {
+      "suggestion": "💡 Vorschlag: Beginnen Sie mit Deutschland und einer vertrauten Kultur wie Weizen oder Mais für zuverlässigere Ergebnisse.",
+      "period": "📅 Unterstützter Zeitraum: 2025-2050"
+    }
+  },
+  "scenarioAnalyzer": {
+    "title": "Zukunftsszenario-Analysator",
+    "description": "Vergleichen Sie Prognosen für verschiedene Länder, Kulturen oder Zeiträume, um die vielversprechendsten landwirtschaftlichen Möglichkeiten zu identifizieren.",
+    "addScenario": "Szenario hinzufügen",
+    "defaultScenarioName": "Szenario {{number}}",
+    "labels": {
+      "country": "Land",
+      "crop": "Kultur",
+      "startYear": "Startjahr",
+      "endYear": "Endjahr"
+    },
+    "placeholders": {
+      "country": "Land auswählen...",
+      "crop": "Kultur auswählen..."
+    },
+    "analyzing": "Szenarien werden analysiert... {{progress}}%",
+    "runAnalysis": "Analyse ausführen",
+    "results": {
+      "comparison": "Szenariovergleich"
+    },
+    "table": {
+      "scenario": "Szenario",
+      "average": "Durchschnitt (kg/ha)",
+      "minimum": "Min (kg/ha)",
+      "maximum": "Max (kg/ha)",
+      "highConfidence": "Hohes Vertrauen"
+    },
+    "charts": {
+      "evolution": "Szenarioentwicklung über Zeit",
+      "yearLabel": "Jahr {{year}}",
+      "averageComparison": "Durchschnittsvergleich",
+      "averageLabel": "Durchschnitt"
+    },
+    "help": {
+      "title": "Beginnen Sie mit dem Vergleich von Szenarien",
+      "description": "Fügen Sie mehrere Szenarien hinzu, um Prognosen zu vergleichen und die besten Möglichkeiten zu identifizieren.",
+      "examplesTitle": "💡 Szenario-Beispiele:",
+      "example1": "• Deutschland vs. Frankreich für Weizen in 2025-2030",
+      "example2": "• Weizen vs. Mais in Deutschland für 2025-2035",
+      "example3": "• Kurzfristige Entwicklung (2025-2027) vs. langfristig (2025-2040)"
+    }
+  },
+  "yieldChart": {
+    "tooltip": {
+      "year": "Jahr {{year}}",
+      "yield": "Ertrag: {{yield}} kg/ha",
+      "confidence": "Vertrauen: {{level}}",
+      "method": "Methode: {{method}}",
+      "noData": "Daten nicht verfügbar"
+    },
+    "axes": {
+      "yLabel": "Ertrag (kg/ha)"
+    },
+    "references": {
+      "average": "Durchschnitt: {{value}}"
+    },
+    "legend": {
+      "trend": "Trend",
+      "yield": "Ertrag",
+      "actualYield": "Tatsächlicher Ertrag",
+      "generalTrend": "Allgemeiner Trend",
+      "periodAverage": "Periodendurchschnitt"
+    },
+    "confidence": {
+      "title": "Prognose-Vertrauensniveau",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig",
+      "veryLow": "Sehr niedrig"
+    },
+    "dataQuality": {
+      "completeness": "{{available}} von {{total}} Jahren haben verfügbare Daten ({{percentage}}% Vollständigkeit)"
+    },
+    "confidenceDistribution": {
+      "title": "Vertrauensverteilung",
+      "high": "{{count}} hoch",
+      "medium": "{{count}} mittel",
+      "low": "{{count}} niedrig",
+      "veryLow": "{{count}} sehr niedrig"
+    }
+  },
+  "yieldEvolution": {
+    "header": {
+      "title": "Globale landwirtschaftliche Ertragsentwicklung",
+      "description": "Analysieren Sie die Entwicklung landwirtschaftlicher Erträge nach Ländern für den Zeitraum 2000-2024 mit fortgeschrittenen KI-Prognosen mit Vertrauensniveaus und Vorhersagemethoden."
+    },
+    "selection": {
+      "title": "Land und Kultur auswählen",
+      "country": "Land/Region",
+      "countryPlaceholder": "Land auswählen...",
+      "crop": "Landwirtschaftliche Kultur",
+      "cropPlaceholder": "Kultur auswählen..."
+    },
+    "buttons": {
+      "generate": "KI-Entwicklung generieren",
+      "generating": "Daten werden generiert... {{progress}}%"
+    },
+    "stats": {
+      "average": "Durchschnitt",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "yearsWithData": "Jahre mit Daten",
+      "outOf25Years": "von 25 Jahren"
+    },
+    "units": {
+      "kgPerHa": "kg/ha"
+    },
+    "confidence": {
+      "title": "KI-Vertrauensniveau-Verteilung",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig",
+      "veryLow": "Sehr niedrig",
+      "predictions": "Prognosen"
+    },
+    "chart": {
+      "title": "Ertragsentwicklung (2000-2024)"
+    },
+    "aiModel": {
+      "title": "KI-Modellinformationen",
+      "model": "Modell: Enhanced RandomForest v2.0",
+      "source": "Quelle: FAOSTAT Globale Daten",
+      "baseline": "Basislinie: 1961",
+      "description": "Prognosen werden mit einem KI-Modell generiert, das auf globalen FAOSTAT-Daten trainiert wurde. Das Vertrauensniveau spiegelt die Sicherheit des Modells basierend auf der Verfügbarkeit historischer Daten und der zeitlichen Distanz zur Gegenwart wider."
+    }
+  },
+  "analytics": {
+    "header": {
+      "title": "KI-Landwirtschaftsanalysezentrum",
+      "description": "Vollständige Plattform für landwirtschaftliche Analyse und Prognosen basierend auf künstlicher Intelligenz. Erkunden Sie historische Entwicklungen, prognostizieren Sie zukünftige Erträge und vergleichen Sie mehrere Szenarien."
+    },
+    "features": {
+      "historical": {
+        "title": "Historische Analyse",
+        "description": "Ertragsentwicklung 2000-2024 für jedes Land und jede Kultur"
+      },
+      "future": {
+        "title": "Zukunftsprognosen",
+        "description": "Schnelle Prognosen für 2025-2050 mit Vertrauensniveaus"
+      },
+      "scenarios": {
+        "title": "Mehrere Szenarien",
+        "description": "Vergleichen und analysieren Sie mehrere Optionen für strategische Planung"
+      }
+    },
+    "tabs": {
+      "evolution": {
+        "title": "Historische Entwicklung",
+        "subtitle": "2000-2024"
+      },
+      "future": {
+        "title": "Zukunftsprognosen",
+        "subtitle": "2025-2050"
+      },
+      "scenarios": {
+        "title": "Szenarioanalyse",
+        "subtitle": "Mehrfachvergleich"
+      }
+    },
+    "evolutionTab": {
+      "header": {
+        "title": "Detaillierte historische Analyse",
+        "description": "Erkunden Sie die Entwicklung landwirtschaftlicher Erträge der letzten 25 Jahre. Diese Analyse gibt Ihnen eine vollständige Perspektive auf historische Trends, Klimaschwankungen und technologischen Fortschritt in der Landwirtschaft."
+      },
+      "features": {
+        "data": "25 Jahre FAOSTAT-Daten",
+        "countries": "245+ verfügbare Länder",
+        "crops": "180+ landwirtschaftliche Kulturen",
+        "analysis": "Erweiterte Trendanalyse"
+      }
+    },
+    "futureTab": {
+      "info": {
+        "title": "Über Zukunftsprognosen"
+      },
+      "confidence": {
+        "title": "Vertrauensniveaus",
+        "high": {
+          "label": "Hoch",
+          "description": "Sehr zuverlässige Prognosen basierend auf konsistenten Daten"
+        },
+        "medium": {
+          "label": "Mittel",
+          "description": "Prognosen mit mäßiger Zuverlässigkeit (1-5 Jahre in der Zukunft)"
+        },
+        "low": {
+          "label": "Niedrig",
+          "description": "Prognosen mit erhöhter Unsicherheit (5-15 Jahre)"
+        },
+        "veryLow": {
+          "label": "Sehr niedrig",
+          "description": "Explorative Prognosen (15+ Jahre in der Zukunft)"
+        }
+      },
+      "methods": {
+        "title": "Vorhersagemethoden",
+        "interpolation": {
+          "label": "Interpolation",
+          "description": "Basierend auf vorhandenen historischen Daten"
+        },
+        "extrapolation": {
+          "label": "Extrapolation",
+          "description": "Fortsetzung aktueller Trends"
+        },
+        "projection": {
+          "label": "Projektion",
+          "description": "Erweiterte Modellierung für langfristig"
+        }
+      },
+      "disclaimer": {
+        "title": "Hinweis",
+        "content": "Prognosen werden von einem KI-Modell generiert, das auf globalen FAOSTAT-Daten trainiert wurde und aktuelle Trends widerspiegelt. Faktoren wie Klimawandel, Agrarpolitik und technologische Innovationen können die tatsächlichen Ergebnisse beeinflussen."
+      }
+    },
+    "scenariosTab": {
+      "header": {
+        "title": "Strategische Szenarioanalyse",
+        "description": "Vergleichen Sie mehrere Szenarien, um fundierte Entscheidungen in der landwirtschaftlichen Planung zu treffen. Diese Funktionalität ermöglicht es Ihnen, verschiedene Optionen zu analysieren und die vielversprechendsten Möglichkeiten zu identifizieren."
+      },
+      "features": {
+        "countries": {
+          "title": "Ländervergleich",
+          "description": "Vergleichen Sie landwirtschaftliches Potenzial zwischen verschiedenen Regionen"
+        },
+        "crops": {
+          "title": "Kulturvergleich",
+          "description": "Bewerten Sie, welche Kulturen profitabler sind"
+        },
+        "temporal": {
+          "title": "Zeitliche Analyse",
+          "description": "Planen Sie für kurz- vs. langfristig"
+        }
+      }
+    }
+  },
+  "appSidebar": {
+    "help": "Hilfe",
+    "dashboard": "Dashboard",
+    "calendar": "Kalender",
+    "plots": "Felder",
+    "aiChat": "KI-Chat",
+    "fieldNotes": "Feldnotizen",
+    "yieldPredictor": "Ertragsschätzung",
+    "map": "Karte",
+    "brandSubtitle": "Landwirtschaft"
+  },
+  "plotApi": {
+    "findAll": {
+      "error": "Fehler beim Laden der Felder."
+    },
+    "findOne": {
+      "error": "Fehler beim Laden des Feldes."
+    },
+    "create": {
+      "success": "Feld wurde erfolgreich erstellt.",
+      "error": "Fehler beim Erstellen des Feldes."
+    },
+    "update": {
+      "success": "Feld wurde erfolgreich aktualisiert.",
+      "error": "Fehler beim Aktualisieren des Feldes."
+    },
+    "delete": {
+      "success": "Feld wurde erfolgreich gelöscht.",
+      "error": "Fehler beim Löschen des Feldes."
+    }
+  },
+  "fieldNoteApi": {
+    "create": {
+      "success": "Feldnotiz wurde erfolgreich gespeichert.",
+      "error": "Fehler beim Speichern der Feldnotiz."
+    },
+    "findAll": {
+      "error": "Fehler beim Laden der Feldnotizen."
+    },
+    "findAllForPlot": {
+      "error": "Fehler beim Laden der Feldnotizen für dieses Feld."
+    },
+    "findOne": {
+      "error": "Fehler beim Laden der Feldnotiz."
+    },
+    "update": {
+      "success": "Feldnotiz wurde erfolgreich aktualisiert.",
+      "error": "Fehler beim Aktualisieren der Feldnotiz."
+    },
+    "delete": {
+      "success": "Feldnotiz wurde erfolgreich gelöscht.",
+      "error": "Fehler beim Löschen der Feldnotiz."
+    }
+  },
+  "conversationApi": {
+    "sendMessage": {
+      "error": "Nachricht konnte nicht gesendet werden. Bitte versuche es erneut."
+    },
+    "clear": {
+      "success": "Konversation wurde gelöscht.",
+      "error": "Fehler beim Löschen der Konversation."
+    },
+    "loadMessage": {
+      "error": "Fehler beim Laden der Nachricht."
+    },
+    "message": {
+      "noContent": "Leere Nachricht.",
+      "invalidContent": "Ungültiger Nachrichteninhalt."
+    },
+    "summary": {
+      "unknownPlot": "Unbekanntes Feld",
+      "noMessagesYet": "Noch keine Nachrichten"
+    }
+  },
+  "plotFormSchema": {
+    "errors": {
+      "nameRequired": "Name ist erforderlich.",
+      "sizeTooSmall": "Die Fläche muss größer als 0 sein.",
+      "boundaryRequired": "Grenze ist erforderlich."
+    },
+    "fieldNoteFormSchema": {
+      "errors": {
+        "titleRequired": "Titel ist erforderlich.",
+        "titleTooLong": "Der Titel darf nicht länger als 100 Zeichen sein.",
+        "messageRequired": "Nachricht ist erforderlich.",
+        "plotIdRequired": "Feld-ID ist erforderlich."
+      }
     }
   }
 }

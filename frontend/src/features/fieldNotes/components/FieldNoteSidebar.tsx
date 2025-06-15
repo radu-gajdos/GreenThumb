@@ -29,7 +29,7 @@ const FieldNotesSidebar: React.FC<FieldNotesSidebarProps> = ({
   onSelectNote,
   onCreateNew,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatNoteTitle = (fieldNote: FieldNote) => {
     const maxLength = 40;
@@ -40,13 +40,18 @@ const FieldNotesSidebar: React.FC<FieldNotesSidebarProps> = ({
   const formatDate = (date: Date | string) => {
     const d = new Date(date);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - d.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = now.getTime() - d.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) return t('fieldNotesSidebar.today');
-    if (diffDays === 2) return t('fieldNotesSidebar.yesterday');
-    if (diffDays <= 7) return t('fieldNotesSidebar.daysAgo', { count: diffDays - 1 });
-    return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+    if (diffDays === 0) return t('fieldNotesSidebar.today');
+    if (diffDays === 1) return t('fieldNotesSidebar.yesterday');
+    if (diffDays > 1 && diffDays <= 7) return t('fieldNotesSidebar.daysAgo', { count: diffDays });
+
+    return d.toLocaleDateString(i18n.language, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   return (

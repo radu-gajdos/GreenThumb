@@ -47,12 +47,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ form, setForm, onSubmit, loading,
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">{t("loginForm.passwordLabel")}</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              {t("loginForm.forgotPassword")}
-            </a>
           </div>
           <Input
             value={form.password}

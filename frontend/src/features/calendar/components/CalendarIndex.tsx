@@ -12,6 +12,8 @@ import WeekView from '../components/calendar/WeekView';
 import ListView from '../components/calendar/ListView';
 import { CalendarEvent } from '../types/calendar';
 import EventDetails from './EventDetails';
+import i18n from '@/i18n'; // sau de unde este definit i18n
+
 
 type ViewType = 'month' | 'week' | 'list';
 
@@ -119,26 +121,35 @@ const CalendarIndex: React.FC = () => {
   };
 
   const formatDateTitle = () => {
+    const locale = i18n.language;
+
     if (view === 'month') {
-      return currentDate.toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' });
+      return currentDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
     } else if (view === 'week') {
       const { start, end } = getVisibleRange();
-      return `${start.getDate()} - ${end.getDate()} ${start.toLocaleDateString('ro-RO', {
+      return `${start.getDate()} - ${end.getDate()} ${start.toLocaleDateString(locale, {
         month: 'long',
         year: 'numeric',
       })}`;
     } else {
       const today = new Date();
       if (isSameDay(selectedListDate, today)) return t('calendarIndex.today');
+
       const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
       if (isSameDay(selectedListDate, yesterday)) return t('calendarIndex.yesterday');
+
       const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
       if (isSameDay(selectedListDate, tomorrow)) return t('calendarIndex.tomorrow');
-      return selectedListDate.toLocaleDateString('ro-RO', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+
+      return selectedListDate.toLocaleDateString(locale, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
       });
     }
   };
+
 
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
